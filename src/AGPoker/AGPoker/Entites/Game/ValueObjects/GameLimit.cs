@@ -1,6 +1,6 @@
 ﻿namespace AGPoker.Entites.Game.ValueObjects
 {
-    internal class GameLimit
+    public class GameLimit
     {
         public int Limit { get; init; }
         public GameLimit(int limit)
@@ -11,7 +11,7 @@
 
         private void Validation(int limit)
         {
-            if (limit <= 1)
+            if (limit <= 1 || limit > 14)
                 throw new Exception("Number of players cannot be lower than 2");
         }
     }
