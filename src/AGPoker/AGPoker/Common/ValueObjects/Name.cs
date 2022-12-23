@@ -1,6 +1,6 @@
 ﻿namespace AGPoker.Common.ValueObjects
 {
-    internal abstract class Name : ValueObject
+    public abstract class Name : ValueObject
     {
         protected Name(string name)
         {

@@ -1,6 +1,6 @@
 ﻿namespace AGPoker.Common
 {
-    internal class Entity
+    public class Entity
     {
     }
 }

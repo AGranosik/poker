@@ -1,6 +1,6 @@
 ﻿namespace AGPoker.Common.ValueObjects
 {
-    internal class ValueObject // just to mark sth as 'value object'
+    public class ValueObject // just to mark sth as 'value object'
     {
     }
 }

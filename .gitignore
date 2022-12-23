@@ -3,7 +3,7 @@
 ################################################################################
 
 /.vs
-/src/AGPoker/.vs/AGPoker
+/src/AGPoker/.vs/
 /src/AGPoker/AGPoker/obj
 /src/AGPoker/AGPoker/bin/Debug/net6.0
 /src/AGPoker/AGPoker.Tests/bin/Debug/net6.0
