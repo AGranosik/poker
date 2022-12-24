@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Folder Include="Domain\Aggregates\" />
-    <Folder Include="Domain\Entites\Game\Players\" />
   </ItemGroup>
 
   <ItemGroup>

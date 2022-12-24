@@ -16,5 +16,14 @@ namespace AGPoker.Entites.Game.Game.Players
 
         public static Player Create(string playerName, string playerSurname)
             => new(PlayerName.Create(playerName), PlayerSurname.Create(playerSurname));
+
+        public static bool operator ==(Player player1, Player player2)
+        {
+            return player1.PlayerName.Value == player2.PlayerName.Value
+                && player2.PlayerSurname.Value == player1.PlayerSurname.Value;
+        }
+
+        public static bool operator !=(Player player1, Player player2)
+            => !(player1 == player2);
     }
 }

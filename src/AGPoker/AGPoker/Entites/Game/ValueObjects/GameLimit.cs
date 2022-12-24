@@ -1,6 +1,8 @@
-﻿namespace AGPoker.Entites.Game.ValueObjects
+﻿using AGPoker.Common.ValueObjects;
+
+namespace AGPoker.Entites.Game.ValueObjects
 {
-    public class GameLimit
+    public class GameLimit : ValueObject // should have 
     {
         public int Limit { get; init; }
         public GameLimit(int limit)

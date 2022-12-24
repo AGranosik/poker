@@ -15,11 +15,27 @@ namespace AGPoker.Aggregates
 
         public static Game Create(Player owner, GameLimit limit)
             => new(owner, limit);
-        // tests + join player case
 
         private List<Player> _players = new();
         public Player Owner { get; init; }
         public GameLimit Limit { get; init; }
+        public int NumberOfPlayer => _players.Count;
+        public void Join(Player player)
+        {
+            if(CanPlayerJoin(player))
+                _players.Add(player);
+        }
+
+        private bool CanPlayerJoin(Player player)
+        {
+            if (NumberOfPlayer + 1 > Limit.Limit)
+                throw new Exception("No more players can be added.");
+
+            if (_players.Contains(player))
+                throw new Exception("Player already in the game.");
+
+            return true;
+        }
 
         private void CreateValidation(Player owner, GameLimit limit)
         {

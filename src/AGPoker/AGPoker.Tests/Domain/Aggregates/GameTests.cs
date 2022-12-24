@@ -29,5 +29,51 @@ namespace AGPoker.Tests.Domain.Aggregates
             var func = () => Game.Create(Player.Create("hehe", "fiu fiu"), new GameLimit(3));
             func.Should().NotThrow();
         }
+
+        [Test]
+        public void JoinPlayer_NoPlayers_Success()
+        {
+            var owner = Player.Create("hehe", "fiu fiu");
+            var player = Player.Create("hehe", "fiu fiu2");
+            var game = Game.Create(owner, new GameLimit(3));
+            var func = () => game.Join(player);
+            func.Should().NotThrow();
+            game.NumberOfPlayer.Should().Be(1);
+        }
+
+        [Test]
+        public void JoinPlayer_OwnerCanJoin_Success()
+        {
+            var owner = Player.Create("hehe", "fiu fiu");
+            var game = Game.Create(owner, new GameLimit(3));
+            var func = () => game.Join(owner);
+            func.Should().NotThrow();
+            game.NumberOfPlayer.Should().Be(1);
+        }
+
+        [Test]
+        public void JoinPlayer_CannotExceedLimit_Success()
+        {
+            var owner = Player.Create("hehe", "fiu fiu");
+            var player = Player.Create("hehe", "fiu fiu2");
+            var player2 = Player.Create("hehe", "fiu fiu3");
+            var game = Game.Create(owner, new GameLimit(2));
+            game.Join(owner);
+            game.Join(player);
+            var func = () => game.Join(player2);
+            func.Should().Throw<Exception>();
+        }
+
+        [Test]
+        public void JoinPlayer_SamePlayerCannotJoinTwice()
+        {
+            var owner = Player.Create("hehe", "fiu fiu");
+            var player = Player.Create("hehe", "fiu fiu2");
+            var game = Game.Create(owner, new GameLimit(3));
+            game.Join(owner);
+            game.Join(player);
+            var func = () => game.Join(player);
+            func.Should().Throw<Exception>();
+        }
     }
 }
