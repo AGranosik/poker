@@ -21,6 +21,11 @@
         public char Symbol { get; init; }
         public string Value { get; init; }
 
+        public static bool operator ==(Card card1, Card card2)
+            => card1.Symbol == card2.Symbol && card1.Value == card2.Value;
+
+        public static bool operator !=(Card card1, Card card2)
+            => !(card1 == card2);
         private void Validation(char symbol, string value)
         {
             if (!_symbols.Contains(symbol))
@@ -29,5 +34,11 @@
             if(!_values.Contains(value))
                 throw new ArgumentException(nameof(value));
         }
+
+        public static IReadOnlyCollection<char> PossibleSymbols
+            => _symbols.AsReadOnly();
+
+        public static IReadOnlyCollection<string> PossibleValues
+            => _values.AsReadOnly();
     }
 }
