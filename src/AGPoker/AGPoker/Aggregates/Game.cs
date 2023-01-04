@@ -13,13 +13,27 @@ namespace AGPoker.Aggregates
             Limit = limit;
         }
 
-        public static Game Create(Player owner, GameLimit limit)
+        public static Game Create(Player owner, GameLimit limit) // domain objects or not....
             => new(owner, limit);
 
         private List<Player> _players = new();
         public Player Owner { get; init; }
+        public Player Dealer { get; private set; }
+        public Player SmallBlindPlayer { get; private set; }
+        public Player BigBlindPlayer { get; private set; }
         public GameLimit Limit { get; init; }
+
+        private int _currentPlayerIndex = 0;
         public int NumberOfPlayer => _players.Count;
+
+        public void Begin()
+        {
+            CanBegin();
+            SetDealer();
+            SetSmallBlindPlayer();
+            SetBigBlindPlayer();
+        }
+
         public void Join(Player player)
         {
             if(CanPlayerJoin(player))
@@ -46,5 +60,32 @@ namespace AGPoker.Aggregates
                 throw new ArgumentNullException(nameof(limit));
         }
 
+        private void SetDealer()
+        {
+            Dealer = GetNextPlayer();
+        }
+
+        private void SetSmallBlindPlayer()
+        {
+            SmallBlindPlayer= GetNextPlayer();
+        }
+
+        private void SetBigBlindPlayer()
+        {
+            BigBlindPlayer= GetNextPlayer();
+        }
+        private void CanBegin()
+        {
+            if (_players.Count <= 1) //use game limit
+                throw new Exception("Not enough players.");
+        }
+
+        private Player GetNextPlayer()
+        {
+            if (_currentPlayerIndex == _players.Count)
+                return _players[0];
+
+            return _players[++_currentPlayerIndex];
+        }
     }
 }

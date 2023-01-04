@@ -1,5 +1,6 @@
 ﻿using AGPoker.Common;
 using AGPoker.Entites.Game.Players.ValueObjects;
+using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Entites.Game.Game.Players
 {
@@ -9,10 +10,12 @@ namespace AGPoker.Entites.Game.Game.Players
         {
             PlayerName = playerName;
             PlayerSurname = playerSurname;
+            Chips = Chips.Create(500);
         }
 
         public PlayerName PlayerName { get; init; }
         public PlayerSurname PlayerSurname { get; init; }
+        public Chips Chips { get; init; }
 
         public static Player Create(string playerName, string playerSurname)
             => new(PlayerName.Create(playerName), PlayerSurname.Create(playerSurname));
@@ -25,5 +28,6 @@ namespace AGPoker.Entites.Game.Game.Players
 
         public static bool operator !=(Player player1, Player player2)
             => !(player1 == player2);
+
     }
 }

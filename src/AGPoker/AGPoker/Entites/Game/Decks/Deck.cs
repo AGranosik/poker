@@ -1,8 +1,9 @@
-﻿using AGPoker.Entites.Game.Decks.ValueObjects;
+﻿using AGPoker.Common;
+using AGPoker.Entites.Game.Decks.ValueObjects;
 
 namespace AGPoker.Entites.Game.Decks
 {
-    public class Deck
+    public class Deck : Entity // each deck is unique for the game
     {
         private List<Card> _cards = new();
         private static Random _random = new Random();
