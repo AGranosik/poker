@@ -88,6 +88,12 @@ namespace AGPoker.Tests.Domain.Aggregates
             smallBlindDifferThanBigBlind.Should().BeTrue();
         }
 
+        [Test]
+        public void Begin_TakeBids_Success()
+        {
+
+        }
+
         private void AddPlayersToGame()
         {
             foreach (var player in _players)
