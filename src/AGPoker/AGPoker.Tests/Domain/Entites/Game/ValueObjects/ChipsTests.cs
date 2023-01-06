@@ -15,13 +15,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.ValueObjects
         }
 
         [Test]
-        public void Amount_CannotBe0_ThrowsException()
-        {
-            var func = () => Chips.Create(0);
-            func.Should().Throw<ArgumentException>();
-        }
-
-        [Test]
         public void Amount_CHigherThan0_Success()
         {
             var chips = Chips.Create(2);

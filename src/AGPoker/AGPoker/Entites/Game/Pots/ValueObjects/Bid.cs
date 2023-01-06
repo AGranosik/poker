@@ -1,9 +1,10 @@
-﻿using AGPoker.Entites.Game.Game.Players;
+﻿using AGPoker.Common.ValueObjects;
+using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Entites.Game.Pots.ValueObjects
 {
-    public class Bid // refactor to larger folders
+    public class Bid : ValueObject // refactor to larger folders
     {
         private Bid(Chips chips, Player player)
         {

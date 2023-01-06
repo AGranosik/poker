@@ -4,6 +4,8 @@ using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Aggregates
 {
+    // minimal bid
+    // minimal diff
     public class Game : IAggregateRoot // just to mark as aggregate root
     {
         private Game(Player owner, GameLimit limit)
