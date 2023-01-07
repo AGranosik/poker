@@ -1,5 +1,6 @@
 ﻿using AGPoker.Common;
 using AGPoker.Entites.Game.Game.Players;
+using AGPoker.Entites.Game.Pots;
 using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Aggregates
@@ -13,6 +14,7 @@ namespace AGPoker.Aggregates
             CreateValidation(owner, limit);
             Owner = owner;
             Limit = limit;
+            Pot = Pot.Create();
         }
 
         public static Game Create(Player owner, GameLimit limit) // domain objects or not....
@@ -24,6 +26,7 @@ namespace AGPoker.Aggregates
         public Player SmallBlindPlayer { get; private set; }
         public Player BigBlindPlayer { get; private set; }
         public GameLimit Limit { get; init; }
+        public Pot Pot { get; init; }
 
         private int _currentPlayerIndex = 0;
         public int NumberOfPlayer => _players.Count;
@@ -88,6 +91,11 @@ namespace AGPoker.Aggregates
                 return _players[0];
 
             return _players[++_currentPlayerIndex];
+        }
+
+        private void TakeBidFromBlinds()
+        {
+
         }
     }
 }

@@ -11,8 +11,20 @@ namespace AGPoker.Entites.Game.ValueObjects
 
         public Money Amount { get; private set; }
 
-        public static Chips Create(int amount)
-            => new (Money.Create(amount));
+        public Chips TakeAwayChips(Money amount)
+        {
+            CanTakeAwayPartOfChips(amount);
+            Amount -= amount;
+            return Create(amount.Value);
+        }
 
+        public static Chips Create(int amount) // money definetely
+            => new (Money.Create(amount));
+        
+        private void CanTakeAwayPartOfChips(Money amount)
+        {
+            if (amount > Amount || amount.Value == 0)
+                throw new ArgumentNullException("Cannot take away that amount of chips.");
+        }
     }
 }

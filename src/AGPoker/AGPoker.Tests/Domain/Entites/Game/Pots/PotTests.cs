@@ -47,7 +47,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Pots
         }
 
         [Test]
-        public void TakeBid_NExtBidCanBeEqualToFirst_Success()
+        public void TakeBid_NextBidCanBeEqualToFirst_Success()
         {
             var bid = Bid.Create(Chips.Create(20), _player);
             _pot.TakeABid(bid);

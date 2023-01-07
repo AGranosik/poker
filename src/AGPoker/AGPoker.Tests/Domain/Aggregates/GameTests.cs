@@ -31,6 +31,13 @@ namespace AGPoker.Tests.Domain.Aggregates
         }
 
         [Test]
+        public void Game_PotIsNotNull_Success()
+        {
+            var game = Game.Create(Player.Create("hehe", "hehe"), new GameLimit(2));
+            game.Pot.Should().NotBeNull();
+        }
+
+        [Test]
         public void JoinPlayer_NoPlayers_Success()
         {
             var owner = Player.Create("hehe", "fiu fiu");

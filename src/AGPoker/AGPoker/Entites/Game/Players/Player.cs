@@ -17,6 +17,7 @@ namespace AGPoker.Entites.Game.Game.Players
         public PlayerSurname PlayerSurname { get; init; }
         public Chips Chips { get; init; }
 
+
         public static Player Create(string playerName, string playerSurname)
             => new(PlayerName.Create(playerName), PlayerSurname.Create(playerSurname));
 
