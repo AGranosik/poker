@@ -1,4 +1,5 @@
 ﻿using AGPoker.Entites.Game.Game.Players;
+using AGPoker.Entites.Game.ValueObjects;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -40,6 +41,26 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
             var player1 = Player.Create("hehe2", "fiufui2");
 
             (player1 == player1).Should().BeTrue();
+        }
+
+        [Test]
+        public void MakeBid_CannotBeHigherThanCurrentAmount_ThrowsException()
+        {
+            var player = Player.Create("hehe", "hehe");
+            var moneyToTake = Money.Create(520);
+            var func = () => player.MakeABid(moneyToTake);
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void MakeBid_CanBeEqualToCurrentAmount_ThrowsException()
+        {
+            var player = Player.Create("hehe", "hehe");
+            var moneyToTake = Money.Create(500);
+            var bid = player.MakeABid(moneyToTake);
+            bid.Should().NotBeNull();
+            (bid.Player == player).Should().BeTrue();
+            (bid.Chips.Amount == moneyToTake).Should().BeTrue();
         }
     }
 }

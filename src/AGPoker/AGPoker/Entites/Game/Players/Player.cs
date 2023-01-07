@@ -1,5 +1,6 @@
 ﻿using AGPoker.Common;
 using AGPoker.Entites.Game.Players.ValueObjects;
+using AGPoker.Entites.Game.Pots.ValueObjects;
 using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Entites.Game.Game.Players
@@ -17,6 +18,11 @@ namespace AGPoker.Entites.Game.Game.Players
         public PlayerSurname PlayerSurname { get; init; }
         public Chips Chips { get; init; }
 
+        public Bid MakeABid(Money amount)
+        {
+            var bidChips = Chips.TakeAwayChips(amount);
+            return Bid.Create(bidChips, this);
+        }
 
         public static Player Create(string playerName, string playerSurname)
             => new(PlayerName.Create(playerName), PlayerSurname.Create(playerSurname));
