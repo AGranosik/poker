@@ -37,6 +37,7 @@ namespace AGPoker.Aggregates
             SetDealer();
             SetSmallBlindPlayer();
             SetBigBlindPlayer();
+            TakeBidFromBlinds();
         }
 
         public void Join(Player player)
@@ -95,7 +96,10 @@ namespace AGPoker.Aggregates
 
         private void TakeBidFromBlinds()
         {
-
+            var smallBlindMoney = Money.Create(10);
+            var bigBlindMoney = Money.Create(20);
+            Pot.TakeABid(SmallBlindPlayer.MakeABid(smallBlindMoney));
+            Pot.TakeABid(BigBlindPlayer.MakeABid(bigBlindMoney));
         }
     }
 }

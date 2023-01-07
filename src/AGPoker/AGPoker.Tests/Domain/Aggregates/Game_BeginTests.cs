@@ -91,7 +91,10 @@ namespace AGPoker.Tests.Domain.Aggregates
         [Test]
         public void Begin_TakeBids_Success()
         {
+            AddPlayersToGame();
+            _game.Begin();
 
+            _game.Pot.Value.Value.Should().Be(30);
         }
 
         private void AddPlayersToGame()
