@@ -10,19 +10,20 @@ namespace AGPoker.Tests.Domain.Aggregates
     internal class Game_BeginTests
     {
         private Game _game;
-        private List<Player> _players = new List<Player>
-        {
-            Player.Create("hehe2", "hehe2"),
-            Player.Create("hehe3", "hehe2"),
-            Player.Create("hehe4", "hehe2"),
-            Player.Create("hehe5", "hehe2"),
-
-        };
+        private List<Player> _players;
         [SetUp]
         public void Setup()
         {
             var owner = Player.Create("fiu", "fiu");
             _game = Game.Create(owner, new GameLimit(5));
+            _players = new List<Player>
+            {
+                Player.Create("hehe2", "hehe2"),
+                Player.Create("hehe3", "hehe2"),
+                Player.Create("hehe4", "hehe2"),
+                Player.Create("hehe5", "hehe2"),
+
+            };
         }
 
         [Test]
@@ -95,6 +96,17 @@ namespace AGPoker.Tests.Domain.Aggregates
             _game.Begin();
 
             _game.Pot.Value.Value.Should().Be(30);
+        }
+
+        [Test]
+        public void Begin_GiveHandToThePlayers_Success()
+        {
+            var expectedNumberOfCards = _players.Count * 2;
+            AddPlayersToGame();
+            _game.Begin();
+            var numberOfCardsInGame = _game.Players.Sum(p => p.Cards.Count);
+            numberOfCardsInGame
+                .Should().Be(expectedNumberOfCards);
         }
 
         private void AddPlayersToGame()

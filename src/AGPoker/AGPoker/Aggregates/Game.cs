@@ -32,6 +32,8 @@ namespace AGPoker.Aggregates
         public Player BigBlindPlayer { get; private set; }
         public GameLimit Limit { get; init; }
         public Pot Pot { get; init; }
+        public IReadOnlyCollection<Player> Players
+            => _players.AsReadOnly();
 
         private int _currentPlayerIndex = 0;
         public int NumberOfPlayer => _players.Count;
@@ -43,16 +45,19 @@ namespace AGPoker.Aggregates
             SetSmallBlindPlayer();
             SetBigBlindPlayer();
             TakeBidFromBlinds();
+            GiveHandToThePlayers();
         }
-
-        public void GaveHandToThePlayers()
+        public void GiveHandToThePlayers()
         {
             var cardsToTake = _players.Count * _handCards;
             var cards = TakeCards(cardsToTake);
-            for(int i =0; i < cardsToTake; i += 2)
+            int skip = 0;
+            foreach(var player in _players)
             {
-
-            }
+                var cardsToGive = cards.Skip(skip).Take(_handCards).ToList();
+                skip += 2;
+                player.TakeCards(cardsToGive);
+            }   
         }
 
         private List<Card> TakeCards(int n) // probably should be rand

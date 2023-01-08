@@ -6,7 +6,7 @@ using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Entites.Game.Game.Players
 {
-    public class Player: Entity
+    public class Player : Entity
     {
         private Player(PlayerName playerName, PlayerSurname playerSurname)
         {
@@ -18,6 +18,9 @@ namespace AGPoker.Entites.Game.Game.Players
         public PlayerName PlayerName { get; init; }
         public PlayerSurname PlayerSurname { get; init; }
         public Chips Chips { get; init; }
+        public IReadOnlyCollection<Card> Cards
+            => _cards.AsReadOnly();
+
         private List<Card> _cards = new();
         public Bid MakeABid(Money amount)
         {
@@ -31,9 +34,9 @@ namespace AGPoker.Entites.Game.Game.Players
             _cards.AddRange(cards);
         }
 
-        private void CheckIfCardsNotNullOrEmpty(List<Card> cards)
+        private static void CheckIfCardsNotNullOrEmpty(List<Card> cards)
         {
-            if(cards is null || cards.Count ==0)
+            if (cards is null || cards.Count == 0)
                 throw new ArgumentNullException(nameof(cards));
         }
 

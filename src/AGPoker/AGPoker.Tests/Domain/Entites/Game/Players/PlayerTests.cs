@@ -79,5 +79,21 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
             var func = () => player.TakeCards(new List<Card>());
             func.Should().Throw<ArgumentException>();
         }
+
+        [Test]
+        public void TakeCards_CardsAssignedToPlayer_Success()
+        {
+            var player = Player.Create("hehe", "hehe");
+            var cards = new List<Card>()
+            {
+                new Card(Card.PossibleSymbols.ElementAt(0), Card.PossibleValues.ElementAt(0)),
+                new Card(Card.PossibleSymbols.ElementAt(0), Card.PossibleValues.ElementAt(1))
+            };
+            player.TakeCards(cards);
+
+            var playerCards = player.Cards;
+            cards.All(c => playerCards.Any(pc => c == pc))
+                .Should().BeTrue();
+        }
     }
 }
