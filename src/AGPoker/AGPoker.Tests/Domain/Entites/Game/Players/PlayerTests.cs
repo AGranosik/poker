@@ -1,4 +1,5 @@
-﻿using AGPoker.Entites.Game.Game.Players;
+﻿using AGPoker.Entites.Game.Decks.ValueObjects;
+using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.ValueObjects;
 using FluentAssertions;
 using NUnit.Framework;
@@ -61,6 +62,22 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
             bid.Should().NotBeNull();
             (bid.Player == player).Should().BeTrue();
             (bid.Chips.Amount == moneyToTake).Should().BeTrue();
+        }
+
+        [Test]
+        public void TakeCards_CannotBeNull_ThrowsException()
+        {
+            var player = Player.Create("hehe", "hehe");
+            var func = () => player.TakeCards(null);
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void TakeCards_CannotBeEmpty_ThrowsException()
+        {
+            var player = Player.Create("hehe", "hehe");
+            var func = () => player.TakeCards(new List<Card>());
+            func.Should().Throw<ArgumentException>();
         }
     }
 }

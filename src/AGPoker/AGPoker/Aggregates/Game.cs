@@ -1,4 +1,6 @@
 ﻿using AGPoker.Common;
+using AGPoker.Entites.Game.Decks;
+using AGPoker.Entites.Game.Decks.ValueObjects;
 using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Pots;
 using AGPoker.Entites.Game.ValueObjects;
@@ -9,18 +11,21 @@ namespace AGPoker.Aggregates
     // minimal diff
     public class Game : IAggregateRoot // just to mark as aggregate root
     {
+        private readonly int _handCards = 2;
         private Game(Player owner, GameLimit limit)
         {
             CreateValidation(owner, limit);
             Owner = owner;
             Limit = limit;
             Pot = Pot.Create();
+            _deck = Deck.Create();
         }
 
         public static Game Create(Player owner, GameLimit limit) // domain objects or not....
             => new(owner, limit);
 
         private List<Player> _players = new();
+        private Deck _deck;
         public Player Owner { get; init; }
         public Player Dealer { get; private set; }
         public Player SmallBlindPlayer { get; private set; }
@@ -38,6 +43,25 @@ namespace AGPoker.Aggregates
             SetSmallBlindPlayer();
             SetBigBlindPlayer();
             TakeBidFromBlinds();
+        }
+
+        public void GaveHandToThePlayers()
+        {
+            var cardsToTake = _players.Count * _handCards;
+            var cards = TakeCards(cardsToTake);
+            for(int i =0; i < cardsToTake; i += 2)
+            {
+
+            }
+        }
+
+        private List<Card> TakeCards(int n) // probably should be rand
+        {
+            var cards = new List<Card>(n);
+            for(int i =0; i < n; i++)
+                cards.Add(_deck.GetNextCard());
+
+            return cards;
         }
 
         public void Join(Player player)
