@@ -1,7 +1,7 @@
 ﻿using AGPoker.Common;
 using AGPoker.Entites.Game.Decks.ValueObjects;
 using AGPoker.Entites.Game.Players.ValueObjects;
-using AGPoker.Entites.Game.Pots.ValueObjects;
+using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Entites.Game.Game.Players

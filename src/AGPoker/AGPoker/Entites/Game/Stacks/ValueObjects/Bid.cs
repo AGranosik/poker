@@ -2,11 +2,12 @@
 using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.ValueObjects;
 
-namespace AGPoker.Entites.Game.Pots.ValueObjects
+namespace AGPoker.Entites.Game.Stacks.ValueObjects
 {
     public class Bid : ValueObject // refactor to larger folders
     {
         // check if its not all in
+        // split into smaller ones.
         private Bid(Chips chips, Player player)
         {
             CreationValidation(chips, player);

@@ -34,7 +34,7 @@ namespace AGPoker.Tests.Domain.Aggregates
         public void Game_PotIsNotNull_Success()
         {
             var game = Game.Create(Player.Create("hehe", "hehe"), new GameLimit(2));
-            game.Pot.Should().NotBeNull();
+            game.Stack.Should().NotBeNull();
         }
 
         [Test]

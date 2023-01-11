@@ -2,8 +2,8 @@
 using AGPoker.Entites.Game.Decks;
 using AGPoker.Entites.Game.Decks.ValueObjects;
 using AGPoker.Entites.Game.Game.Players;
-using AGPoker.Entites.Game.Pots;
-using AGPoker.Entites.Game.Pots.ValueObjects;
+using AGPoker.Entites.Game.Stacks;
+using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Aggregates
@@ -18,7 +18,7 @@ namespace AGPoker.Aggregates
             CreateValidation(owner, limit);
             Owner = owner;
             Limit = limit;
-            Pot = Pot.Create();
+            Stack = Stack.Create();
             _deck = Deck.Create();
         }
 
@@ -32,7 +32,7 @@ namespace AGPoker.Aggregates
         public Player SmallBlindPlayer { get; private set; }
         public Player BigBlindPlayer { get; private set; }
         public GameLimit Limit { get; init; }
-        public Pot Pot { get; init; }
+        public Stack Stack { get; init; }
         public IReadOnlyCollection<Player> Players
             => _players.AsReadOnly();
 
@@ -146,8 +146,8 @@ namespace AGPoker.Aggregates
         {
             var smallBlindMoney = Money.Create(10);
             var bigBlindMoney = Money.Create(20);
-            Pot.TakeABid(SmallBlindPlayer.MakeABid(smallBlindMoney));
-            Pot.TakeABid(BigBlindPlayer.MakeABid(bigBlindMoney));
+            Stack.TakeABid(SmallBlindPlayer.MakeABid(smallBlindMoney));
+            Stack.TakeABid(BigBlindPlayer.MakeABid(bigBlindMoney));
         }
     }
 }

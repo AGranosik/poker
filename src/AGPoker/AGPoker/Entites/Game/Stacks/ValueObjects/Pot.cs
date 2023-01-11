@@ -1,11 +1,12 @@
-﻿using AGPoker.Common;
-using AGPoker.Entites.Game.Pots.ValueObjects;
+﻿using AGPoker.Common.ValueObjects;
 using AGPoker.Entites.Game.ValueObjects;
 
-namespace AGPoker.Entites.Game.Pots
+namespace AGPoker.Entites.Game.Stacks.ValueObjects
 {
-    public class Pot : Entity
+    public class Pot : ValueObject
     {
+        // all in pot
+        // should create new pot if necessary 
         private List<Bid> _bids = new();
         private Money _highestBid = Money.Create(0);
 
@@ -31,13 +32,13 @@ namespace AGPoker.Entites.Game.Pots
 
         private void BidValidation(Bid bid)
         {
-            if(bid.Chips.Amount < _highestBid)
+            if (bid.Chips.Amount < _highestBid)
                 throw new ArgumentException(nameof(bid));
         }
 
         private void SetHighestBidIfNeccessary(Bid bid)
         {
-            if(bid.Chips.Amount > _highestBid)
+            if (bid.Chips.Amount > _highestBid)
                 _highestBid = bid.Chips.Amount;
         }
     }

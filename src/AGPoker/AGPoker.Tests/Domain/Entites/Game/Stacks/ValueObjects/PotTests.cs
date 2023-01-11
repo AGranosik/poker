@@ -1,11 +1,10 @@
 ﻿using AGPoker.Entites.Game.Game.Players;
-using AGPoker.Entites.Game.Pots;
-using AGPoker.Entites.Game.Pots.ValueObjects;
+using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Entites.Game.ValueObjects;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace AGPoker.Tests.Domain.Entites.Game.Pots
+namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
 {
     [TestFixture]
     internal class PotTests

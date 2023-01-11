@@ -1,6 +1,6 @@
 ﻿using AGPoker.Aggregates;
 using AGPoker.Entites.Game.Game.Players;
-using AGPoker.Entites.Game.Pots.ValueObjects;
+using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Entites.Game.ValueObjects;
 using FluentAssertions;
 using NUnit.Framework;
