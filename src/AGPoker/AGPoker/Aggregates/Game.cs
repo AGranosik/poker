@@ -3,6 +3,7 @@ using AGPoker.Entites.Game.Decks;
 using AGPoker.Entites.Game.Decks.ValueObjects;
 using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Pots;
+using AGPoker.Entites.Game.Pots.ValueObjects;
 using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Aggregates
@@ -47,6 +48,18 @@ namespace AGPoker.Aggregates
             TakeBidFromBlinds();
             GiveHandToThePlayers();
         }
+
+        // 
+        public void TakeBid(Bid bid)
+        {
+            var bidPlayerIndex = _players.IndexOf(bid.Player);
+            if (bidPlayerIndex == -1)
+                throw new ArgumentException("No player in the game.");
+
+            CheckIfPlayersTurn(bidPlayerIndex);
+            // should create new pot
+        }
+
         public void GiveHandToThePlayers()
         {
             var cardsToTake = _players.Count * _handCards;
@@ -73,6 +86,12 @@ namespace AGPoker.Aggregates
         {
             if(CanPlayerJoin(player))
                 _players.Add(player);
+        }
+
+        private void CheckIfPlayersTurn(int bidPlayerIndex)
+        {
+            if (bidPlayerIndex != _currentPlayerIndex)
+                throw new ArgumentException("Not this player turn.");
         }
 
         private bool CanPlayerJoin(Player player)
@@ -117,7 +136,7 @@ namespace AGPoker.Aggregates
 
         private Player GetNextPlayer()
         {
-            if (_currentPlayerIndex == _players.Count)
+            if (_currentPlayerIndex == _players.Count - 1)
                 return _players[0];
 
             return _players[++_currentPlayerIndex];

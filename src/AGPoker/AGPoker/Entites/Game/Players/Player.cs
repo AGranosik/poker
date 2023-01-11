@@ -8,11 +8,11 @@ namespace AGPoker.Entites.Game.Game.Players
 {
     public class Player : Entity
     {
-        private Player(PlayerName playerName, PlayerSurname playerSurname)
+        private Player(PlayerName playerName, PlayerSurname playerSurname, Chips chips)
         {
             PlayerName = playerName;
             PlayerSurname = playerSurname;
-            Chips = Chips.Create(500);
+            Chips = chips;
         }
 
         public PlayerName PlayerName { get; init; }
@@ -40,8 +40,8 @@ namespace AGPoker.Entites.Game.Game.Players
                 throw new ArgumentNullException(nameof(cards));
         }
 
-        public static Player Create(string playerName, string playerSurname)
-            => new(PlayerName.Create(playerName), PlayerSurname.Create(playerSurname));
+        public static Player Create(string playerName, string playerSurname, int chips = 500)
+            => new(PlayerName.Create(playerName), PlayerSurname.Create(playerSurname), Chips.Create(chips));
 
         public static bool operator ==(Player player1, Player player2)
         {

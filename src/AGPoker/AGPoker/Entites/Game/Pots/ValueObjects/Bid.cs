@@ -6,6 +6,7 @@ namespace AGPoker.Entites.Game.Pots.ValueObjects
 {
     public class Bid : ValueObject // refactor to larger folders
     {
+        // check if its not all in
         private Bid(Chips chips, Player player)
         {
             CreationValidation(chips, player);
