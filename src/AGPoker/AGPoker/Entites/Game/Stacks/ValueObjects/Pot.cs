@@ -18,8 +18,10 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         public void TakeABid(Bid bid)
         {
-            BidValidation(bid);
-            SetHighestBidIfNeccessary(bid);
+            var playerBids = TakePlayerBids(bid);
+            var playerBidAmount = GetPlayerBidAmount(playerBids);
+            BidValidation(playerBidAmount);
+            SetHighestBidIfNeccessary(playerBidAmount);
 
             _bids.Add(bid);
         }
@@ -30,16 +32,26 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public static Pot Create()
             => new();
 
-        private void BidValidation(Bid bid)
+        private void BidValidation(int playerBidAmount)
         {
-            if (bid.Chips.Amount < _highestBid)
-                throw new ArgumentException(nameof(bid));
+            if (playerBidAmount < _highestBid.Value)
+                throw new ArgumentException();
         }
 
-        private void SetHighestBidIfNeccessary(Bid bid)
+        private void SetHighestBidIfNeccessary(int playerBidAmount)
         {
-            if (bid.Chips.Amount > _highestBid)
-                _highestBid = bid.Chips.Amount;
+            if (playerBidAmount > _highestBid.Value)
+                _highestBid = Money.Create(playerBidAmount);
+        }
+
+        private int GetPlayerBidAmount(List<Bid> playerBids)
+            => playerBids.Sum(b => b.Chips.Amount.Value);
+
+        private List<Bid> TakePlayerBids(Bid currentBid)
+        {
+            var bids = _bids.Where(b => b.Player == currentBid.Player).ToList();
+            bids.Add(currentBid);
+            return bids;
         }
     }
 }

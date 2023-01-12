@@ -49,7 +49,12 @@ namespace AGPoker.Aggregates
             GiveHandToThePlayers();
         }
 
-        // 
+        public void Check(Player player)
+        {
+            _currentPlayerIndex++;
+        }
+
+        // how to detect that bid can be taken
         public void TakeBid(Bid bid)
         {
             var bidPlayerIndex = _players.IndexOf(bid.Player);
@@ -57,7 +62,8 @@ namespace AGPoker.Aggregates
                 throw new ArgumentException("No player in the game.");
 
             CheckIfPlayersTurn(bidPlayerIndex);
-            // should create new pot
+            Stack.TakeABid(bid);
+            GetNextPlayer();
         }
 
         public void GiveHandToThePlayers()
@@ -137,9 +143,12 @@ namespace AGPoker.Aggregates
         private Player GetNextPlayer()
         {
             if (_currentPlayerIndex == _players.Count - 1)
+            {
+                _currentPlayerIndex = 0;
                 return _players[0];
+            }
 
-            return _players[++_currentPlayerIndex];
+            return _players[_currentPlayerIndex++];
         }
 
         private void TakeBidFromBlinds()

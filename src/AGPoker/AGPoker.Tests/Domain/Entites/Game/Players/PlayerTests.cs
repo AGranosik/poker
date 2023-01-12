@@ -54,7 +54,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
         }
 
         [Test]
-        public void MakeBid_CanBeEqualToCurrentAmount_ThrowsException()
+        public void MakeBid_CanBeEqualToCurrentAmount_AllInFlag()
         {
             var player = Player.Create("hehe", "hehe");
             var moneyToTake = Money.Create(500);
@@ -62,6 +62,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
             bid.Should().NotBeNull();
             (bid.Player == player).Should().BeTrue();
             (bid.Chips.Amount == moneyToTake).Should().BeTrue();
+            bid.AllIn.Should().BeTrue();
         }
 
         [Test]

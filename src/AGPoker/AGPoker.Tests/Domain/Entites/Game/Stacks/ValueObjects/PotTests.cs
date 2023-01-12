@@ -11,6 +11,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
     {
         private Pot _pot;
         private Player _player = Player.Create("hehe", "hehe");
+        private Player _player2 = Player.Create("hehe2", "hehe2");
 
         [SetUp]
         public void SetUp()
@@ -25,11 +26,11 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         }
 
         [Test]
-        public void TakeBid_CannotBeLowerThamHighest_ThrowsException()
+        public void TakeBid_CannotBeLowerThanHighest_ThrowsException()
         {
             var bid = Bid.Create(Chips.Create(20), _player);
             _pot.TakeABid(bid);
-            bid = Bid.Create(Chips.Create(10), _player);
+            bid = Bid.Create(Chips.Create(10), _player2);
             var func = () => _pot.TakeABid(bid);
             func.Should().Throw<ArgumentException>();
         }
@@ -39,7 +40,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         {
             var bid = Bid.Create(Chips.Create(10), _player);
             _pot.TakeABid(bid);
-            bid = Bid.Create(Chips.Create(20), _player);
+            bid = Bid.Create(Chips.Create(20), _player2);
             var func = () => _pot.TakeABid(bid);
             func.Should().NotThrow();
             _pot.Value.Value.Should().Be(30); // remove many lower invocation like .Value.Value
@@ -50,7 +51,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         {
             var bid = Bid.Create(Chips.Create(20), _player);
             _pot.TakeABid(bid);
-            bid = Bid.Create(Chips.Create(20), _player);
+            bid = Bid.Create(Chips.Create(20), _player2);
             var func = () => _pot.TakeABid(bid);
             func.Should().NotThrow();
             _pot.Value.Value.Should().Be(40);

@@ -25,7 +25,7 @@ namespace AGPoker.Entites.Game.Game.Players
         public Bid MakeABid(Money amount)
         {
             var bidChips = Chips.TakeAwayChips(amount);
-            return Bid.Create(bidChips, this);
+            return Bid.Create(bidChips, this, LastChipsWereTaken());
         }
 
         public void TakeCards(List<Card> cards)
@@ -33,6 +33,9 @@ namespace AGPoker.Entites.Game.Game.Players
             CheckIfCardsNotNullOrEmpty(cards);
             _cards.AddRange(cards);
         }
+
+        public bool LastChipsWereTaken()
+            => Chips.Amount.Value == 0;
 
         private static void CheckIfCardsNotNullOrEmpty(List<Card> cards)
         {

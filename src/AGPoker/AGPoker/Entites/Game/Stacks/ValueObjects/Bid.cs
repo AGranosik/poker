@@ -8,19 +8,21 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
     {
         // check if its not all in
         // split into smaller ones.
-        private Bid(Chips chips, Player player)
+        private Bid(Chips chips, Player player, bool allIn)
         {
             CreationValidation(chips, player);
             Chips = chips;
             Player = player;
+            AllIn = allIn;
         }
 
         public Chips Chips { get; init; }
         public Player Player { get; set; }
+        public bool AllIn { get; init; }
 
 
-        public static Bid Create(Chips chips, Player player)
-            => new(chips, player);
+        public static Bid Create(Chips chips, Player player, bool allIn = false)
+            => new(chips, player, allIn);
 
         private void CreationValidation(Chips chips, Player player)
         {
