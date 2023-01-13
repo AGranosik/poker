@@ -55,6 +55,9 @@ namespace AGPoker.Aggregates
         }
 
         // how to detect that bid can be taken
+        // turn shouldn't be game responsibility
+        // if add Table it will basically everything except Owner
+        // if add Turn entity game will have to manage between turns/bids 
         public void TakeBid(Bid bid)
         {
             var bidPlayerIndex = _players.IndexOf(bid.Player);
