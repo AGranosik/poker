@@ -4,6 +4,7 @@ using AGPoker.Entites.Game.Decks.ValueObjects;
 using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Stacks;
 using AGPoker.Entites.Game.Stacks.ValueObjects;
+using AGPoker.Entites.Game.Turns;
 using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Aggregates
@@ -28,15 +29,12 @@ namespace AGPoker.Aggregates
         private List<Player> _players = new();
         private Deck _deck;
         public Player Owner { get; init; }
-        public Player Dealer { get; private set; }
-        public Player SmallBlindPlayer { get; private set; }
-        public Player BigBlindPlayer { get; private set; }
         public GameLimit Limit { get; init; }
         public Stack Stack { get; init; }
         public IReadOnlyCollection<Player> Players
             => _players.AsReadOnly();
 
-        private int _currentPlayerIndex = 0;
+        private Turn _turn;
         public int NumberOfPlayer => _players.Count;
 
         public void Begin()
@@ -47,17 +45,14 @@ namespace AGPoker.Aggregates
             SetBigBlindPlayer();
             TakeBidFromBlinds();
             GiveHandToThePlayers();
+            StartTurn();
         }
 
         public void Check(Player player)
         {
-            _currentPlayerIndex++;
         }
 
-        // how to detect that bid can be taken
-        // turn shouldn't be game responsibility
-        // if add Table it will basically everything except Owner
-        // if add Turn entity game will have to manage between turns/bids 
+        // Flow -> get stack check if are equal and if all players place a bet
         public void TakeBid(Bid bid)
         {
             var bidPlayerIndex = _players.IndexOf(bid.Player);
@@ -97,12 +92,6 @@ namespace AGPoker.Aggregates
                 _players.Add(player);
         }
 
-        private void CheckIfPlayersTurn(int bidPlayerIndex)
-        {
-            if (bidPlayerIndex != _currentPlayerIndex)
-                throw new ArgumentException("Not this player turn.");
-        }
-
         private bool CanPlayerJoin(Player player)
         {
             if (NumberOfPlayer + 1 > Limit.Limit)
@@ -123,6 +112,9 @@ namespace AGPoker.Aggregates
                 throw new ArgumentNullException(nameof(limit));
         }
 
+        private void StartTurn()
+            => _turn = Turn.Start(_players);
+
         private void SetDealer()
         {
             Dealer = GetNextPlayer();
@@ -141,17 +133,6 @@ namespace AGPoker.Aggregates
         {
             if (_players.Count <= 1) //use game limit
                 throw new Exception("Not enough players.");
-        }
-
-        private Player GetNextPlayer()
-        {
-            if (_currentPlayerIndex == _players.Count - 1)
-            {
-                _currentPlayerIndex = 0;
-                return _players[0];
-            }
-
-            return _players[_currentPlayerIndex++];
         }
 
         private void TakeBidFromBlinds()
