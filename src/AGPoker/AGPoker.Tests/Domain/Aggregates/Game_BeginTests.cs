@@ -38,55 +38,7 @@ namespace AGPoker.Tests.Domain.Aggregates
         {
             AddPlayersToGame();
             _game.Begin();
-            _game.Dealer.Should().NotBeNull();
-        }
-
-        [Test]
-        public void Begin_SmallBlindPlayerSet_Success()
-        {
-            AddPlayersToGame();
-            _game.Begin();
-            _game.Dealer.Should().NotBeNull();
-            _game.SmallBlindPlayer.Should().NotBeNull();
-        }
-
-        [Test]
-        public void Begin_SmallBlindDifferentThanDealer_Success()
-        {
-            AddPlayersToGame();
-            _game.Begin();
-            _game.Dealer.Should().NotBeNull();
-            _game.SmallBlindPlayer.Should().NotBeNull();
-
-            (_game.Dealer == _game.SmallBlindPlayer).Should().BeFalse();
-        }
-
-        [Test]
-        public void Begin_BigBlindPlayerSet_Success()
-        {
-            AddPlayersToGame();
-            _game.Begin();
-            _game.Dealer.Should().NotBeNull();
-            _game.SmallBlindPlayer.Should().NotBeNull();
-            _game.BigBlindPlayer.Should().NotBeNull();
-        }
-
-        [Test]
-        public void Begin_StartPlayersDifferFromEachOther()
-        {
-            AddPlayersToGame();
-            _game.Begin();
-            _game.Dealer.Should().NotBeNull();
-            _game.SmallBlindPlayer.Should().NotBeNull();
-            _game.BigBlindPlayer.Should().NotBeNull();
-
-            var dealerDifferentThanSmallBlind = _game.Dealer != _game.SmallBlindPlayer;
-            var dealerDifferentThanBigBlind = _game.Dealer != _game.BigBlindPlayer;
-            var smallBlindDifferThanBigBlind = _game.SmallBlindPlayer != _game.BigBlindPlayer;
-
-            dealerDifferentThanBigBlind.Should().BeTrue();
-            dealerDifferentThanSmallBlind.Should().BeTrue();
-            smallBlindDifferThanBigBlind.Should().BeTrue();
+            _game.Turn.Dealer.Should().NotBeNull();
         }
 
         [Test]

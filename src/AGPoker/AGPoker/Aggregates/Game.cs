@@ -34,34 +34,29 @@ namespace AGPoker.Aggregates
         public IReadOnlyCollection<Player> Players
             => _players.AsReadOnly();
 
-        private Turn _turn;
+        public Turn Turn { get; private set; }
         public int NumberOfPlayer => _players.Count;
 
         public void Begin()
         {
             CanBegin();
-            SetDealer();
-            SetSmallBlindPlayer();
-            SetBigBlindPlayer();
+            StartTurn();
             TakeBidFromBlinds();
             GiveHandToThePlayers();
-            StartTurn();
         }
 
         public void Check(Player player)
         {
+            Turn.Next();
         }
 
-        // Flow -> get stack check if are equal and if all players place a bet
         public void TakeBid(Bid bid)
         {
-            var bidPlayerIndex = _players.IndexOf(bid.Player);
-            if (bidPlayerIndex == -1)
+            Turn.Next();
+            if (!Turn.IsThisPlayerTurn(bid.Player))
                 throw new ArgumentException("No player in the game.");
 
-            CheckIfPlayersTurn(bidPlayerIndex);
             Stack.TakeABid(bid);
-            GetNextPlayer();
         }
 
         public void GiveHandToThePlayers()
@@ -113,22 +108,7 @@ namespace AGPoker.Aggregates
         }
 
         private void StartTurn()
-            => _turn = Turn.Start(_players);
-
-        private void SetDealer()
-        {
-            Dealer = GetNextPlayer();
-        }
-
-        private void SetSmallBlindPlayer()
-        {
-            SmallBlindPlayer= GetNextPlayer();
-        }
-
-        private void SetBigBlindPlayer()
-        {
-            BigBlindPlayer= GetNextPlayer();
-        }
+            => Turn = Turn.Start(_players);
         private void CanBegin()
         {
             if (_players.Count <= 1) //use game limit
@@ -139,8 +119,8 @@ namespace AGPoker.Aggregates
         {
             var smallBlindMoney = Money.Create(10);
             var bigBlindMoney = Money.Create(20);
-            Stack.TakeABid(SmallBlindPlayer.MakeABid(smallBlindMoney));
-            Stack.TakeABid(BigBlindPlayer.MakeABid(bigBlindMoney));
+            Stack.TakeABid(Turn.SmallBlindPlayer.MakeABid(smallBlindMoney));
+            Stack.TakeABid(Turn.BigBlindPlayer.MakeABid(bigBlindMoney));
         }
     }
 }

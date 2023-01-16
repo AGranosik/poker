@@ -21,4 +21,8 @@
     <ProjectReference Include="..\AGPoker\AGPoker.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\Entites\Game\Turns\Valueobjects\" />
+  </ItemGroup>
+
 </Project>

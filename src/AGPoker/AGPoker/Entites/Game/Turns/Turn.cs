@@ -17,16 +17,19 @@ namespace AGPoker.Entites.Game.Turns
 
         private List<Player> _players = new();
         private List<int> _playersInGame = new();
-        private int _currentPlayerIndex = 0;
+        private int _currentPlayerIndex = -1;
         private int _dealerIndex = 0;
 
         public static Turn Start(List<Player> players)
             => new(players);
 
+        public void Next()
+            => GetNextPlayerIndex();
+
         public bool IsThisPlayerTurn(Player player)
         {
             var playerIndex = _players.IndexOf(player);
-            return playerIndex >= 0 && _playersInGame.Contains(playerIndex);
+            return playerIndex >= 0 && _playersInGame.Contains(playerIndex) && _currentPlayerIndex == playerIndex;
         }
 
         private void SetPlayersInGame()
@@ -43,17 +46,31 @@ namespace AGPoker.Entites.Game.Turns
 
         private void SetDealer()
         {
-            Dealer = _players[_currentPlayerIndex++];
+            Dealer = _players[GetNextPlayerIndex()];
         }
 
         private void SetSmallBlind()
         {
-            SmallBlindPlayer = _players[_currentPlayerIndex++];
+            SmallBlindPlayer = _players[GetNextPlayerIndex()];
         }
 
         private void SetBigBlind()
         {
-            BigBlindPlayer = _players[_currentPlayerIndex++];
+            BigBlindPlayer = _players[GetNextPlayerIndex()];
+        }
+
+        private int GetNextPlayerIndex()
+        {
+            if(_currentPlayerIndex == _players.Count - 1)
+            {
+                _currentPlayerIndex = 0;
+            }
+            else
+            {
+                _currentPlayerIndex++;
+            }
+
+            return _currentPlayerIndex;
         }
 
     }
