@@ -34,8 +34,8 @@ namespace AGPoker.Entites.Game.Game.Players
             _cards.AddRange(cards);
         }
 
-        public bool LastChipsWereTaken()
-            => Chips.Amount.Value == 0;
+        public BidType LastChipsWereTaken()
+            => Chips.Amount.Value == 0 ? BidType.AllIn : BidType.Equal;
 
         private static void CheckIfCardsNotNullOrEmpty(List<Card> cards)
         {

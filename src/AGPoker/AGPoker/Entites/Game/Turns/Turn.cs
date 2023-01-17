@@ -1,4 +1,5 @@
 ﻿using AGPoker.Entites.Game.Game.Players;
+using AGPoker.Entites.Game.Stacks.ValueObjects;
 
 namespace AGPoker.Entites.Game.Turns
 {
@@ -19,18 +20,27 @@ namespace AGPoker.Entites.Game.Turns
         private List<int> _playersInGame = new();
         private int _currentPlayerIndex = -1;
         private int _dealerIndex = 0;
+        private int _movesIntTurn = 0;
 
         public static Turn Start(List<Player> players)
             => new(players);
 
-        public void Next()
-            => GetNextPlayerIndex();
+        public void Next(BidType bidType)
+        {
+            if (!CanMakeBid())
+                throw new ArgumentException("Next move cannot be performed.");
+            GetNextPlayerIndex();
+            _movesIntTurn++;
+        }
 
         public bool IsThisPlayerTurn(Player player)
         {
             var playerIndex = _players.IndexOf(player);
             return playerIndex >= 0 && _playersInGame.Contains(playerIndex) && _currentPlayerIndex == playerIndex;
         }
+
+        private bool CanMakeBid()
+            => _movesIntTurn < _playersInGame.Count;
 
         private void SetPlayersInGame()
         {
@@ -42,6 +52,7 @@ namespace AGPoker.Entites.Game.Turns
             SetDealer();
             SetSmallBlind();
             SetBigBlind();
+            GetNextPlayerIndex();
         }
 
         private void SetDealer()

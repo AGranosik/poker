@@ -47,16 +47,16 @@ namespace AGPoker.Aggregates
 
         public void Check(Player player)
         {
-            Turn.Next();
+            Turn.Next(BidType.Check);
         }
 
         public void TakeBid(Bid bid)
         {
-            Turn.Next();
             if (!Turn.IsThisPlayerTurn(bid.Player))
                 throw new ArgumentException("No player in the game.");
 
             Stack.TakeABid(bid);
+            Turn.Next(bid.BidType);
         }
 
         public void GiveHandToThePlayers()
