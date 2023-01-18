@@ -1,4 +1,5 @@
 ﻿using AGPoker.Entites.Game.Game.Players;
+using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Entites.Game.Turns;
 using FluentAssertions;
 using NUnit.Framework;
@@ -26,14 +27,14 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         }
 
         [Test]
-        public void Begin_SmallBlindPlayerSet_Success()
+        public void Start_SmallBlindPlayerSet_Success()
         {
             _turn.Dealer.Should().NotBeNull();
             _turn.SmallBlindPlayer.Should().NotBeNull();
         }
 
         [Test]
-        public void Begin_SmallBlindDifferentThanDealer_Success()
+        public void Start_SmallBlindDifferentThanDealer_Success()
         {
             _turn.Dealer.Should().NotBeNull();
             _turn.SmallBlindPlayer.Should().NotBeNull();
@@ -42,7 +43,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         }
 
         [Test]
-        public void Begin_BigBlindPlayerSet_Success()
+        public void Start_BigBlindPlayerSet_Success()
         {
             _turn.Dealer.Should().NotBeNull();
             _turn.SmallBlindPlayer.Should().NotBeNull();
@@ -50,7 +51,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         }
 
         [Test]
-        public void Begin_StartPlayersDifferFromEachOther()
+        public void Start_StartPlayersDifferFromEachOther_Success()
         {
             _turn.Dealer.Should().NotBeNull();
             _turn.SmallBlindPlayer.Should().NotBeNull();
@@ -63,6 +64,54 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             dealerDifferentThanBigBlind.Should().BeTrue();
             dealerDifferentThanSmallBlind.Should().BeTrue();
             smallBlindDifferThanBigBlind.Should().BeTrue();
+        }
+
+        [Test]
+        public void Next_EveryoneChecked_Success()
+        {
+            var bidTypeChecked = BidType.Check;
+            for(int i =0; i < _players.Count; i++)
+                _turn.Next(bidTypeChecked);
+        }
+
+        [Test]
+        public void Next_EveryoneCheckedExtraTurn_ThrowsException()
+        {
+            var bidTypeChecked = BidType.Check;
+            for (int i = 0; i < _players.Count; i++)
+                _turn.Next(bidTypeChecked);
+
+            var func = () => _turn.Next(bidTypeChecked);
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void Next_EveryonePassedExceptFirstPlayer_Success()
+        {
+            var bidTypePassed = BidType.Pass;
+            for (int i = 0; i < _players.Count - 1; i++)
+                _turn.Next(bidTypePassed);
+        }
+
+        [Test]
+        public void Next_LastPlayerCannotPass_ThrowsException()
+        {
+            var bidTypePassed = BidType.Pass;
+            for (int i = 0; i < _players.Count - 1; i++)
+                _turn.Next(bidTypePassed);
+
+            var func = () => _turn.Next(bidTypePassed);
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void Next_OneOfThemMakeBiggerBidCircleNotClosedUntilThen_Success()
+        {
+            var checkedBid = BidType.Check;
+            for (int i = 0; i < 2; i++)
+                _turn.Next(checkedBid);
+
+
         }
     }
 }

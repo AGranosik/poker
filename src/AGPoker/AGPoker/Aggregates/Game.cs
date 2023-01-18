@@ -45,6 +45,11 @@ namespace AGPoker.Aggregates
             GiveHandToThePlayers();
         }
 
+        public void Pass(Player player)
+        {
+            Turn.Next(BidType.Pass);
+        }
+
         public void Check(Player player)
         {
             Turn.Next(BidType.Check);

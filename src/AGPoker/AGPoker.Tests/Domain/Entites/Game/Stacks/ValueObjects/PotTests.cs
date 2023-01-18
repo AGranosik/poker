@@ -36,6 +36,29 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         }
 
         [Test]
+        public void TakeBid_CannotCheckIfNotEqualToHighestBid_ThrowsException()
+        {
+            var bid = Bid.Create(Chips.Create(20), _player);
+            _pot.TakeABid(bid);
+            bid = _player2.Check();
+            var func = () => _pot.TakeABid(bid);
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void TakeBid_CanCheckIfEqualToHighest_Success()
+        {
+            var bid = Bid.Create(Chips.Create(20), _player);
+            _pot.TakeABid(bid);
+            bid = Bid.Create(Chips.Create(20), _player2);
+            _pot.TakeABid(bid);
+            bid = _player.Check();
+            var func = () => _pot.TakeABid(bid);
+            func.Should().NotThrow<ArgumentException>();
+
+        }
+
+        [Test]
         public void TakeBid_NextBidCanBeHigherThanFirst_Success()
         {
             var bid = Bid.Create(Chips.Create(10), _player);

@@ -20,7 +20,7 @@ namespace AGPoker.Entites.Game.Turns
         private List<int> _playersInGame = new();
         private int _currentPlayerIndex = -1;
         private int _dealerIndex = 0;
-        private int _movesIntTurn = 0;
+        private int _movesInTurn = 0;
 
         public static Turn Start(List<Player> players)
             => new(players);
@@ -29,8 +29,9 @@ namespace AGPoker.Entites.Game.Turns
         {
             if (!CanMakeBid())
                 throw new ArgumentException("Next move cannot be performed.");
+            RemovePlayerFromTurnIfNeccessary(bidType);
             GetNextPlayerIndex();
-            _movesIntTurn++;
+            _movesInTurn++;
         }
 
         public bool IsThisPlayerTurn(Player player)
@@ -39,8 +40,17 @@ namespace AGPoker.Entites.Game.Turns
             return playerIndex >= 0 && _playersInGame.Contains(playerIndex) && _currentPlayerIndex == playerIndex;
         }
 
+        private void RemovePlayerFromTurnIfNeccessary(BidType bidType)
+        {
+            if (bidType == BidType.Pass)
+                _playersInGame.Remove(_currentPlayerIndex);
+        }
+
         private bool CanMakeBid()
-            => _movesIntTurn < _playersInGame.Count;
+            => _movesInTurn < _players.Count && !IsTheLastOnePlayer();
+
+        private bool IsTheLastOnePlayer()
+            => _playersInGame.Count == 1;
 
         private void SetPlayersInGame()
         {
@@ -72,7 +82,7 @@ namespace AGPoker.Entites.Game.Turns
 
         private int GetNextPlayerIndex()
         {
-            if(_currentPlayerIndex == _players.Count - 1)
+            if(_currentPlayerIndex >= _playersInGame.Count - 1)
             {
                 _currentPlayerIndex = 0;
             }

@@ -22,6 +22,10 @@ namespace AGPoker.Entites.Game.Game.Players
             => _cards.AsReadOnly();
 
         private List<Card> _cards = new();
+
+        public Bid Check()
+            => Bid.Check(this);
+
         public Bid MakeABid(Money amount)
         {
             var bidChips = Chips.TakeAwayChips(amount);

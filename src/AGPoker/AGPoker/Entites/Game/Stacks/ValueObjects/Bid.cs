@@ -26,6 +26,10 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public static Bid Create(Chips chips, Player player, BidType bidType = BidType.Equal)
             => new(chips, player, bidType);
 
+
+        public static Bid Check(Player player)
+            => new(Chips.Create(0), player, BidType.Check);
+
         private void CreationValidation(Chips chips, Player player)
         {
             if(chips is null)
@@ -34,13 +38,14 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             if (player is null)
                 throw new ArgumentNullException(nameof(player));
 
-            if(chips.Amount.Value <= 0)
+            if(chips.Amount.Value < 0)
                 throw new ArgumentException(nameof(chips.Amount));
         }
     }
 
     public enum BidType
     {
+        Pass,
         Check,
         Equal,
         Higher,

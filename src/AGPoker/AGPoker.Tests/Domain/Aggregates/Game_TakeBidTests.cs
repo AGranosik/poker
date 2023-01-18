@@ -66,6 +66,12 @@ namespace AGPoker.Tests.Domain.Aggregates
         }
 
         [Test]
+        public void Takebid_CannotCheckIfNotEqualsToHighestBid_ThrowsException()
+        {
+
+        }
+
+        [Test]
         public void TakeBid_EasiestFlow_Success()
         {
             var firstPlayer = _players.Last();

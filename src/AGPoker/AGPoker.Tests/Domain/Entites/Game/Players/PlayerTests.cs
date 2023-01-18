@@ -1,5 +1,6 @@
 ﻿using AGPoker.Entites.Game.Decks.ValueObjects;
 using AGPoker.Entites.Game.Game.Players;
+using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Entites.Game.ValueObjects;
 using FluentAssertions;
 using NUnit.Framework;
@@ -51,6 +52,17 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
             var moneyToTake = Money.Create(520);
             var func = () => player.MakeABid(moneyToTake);
             func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void MakeBid_Check_Success()
+        {
+            var player = Player.Create("hehe", "hehe");
+            var emptyBid = Money.Create(0);
+            var bid = player.Check();
+            bid.Should().NotBeNull();
+            (bid.Chips.Amount.Value == 0).Should().BeTrue();
+            bid.BidType.Should().Be(BidType.Check);
         }
 
         [Test]

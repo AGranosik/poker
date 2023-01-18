@@ -31,10 +31,10 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         }
 
         [Test]
-        public void Bid_ChipsCannotBe0_ThrowsException()
+        public void Bid_ChipsCanBe0_Sucess()
         {
             var func = () => Bid.Create(Chips.Create(0), Player.Create("hehe", "hehe"));
-            func.Should().Throw<ArgumentException>();
+            func.Should().NotThrow<ArgumentException>();
         }
     }
 }
