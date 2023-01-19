@@ -23,10 +23,10 @@ namespace AGPoker.Entites.Game.Game.Players
 
         private List<Card> _cards = new();
 
-        public Bid Check()
+        public Bid Call()
             => Bid.Check(this);
 
-        public Bid MakeABid(Money amount)
+        public Bid Raise(Money amount)
         {
             var bidChips = Chips.TakeAwayChips(amount);
             return Bid.Create(bidChips, this, LastChipsWereTaken());
@@ -39,7 +39,7 @@ namespace AGPoker.Entites.Game.Game.Players
         }
 
         public BidType LastChipsWereTaken()
-            => Chips.Amount.Value == 0 ? BidType.AllIn : BidType.Equal;
+            => Chips.Amount.Value == 0 ? BidType.AllIn : BidType.Call;
 
         private static void CheckIfCardsNotNullOrEmpty(List<Card> cards)
         {

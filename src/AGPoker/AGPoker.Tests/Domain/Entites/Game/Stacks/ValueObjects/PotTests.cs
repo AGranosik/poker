@@ -20,7 +20,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void Pot_TakeSingleBid_Success()
         {
-            var bid = Bid.Create(Chips.Create(20), _player);
+            var bid = _player.Raise(Money.Create(20));
             _pot.TakeABid(bid);
             _pot.Value.Value.Should().Be(20);
         }
@@ -28,9 +28,9 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void TakeBid_CannotBeLowerThanHighest_ThrowsException()
         {
-            var bid = Bid.Create(Chips.Create(20), _player);
+            var bid = _player.Raise(Money.Create(20));
             _pot.TakeABid(bid);
-            bid = Bid.Create(Chips.Create(10), _player2);
+            bid = _player2.Raise(Money.Create(10));
             var func = () => _pot.TakeABid(bid);
             func.Should().Throw<ArgumentException>();
         }
@@ -38,9 +38,9 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void TakeBid_CannotCheckIfNotEqualToHighestBid_ThrowsException()
         {
-            var bid = Bid.Create(Chips.Create(20), _player);
+            var bid = _player.Raise(Money.Create(20));
             _pot.TakeABid(bid);
-            bid = _player2.Check();
+            bid = _player2.Call();
             var func = () => _pot.TakeABid(bid);
             func.Should().Throw<ArgumentException>();
         }
@@ -48,11 +48,11 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void TakeBid_CanCheckIfEqualToHighest_Success()
         {
-            var bid = Bid.Create(Chips.Create(20), _player);
+            var bid = _player.Raise(Money.Create(20));
             _pot.TakeABid(bid);
-            bid = Bid.Create(Chips.Create(20), _player2);
+            bid = _player2.Raise(Money.Create(20));
             _pot.TakeABid(bid);
-            bid = _player.Check();
+            bid = _player.Call();
             var func = () => _pot.TakeABid(bid);
             func.Should().NotThrow<ArgumentException>();
 
@@ -61,9 +61,9 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void TakeBid_NextBidCanBeHigherThanFirst_Success()
         {
-            var bid = Bid.Create(Chips.Create(10), _player);
+            var bid = _player.Raise(Money.Create(10));
             _pot.TakeABid(bid);
-            bid = Bid.Create(Chips.Create(20), _player2);
+            bid = _player2.Raise(Money.Create(20));
             var func = () => _pot.TakeABid(bid);
             func.Should().NotThrow();
             _pot.Value.Value.Should().Be(30); // remove many lower invocation like .Value.Value
@@ -72,9 +72,9 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void TakeBid_NextBidCanBeEqualToFirst_Success()
         {
-            var bid = Bid.Create(Chips.Create(20), _player);
+            var bid = _player.Raise(Money.Create(20));
             _pot.TakeABid(bid);
-            bid = Bid.Create(Chips.Create(20), _player2);
+            bid = _player2.Raise(Money.Create(20));
             var func = () => _pot.TakeABid(bid);
             func.Should().NotThrow();
             _pot.Value.Value.Should().Be(40);

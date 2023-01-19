@@ -1,4 +1,5 @@
-﻿using AGPoker.Common;
+﻿using System.Security.Cryptography;
+using AGPoker.Common;
 using AGPoker.Entites.Game.Decks;
 using AGPoker.Entites.Game.Decks.ValueObjects;
 using AGPoker.Entites.Game.Game.Players;
@@ -45,23 +46,30 @@ namespace AGPoker.Aggregates
             GiveHandToThePlayers();
         }
 
-        public void Pass(Player player)
+        public void Fold(Player player)
         {
-            Turn.Next(BidType.Pass);
+            if (!Turn.IsThisPlayerTurn(player))
+                throw new ArgumentException("No player in the game.");
+            Turn.Bet(BidType.Fold);
         }
 
-        public void Check(Player player)
+        public void Call(Player player)
         {
-            Turn.Next(BidType.Check);
+            //check if need to take some bet from player
+            // stack should have option for player to call
+            if (!Turn.IsThisPlayerTurn(player))
+                throw new ArgumentException("No player in the game.");
+
+            Turn.Bet(BidType.Call);
         }
 
-        public void TakeBid(Bid bid)
+        public void Raise(Bid bid)
         {
             if (!Turn.IsThisPlayerTurn(bid.Player))
                 throw new ArgumentException("No player in the game.");
 
-            Stack.TakeABid(bid);
-            Turn.Next(bid.BidType);
+            Stack.Raise(bid);
+            Turn.Bet(bid.BidType);
         }
 
         public void GiveHandToThePlayers()
@@ -124,8 +132,8 @@ namespace AGPoker.Aggregates
         {
             var smallBlindMoney = Money.Create(10);
             var bigBlindMoney = Money.Create(20);
-            Stack.TakeABid(Turn.SmallBlindPlayer.MakeABid(smallBlindMoney));
-            Stack.TakeABid(Turn.BigBlindPlayer.MakeABid(bigBlindMoney));
+            Stack.Raise(Turn.SmallBlindPlayer.Raise(smallBlindMoney));
+            Stack.Raise(Turn.BigBlindPlayer.Raise(bigBlindMoney));
         }
     }
 }

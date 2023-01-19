@@ -50,7 +50,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
         {
             var player = Player.Create("hehe", "hehe");
             var moneyToTake = Money.Create(520);
-            var func = () => player.MakeABid(moneyToTake);
+            var func = () => player.Raise(moneyToTake);
             func.Should().Throw<ArgumentException>();
         }
 
@@ -59,10 +59,10 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
         {
             var player = Player.Create("hehe", "hehe");
             var emptyBid = Money.Create(0);
-            var bid = player.Check();
+            var bid = player.Call();
             bid.Should().NotBeNull();
             (bid.Chips.Amount.Value == 0).Should().BeTrue();
-            bid.BidType.Should().Be(BidType.Check);
+            bid.BidType.Should().Be(BidType.Call);
         }
 
         [Test]
@@ -70,7 +70,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
         {
             var player = Player.Create("hehe", "hehe");
             var moneyToTake = Money.Create(500);
-            var bid = player.MakeABid(moneyToTake);
+            var bid = player.Raise(moneyToTake);
             bid.Should().NotBeNull();
             (bid.Player == player).Should().BeTrue();
             (bid.Chips.Amount == moneyToTake).Should().BeTrue();

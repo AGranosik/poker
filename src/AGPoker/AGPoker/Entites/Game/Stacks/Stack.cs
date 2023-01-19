@@ -1,4 +1,5 @@
 ﻿using AGPoker.Common;
+using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Entites.Game.ValueObjects;
 
@@ -18,7 +19,12 @@ namespace AGPoker.Entites.Game.Stacks
         public Money Value
             => Money.Create(_pots.Sum(p => p.Value.Value));
 
-        public void TakeABid(Bid bid)
+        public void Call(Player player)
+        {
+            var highestBid = 
+        }
+
+        public void Raise(Bid bid)
             => _pots.First().TakeABid(bid);
     }
 }

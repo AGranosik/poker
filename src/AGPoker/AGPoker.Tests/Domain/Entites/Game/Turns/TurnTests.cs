@@ -69,49 +69,90 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void Next_EveryoneChecked_Success()
         {
-            var bidTypeChecked = BidType.Check;
+            var bidTypeChecked = BidType.Call;
             for(int i =0; i < _players.Count; i++)
-                _turn.Next(bidTypeChecked);
+                _turn.Bet(bidTypeChecked);
         }
 
         [Test]
         public void Next_EveryoneCheckedExtraTurn_ThrowsException()
         {
-            var bidTypeChecked = BidType.Check;
+            var bidTypeChecked = BidType.Call;
             for (int i = 0; i < _players.Count; i++)
-                _turn.Next(bidTypeChecked);
+                _turn.Bet(bidTypeChecked);
 
-            var func = () => _turn.Next(bidTypeChecked);
+            var func = () => _turn.Bet(bidTypeChecked);
             func.Should().Throw<ArgumentException>();
         }
 
         [Test]
         public void Next_EveryonePassedExceptFirstPlayer_Success()
         {
-            var bidTypePassed = BidType.Pass;
+            var bidTypePassed = BidType.Fold;
             for (int i = 0; i < _players.Count - 1; i++)
-                _turn.Next(bidTypePassed);
+                _turn.Bet(bidTypePassed);
         }
 
         [Test]
         public void Next_LastPlayerCannotPass_ThrowsException()
         {
-            var bidTypePassed = BidType.Pass;
+            var bidTypePassed = BidType.Fold;
             for (int i = 0; i < _players.Count - 1; i++)
-                _turn.Next(bidTypePassed);
+                _turn.Bet(bidTypePassed);
 
-            var func = () => _turn.Next(bidTypePassed);
+            var func = () => _turn.Bet(bidTypePassed);
             func.Should().Throw<ArgumentException>();
         }
 
         [Test]
-        public void Next_OneOfThemMakeBiggerBidCircleNotClosedUntilThen_Success()
+        public void Next_OneOfThemMakeBiggerBidCircleNotClosedRestCheckedUntilThen_Success()
         {
-            var checkedBid = BidType.Check;
+            var checkedBid = BidType.Call;
             for (int i = 0; i < 2; i++)
-                _turn.Next(checkedBid);
+                _turn.Bet(checkedBid);
 
+            _turn.Bet(BidType.Raise);
 
+            for (int i = 0; i < _players.Count; i++)
+                _turn.Bet(checkedBid);
+
+            var func = () => _turn.Bet(checkedBid);
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void Next_HigherBidAfterAnotherThamCircleClosed_Success()
+        {
+            var checkedBid = BidType.Call;
+            var higherBid = BidType.Raise;
+            for (int i = 0; i < 2; i++)
+                _turn.Bet(checkedBid);
+
+            _turn.Bet(higherBid);
+            _turn.Bet(checkedBid);
+            _turn.Bet(higherBid);
+
+            for (int i = 0; i < _players.Count; i++)
+                _turn.Bet(checkedBid);
+
+            var func = () => _turn.Bet(checkedBid);
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void Next_AllInDoesntChangeCircleFlow_Success()
+        {
+            var checkedBid = BidType.Call;
+            var allIn = BidType.AllIn;
+
+            for (int i = 0; i < 2; i++)
+                _turn.Bet(checkedBid);
+
+            _turn.Bet(allIn);
+            _turn.Bet(checkedBid);
+
+            var func = () => _turn.Bet(checkedBid); // to make sure circle is closed
+            func.Should().Throw<ArgumentException>();
         }
     }
 }

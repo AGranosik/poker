@@ -23,14 +23,15 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
              => BidType == BidType.AllIn;
 
 
-        public static Bid Create(Chips chips, Player player, BidType bidType = BidType.Equal)
+        public static Bid Create(Chips chips, Player player, BidType bidType)
             => new(chips, player, bidType);
 
 
         public static Bid Check(Player player)
-            => new(Chips.Create(0), player, BidType.Check);
+            => new(Chips.Create(0), player, BidType.Call);
 
-        private void CreationValidation(Chips chips, Player player)
+
+        private static void CreationValidation(Chips chips, Player player)
         {
             if(chips is null)
                 throw new ArgumentNullException(nameof(chips));
@@ -45,10 +46,9 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
     public enum BidType
     {
-        Pass,
-        Check,
-        Equal,
-        Higher,
+        Fold,
+        Call,
+        Raise,
         AllIn
     }
 }

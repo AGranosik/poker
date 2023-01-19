@@ -40,8 +40,8 @@ namespace AGPoker.Tests.Domain.Aggregates
         {
             var playerNotInGame = Player.Create("sadasd", "adasd");
             var chips = Chips.Create(30);
-            var bid = Bid.Create(chips, playerNotInGame);
-            var func = () => _game.TakeBid(bid);
+            var bid = playerNotInGame.Raise(chips.Amount);
+            var func = () => _game.Raise(bid);
             func.Should().Throw<ArgumentException>();
         }
 
@@ -50,8 +50,8 @@ namespace AGPoker.Tests.Domain.Aggregates
         {
             var notPlayerTurn = _players.First();
             var chips = Chips.Create(30);
-            var bid = Bid.Create(chips, notPlayerTurn);
-            var func = () => _game.TakeBid(bid);
+            var bid = notPlayerTurn.Raise(chips.Amount);
+            var func = () => _game.Raise(bid);
             func.Should().Throw<ArgumentException>();
         }
 
@@ -60,8 +60,8 @@ namespace AGPoker.Tests.Domain.Aggregates
         {
             var playerTurn = _players.Last();
             var chips = Chips.Create(30);
-            var bid = Bid.Create(chips, playerTurn);
-            _game.TakeBid(bid);
+            var bid = playerTurn.Raise(chips.Amount);
+            _game.Raise(bid);
             _game.Stack.Value.Value.Should().Be(60);
         }
 
@@ -75,12 +75,11 @@ namespace AGPoker.Tests.Domain.Aggregates
         public void TakeBid_EasiestFlow_Success()
         {
             var firstPlayer = _players.Last();
-            var chips = Chips.Create(20);
 
-            _game.TakeBid(Bid.Create(chips, firstPlayer)); // 20 - 0 - 10 -20
-            _game.TakeBid(Bid.Create(chips, _dealer)); // 20 - 20 - 10 - 20
-            _game.TakeBid(Bid.Create(Chips.Create(10), _smallBlind));
-            _game.Check(_bigBlind);
+            _game.Raise(firstPlayer.Call()); // 20 - 0 - 10 -20
+            _game.Raise(_dealer.Call()); // 20 - 20 - 10 - 20
+            _game.Raise(_smallBlind.Call());
+            _game.Call(_bigBlind);
         }
 
         [Test]
@@ -89,12 +88,13 @@ namespace AGPoker.Tests.Domain.Aggregates
             var firstPlayer = _players.Last();
             var chips = Chips.Create(20);
 
-            _game.TakeBid(Bid.Create(chips, firstPlayer)); // 20 - 0 - 10 -20
-            _game.TakeBid(Bid.Create(chips, _dealer)); // 20 - 20 - 10 - 20
-            _game.TakeBid(Bid.Create(Chips.Create(10), _smallBlind));
-            _game.Check(_bigBlind);
 
-            var func = () => _game.TakeBid(Bid.Create(chips, firstPlayer));
+            _game.Raise(firstPlayer.Call()); // 20 - 0 - 10 -20
+            _game.Raise(_dealer.Call()); // 20 - 20 - 10 - 20
+            _game.Raise(_smallBlind.Call());
+            _game.Call(_bigBlind);
+
+            var func = () => _game.Raise(firstPlayer.Raise(chips.Amount));
             func.Should().Throw<ArgumentException>();
         }
 
