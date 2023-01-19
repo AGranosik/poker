@@ -76,10 +76,12 @@ namespace AGPoker.Tests.Domain.Aggregates
         {
             var firstPlayer = _players.Last();
 
-            _game.Raise(firstPlayer.Call()); // 20 - 0 - 10 -20
-            _game.Raise(_dealer.Call()); // 20 - 20 - 10 - 20
-            _game.Raise(_smallBlind.Call());
+            _game.Call(firstPlayer); // 20 - 0 - 10 -20
+            _game.Call(_dealer); // 20 - 20 - 10 - 20
+            _game.Call(_smallBlind);
             _game.Call(_bigBlind);
+
+            _game.Stack.Value.Value.Should().Be(80);
         }
 
         [Test]
@@ -89,9 +91,9 @@ namespace AGPoker.Tests.Domain.Aggregates
             var chips = Chips.Create(20);
 
 
-            _game.Raise(firstPlayer.Call()); // 20 - 0 - 10 -20
-            _game.Raise(_dealer.Call()); // 20 - 20 - 10 - 20
-            _game.Raise(_smallBlind.Call());
+            _game.Call(firstPlayer); // 20 - 0 - 10 -20
+            _game.Call(_dealer); // 20 - 20 - 10 - 20
+            _game.Call(_smallBlind);
             _game.Call(_bigBlind);
 
             var func = () => _game.Raise(firstPlayer.Raise(chips.Amount));

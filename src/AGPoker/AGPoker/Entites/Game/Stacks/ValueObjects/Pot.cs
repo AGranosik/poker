@@ -1,4 +1,5 @@
 ﻿using AGPoker.Common.ValueObjects;
+using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Entites.Game.Stacks.ValueObjects
@@ -16,7 +17,10 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         // highest bid
         // player passed do not count to highest bid
 
-        public void TakeABid(Bid bid)
+        public Money Value
+            => Money.Create(_bids.Sum(b => b.Chips.Amount.Value));
+
+        public void Raise(Bid bid)
         {
             var playerBids = TakePlayerBids(bid);
             var playerBidAmount = GetPlayerBidAmount(playerBids);
@@ -26,11 +30,32 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             _bids.Add(bid);
         }
 
-        public Money Value
-            => Money.Create(_bids.Sum(b => b.Chips.Amount.Value));
+        public void Call(Player player)
+        {
+            var playerMoney = Money.Create(_bids.Where(b => b.Player == player)
+                .Sum(b => b.Chips.Amount.Value));
+
+            Bid bid;
+            if(ShouldPlayerGiveChips(playerMoney))
+            {
+                var missingChips = _highestBid - playerMoney;
+                bid = Bid.Create(Chips.Create(missingChips.Value), player, BidType.Call);
+            }
+            else
+            {
+                bid = Bid.Call(player);
+            }
+            _bids.Add(bid);
+        }
 
         public static Pot Create()
             => new();
+
+
+        private bool ShouldPlayerGiveChips(Money playerMoney)
+        {
+            return playerMoney < _highestBid;
+        }
 
         private void BidValidation(int playerBidAmount)
         {

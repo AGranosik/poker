@@ -22,14 +22,11 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public bool AllIn
              => BidType == BidType.AllIn;
 
-
         public static Bid Create(Chips chips, Player player, BidType bidType)
             => new(chips, player, bidType);
 
-
-        public static Bid Check(Player player)
+        public static Bid Call(Player player)
             => new(Chips.Create(0), player, BidType.Call);
-
 
         private static void CreationValidation(Chips chips, Player player)
         {

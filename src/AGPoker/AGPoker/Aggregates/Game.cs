@@ -60,6 +60,7 @@ namespace AGPoker.Aggregates
             if (!Turn.IsThisPlayerTurn(player))
                 throw new ArgumentException("No player in the game.");
 
+            Stack.Call(player);
             Turn.Bet(BidType.Call);
         }
 

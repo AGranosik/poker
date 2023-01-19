@@ -24,7 +24,7 @@ namespace AGPoker.Entites.Game.Game.Players
         private List<Card> _cards = new();
 
         public Bid Call()
-            => Bid.Check(this);
+            => Bid.Call(this);
 
         public Bid Raise(Money amount)
         {

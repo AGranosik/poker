@@ -20,11 +20,9 @@ namespace AGPoker.Entites.Game.Stacks
             => Money.Create(_pots.Sum(p => p.Value.Value));
 
         public void Call(Player player)
-        {
-            var highestBid = 
-        }
+            => _pots.First().Call(player);
 
         public void Raise(Bid bid)
-            => _pots.First().TakeABid(bid);
+            => _pots.First().Raise(bid);
     }
 }
