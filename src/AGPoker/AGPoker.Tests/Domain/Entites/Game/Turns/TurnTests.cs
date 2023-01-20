@@ -154,5 +154,36 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             var func = () => _turn.Bet(checkedBid); // to make sure circle is closed
             func.Should().Throw<ArgumentException>();
         }
+
+        [Test]
+        public void NextRound_CannotStartWhenEarlierNotFinished_ThrwosException()
+        {
+            var func = () => _turn.NextRound();
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void NextRound_CannotStartIfThereIsNotMoreThan1PlayerLeft_ThrowsException()
+        {
+            for (int i = 0; i < _players.Count-2; i++)
+                _turn.Bet(BidType.Fold);
+
+            _turn.Bet(BidType.Call);
+
+            var func = () => _turn.NextRound();
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void NextRound_EveryOneGetIntoNextRound_ThrowsException()
+        {
+            GetEveryPlayerIntoNextRound();
+        }
+
+        private void GetEveryPlayerIntoNextRound()
+        {
+            for (int i = 0; i < _players.Count - 1; i++)
+                _turn.Bet(BidType.Call);
+        }
     }
 }
