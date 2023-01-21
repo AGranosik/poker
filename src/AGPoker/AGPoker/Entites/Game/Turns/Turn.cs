@@ -8,7 +8,8 @@ namespace AGPoker.Entites.Game.Turns
         private Turn(List<Player> players) //should be there any player for turn?
         {
             _players = players;
-            SetTournCounters();
+            SetPlayersInGame();
+            SetTurnCounters();
             SetTrio();
         }
 
@@ -20,7 +21,7 @@ namespace AGPoker.Entites.Game.Turns
         private List<int> _playersInGame = new();
         private int _currentPlayerIndex = -1;
         private int _dealerIndex = 0;
-        private int _movesInTurn = 0;
+        private int _movesInTurn = 1;
         private int _maximumMovesInRound = 0;
 
         public static Turn Start(List<Player> players)
@@ -49,15 +50,17 @@ namespace AGPoker.Entites.Game.Turns
 
             if (IsTheLastOnePlayer())
                 throw new ArgumentException("Not enough players.");
+
+            SetTurnCounters();
         }
 
         private bool EarlierRoundFinished()
             => _movesInTurn == _maximumMovesInRound;
 
-        private void SetTurnMove(BidType bidType)
+        private void SetTurnMove(BidType bidType) // into another clas -> Circle
         {
             if (bidType == BidType.Raise)
-                _movesInTurn = 0;
+                _movesInTurn = 1;
             else
                 _movesInTurn++;
         }
@@ -69,15 +72,20 @@ namespace AGPoker.Entites.Game.Turns
         }
 
         private bool CanMakeBid()
-            => _movesInTurn < _players.Count && !IsTheLastOnePlayer();
+            => _movesInTurn < _maximumMovesInRound && !IsTheLastOnePlayer();
 
         private bool IsTheLastOnePlayer()
             => _playersInGame.Count == 1;
 
-        private void SetTournCounters()
+        private void SetPlayersInGame()
         {
             _playersInGame = Enumerable.Range(0, _players.Count).ToList();
+        }
+
+        private void SetTurnCounters()
+        {
             _maximumMovesInRound = _playersInGame.Count;
+            _movesInTurn = 0;
         }
 
         private void SetTrio()

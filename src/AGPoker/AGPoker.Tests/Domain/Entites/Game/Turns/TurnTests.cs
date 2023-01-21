@@ -105,18 +105,18 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         }
 
         [Test]
-        public void Next_OneOfThemMakeBiggerBidCircleNotClosedRestCheckedUntilThen_Success()
+        public void Next_OneOfThemMakeBiggerBidCircleNotClosedRestCalledUntilThen_Success()
         {
-            var checkedBid = BidType.Call;
+            var foldedBet = BidType.Call;
             for (int i = 0; i < 2; i++)
-                _turn.Bet(checkedBid);
+                _turn.Bet(foldedBet);
 
             _turn.Bet(BidType.Raise);
 
-            for (int i = 0; i < _players.Count; i++)
-                _turn.Bet(checkedBid);
+            for (int i = 0; i < _players.Count-1; i++)
+                _turn.Bet(foldedBet);
 
-            var func = () => _turn.Bet(checkedBid);
+            var func = () => _turn.Bet(foldedBet);
             func.Should().Throw<ArgumentException>();
         }
 
@@ -132,7 +132,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             _turn.Bet(checkedBid);
             _turn.Bet(higherBid);
 
-            for (int i = 0; i < _players.Count; i++)
+            for (int i = 0; i < _players.Count-1; i++)
                 _turn.Bet(checkedBid);
 
             var func = () => _turn.Bet(checkedBid);
@@ -175,15 +175,62 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         }
 
         [Test]
-        public void NextRound_EveryOneGetIntoNextRound_ThrowsException()
+        public void NextRound_EveryOneGetIntoNextRoundAndCanCall_ThrowsException()
         {
-            GetEveryPlayerIntoNextRound();
+            EveryPlayerCall();
+
+            _turn.NextRound();
+
+            EveryPlayerCall();
+
         }
 
-        private void GetEveryPlayerIntoNextRound()
+        [Test]
+        public void NextRound_OnlyPlayersInGameStayAtNextRound_Success()
         {
+            _turn.Bet(BidType.Fold);
             for (int i = 0; i < _players.Count - 1; i++)
                 _turn.Bet(BidType.Call);
+
+            _turn.NextRound();
+
+            for (int i = 0; i < 3; i++)
+                _turn.Bet(BidType.Call);
+
+            var func = () => _turn.Bet(BidType.Call);
+            func.Should().Throw<ArgumentException>();
+
+        }
+
+        [Test]
+        public void NextRound_SomeBettingBeforeSecondRoundClosure_Success()
+        {
+            AllToTheNextOneWithoutOne();
+
+            _turn.Bet(BidType.Raise); // 1
+            _turn.Bet(BidType.Call); // 2
+            _turn.Bet(BidType.Raise); //1
+            _turn.Bet(BidType.Fold); // 2
+            _turn.Bet(BidType.Call); // 3
+
+            var func = () => _turn.Bet(BidType.Call); // circle should be closed
+            func.Should().Throw<ArgumentException>();
+        }
+
+        // check the case raise / fold / raise fodled player cannot bet again
+        private void EveryPlayerCall()
+        {
+            for (int i = 0; i < _players.Count; i++)
+                _turn.Bet(BidType.Call);
+        }
+
+        private void AllToTheNextOneWithoutOne()
+        {
+            for (int i = 0; i < _players.Count-1; i++)
+                _turn.Bet(BidType.Call);
+
+            _turn.Bet(BidType.Fold);
+            _turn.NextRound();
         }
     }
 }

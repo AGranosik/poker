@@ -58,7 +58,7 @@ namespace AGPoker.Aggregates
             //check if need to take some bet from player
             // stack should have option for player to call
             if (!Turn.IsThisPlayerTurn(player))
-                throw new ArgumentException("No player in the game.");
+                throw new ArgumentException("No player turn.");
 
             Stack.Call(player);
             Turn.Bet(BidType.Call);
