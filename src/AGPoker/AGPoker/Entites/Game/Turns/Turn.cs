@@ -19,6 +19,7 @@ namespace AGPoker.Entites.Game.Turns
 
         private List<Player> _players = new();
         private List<int> _playersInGame = new();
+        private List<int> _playersToRemove = new();
         private int _currentPlayerIndex = -1;
         private int _dealerIndex = 0;
         private int _movesInTurn = 1;
@@ -34,7 +35,7 @@ namespace AGPoker.Entites.Game.Turns
             RemovePlayerFromTurnIfNeccessary(bidType);
 
             SetTurnMove(bidType);
-            GetNextPlayerIndex();
+            SetNextPlayerIndex();
         }
 
         public bool IsThisPlayerTurn(Player player)
@@ -57,8 +58,8 @@ namespace AGPoker.Entites.Game.Turns
         private bool EarlierRoundFinished()
             => _movesInTurn == _maximumMovesInRound;
 
-        private void SetTurnMove(BidType bidType) // into another clas -> Circle
-        {
+        private void SetTurnMove(BidType bidType, int ) // into another clas -> Circle
+        {// skip some players when they folded oraz lower maximum moves in turn
             if (bidType == BidType.Raise)
                 _movesInTurn = 1;
             else
@@ -68,14 +69,14 @@ namespace AGPoker.Entites.Game.Turns
         private void RemovePlayerFromTurnIfNeccessary(BidType bidType)
         {
             if (bidType == BidType.Fold)
-                _playersInGame.Remove(_currentPlayerIndex);
+                _playersToRemove.Add(_currentPlayerIndex);
         }
 
         private bool CanMakeBid()
             => _movesInTurn < _maximumMovesInRound && !IsTheLastOnePlayer();
 
         private bool IsTheLastOnePlayer()
-            => _playersInGame.Count == 1;
+            => _playersInGame.Count == _playersToRemove.Count+1;
 
         private void SetPlayersInGame()
         {
@@ -84,8 +85,15 @@ namespace AGPoker.Entites.Game.Turns
 
         private void SetTurnCounters()
         {
+            RemoveFoldedPlayersFromTurn();
             _maximumMovesInRound = _playersInGame.Count;
             _movesInTurn = 0;
+        }
+
+        private void RemoveFoldedPlayersFromTurn()
+        {
+            _playersInGame = Enumerable.Range(0, _players.Count).Where(p => !_playersToRemove.Contains(p)).ToList();
+            _playersToRemove.Clear();
         }
 
         private void SetTrio()
@@ -93,25 +101,28 @@ namespace AGPoker.Entites.Game.Turns
             SetDealer();
             SetSmallBlind();
             SetBigBlind();
-            GetNextPlayerIndex();
+            SetNextPlayerIndex();
         }
 
         private void SetDealer()
         {
-            Dealer = _players[GetNextPlayerIndex()];
+            SetNextPlayerIndex();
+            Dealer = _players[_currentPlayerIndex];
         }
 
         private void SetSmallBlind()
         {
-            SmallBlindPlayer = _players[GetNextPlayerIndex()];
+            SetNextPlayerIndex();
+            SmallBlindPlayer = _players[_currentPlayerIndex];
         }
 
         private void SetBigBlind()
         {
-            BigBlindPlayer = _players[GetNextPlayerIndex()];
+            SetNextPlayerIndex();
+            BigBlindPlayer = _players[_currentPlayerIndex];
         }
 
-        private int GetNextPlayerIndex()
+        private void SetNextPlayerIndex()
         {
             if(_currentPlayerIndex >= _playersInGame.Count - 1)
             {
@@ -121,8 +132,6 @@ namespace AGPoker.Entites.Game.Turns
             {
                 _currentPlayerIndex++;
             }
-
-            return _currentPlayerIndex;
         }
 
     }

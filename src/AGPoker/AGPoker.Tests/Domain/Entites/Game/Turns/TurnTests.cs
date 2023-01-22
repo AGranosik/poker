@@ -179,8 +179,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         {
             EveryPlayerCall();
 
-            _turn.NextRound();
-
             EveryPlayerCall();
 
         }
@@ -217,11 +215,34 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             func.Should().Throw<ArgumentException>();
         }
 
+        [Test]
+        public void Next_OnePlayerFoldedAfterSomeRaisingBets_Success()
+        {
+            EveryPlayerCall();
+
+            _turn.Bet(BidType.Call);// 1
+            _turn.Bet(BidType.Raise); // 1
+            _turn.Bet(BidType.Call); //2
+            _turn.Bet(BidType.Call); //3
+            _turn.Bet(BidType.Raise); // 1
+            _turn.Bet(BidType.Raise); // 1
+            _turn.Bet(BidType.Fold); // 2
+            _turn.Bet(BidType.Raise); // 1
+            _turn.Bet(BidType.Call); // 2-3
+            _turn.Bet(BidType.Call); //4
+
+
+            var func = () => _turn.Bet(BidType.Call); // circle should be closed
+            func.Should().Throw<ArgumentException>();
+        }
+
         // check the case raise / fold / raise fodled player cannot bet again
         private void EveryPlayerCall()
         {
             for (int i = 0; i < _players.Count; i++)
                 _turn.Bet(BidType.Call);
+
+            _turn.NextRound();
         }
 
         private void AllToTheNextOneWithoutOne()
