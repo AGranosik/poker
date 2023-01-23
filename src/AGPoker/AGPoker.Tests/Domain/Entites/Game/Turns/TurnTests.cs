@@ -281,6 +281,71 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         {
             EveryPlayerCall();
 
+            TwoPlayersLastAfterBetting();
+            var func = () => _turn.Bet(BidType.Call); // circle should be closed
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void NextRound_2ndRound_Sucess()
+        {
+            EveryPlayerCall();
+            TwoPlayersLastAfterBetting();
+            var func = () => _turn.NextRound();
+            func.Should().NotThrow();
+        }
+
+        [Test]
+        public void NextRound_CannotStart3rdRoundWithoutFullCircle_Sucess()
+        {
+            EveryPlayerCall();
+
+            TwoPlayersLastAfterBetting();
+            _turn.NextRound();
+
+            var func = () => _turn.NextRound();
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void NextRound_CanStart3rdRoundAfterFullCircle_Success()
+        {
+            EveryPlayerCall();
+            EveryPlayerCall();
+            TwoPlayersLastAfterBetting();
+
+            var func = () => _turn.NextRound();
+            func.Should().NotThrow();
+        }
+
+        [Test]
+        public void NextRound_CanStartFinalRound_Success()
+        {
+            EveryPlayerCall();
+            EveryPlayerCall();
+            EveryPlayerCall();
+            TwoPlayersLastAfterBetting();
+
+            var func = () => _turn.NextRound();
+            func.Should().NotThrow();
+        }
+
+        [Test]
+        public void NextRound_CannotStart5thRound_Success()
+        {
+            EveryPlayerCall();
+            EveryPlayerCall();
+            EveryPlayerCall();
+            EveryPlayerCall();
+
+            TwoPlayersLastAfterBetting();
+
+            var func = () => _turn.NextRound();
+            func.Should().Throw<ArgumentException>();
+        }
+
+        private void TwoPlayersLastAfterBetting()
+        {
             _turn.Bet(BidType.Call); //1
             _turn.Bet(BidType.Fold); //2
             _turn.Bet(BidType.Call); //3
@@ -290,10 +355,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             _turn.Bet(BidType.Raise); //1
             _turn.Bet(BidType.Call); //2
             _turn.Bet(BidType.Fold); //3
-
-
-            var func = () => _turn.Bet(BidType.Call); // circle should be closed
-            func.Should().Throw<ArgumentException>();
         }
 
         private void EveryPlayerCall()

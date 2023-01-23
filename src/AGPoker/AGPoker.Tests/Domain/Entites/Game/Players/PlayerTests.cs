@@ -58,7 +58,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
         public void MakeBid_Check_Success()
         {
             var player = Player.Create("hehe", "hehe");
-            var emptyBid = Money.Create(0);
             var bid = player.Call();
             bid.Should().NotBeNull();
             (bid.Chips.Amount.Value == 0).Should().BeTrue();

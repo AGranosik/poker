@@ -24,6 +24,7 @@ namespace AGPoker.Entites.Game.Turns
         private int _dealerIndex = 0;
         private int _movesInTurn = 1;
         private int _maximumMovesInRound = 0;
+        private int _roundNumber = 1;
 
         public static Turn Start(List<Player> players)
             => new(players);
@@ -46,6 +47,9 @@ namespace AGPoker.Entites.Game.Turns
 
         public void NextRound()
         {
+            if (IsTheLastRound())
+                throw new ArgumentException("It was last round.");
+
             if (!EarlierRoundFinished())
                 throw new ArgumentException("Earlier round doesnt finished.");
 
@@ -53,7 +57,11 @@ namespace AGPoker.Entites.Game.Turns
                 throw new ArgumentException("Not enough players.");
 
             SetTurnCounters();
+            _roundNumber++;
         }
+
+        private bool IsTheLastRound()
+            => _roundNumber > 4;
 
         private bool EarlierRoundFinished()
             => _movesInTurn == _maximumMovesInRound;
