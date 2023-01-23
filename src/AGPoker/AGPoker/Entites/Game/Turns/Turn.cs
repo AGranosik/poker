@@ -58,10 +58,12 @@ namespace AGPoker.Entites.Game.Turns
         private bool EarlierRoundFinished()
             => _movesInTurn == _maximumMovesInRound;
 
-        private void SetTurnMove(BidType bidType, int ) // into another clas -> Circle
-        {// skip some players when they folded oraz lower maximum moves in turn
+        private void SetTurnMove(BidType bidType) // into another clas -> Circle
+        {
             if (bidType == BidType.Raise)
                 _movesInTurn = 1;
+            else if (bidType == BidType.Fold)
+                return;
             else
                 _movesInTurn++;
         }
@@ -69,7 +71,10 @@ namespace AGPoker.Entites.Game.Turns
         private void RemovePlayerFromTurnIfNeccessary(BidType bidType)
         {
             if (bidType == BidType.Fold)
-                _playersToRemove.Add(_currentPlayerIndex);
+            {
+                _playersInGame.RemoveAt(_currentPlayerIndex);
+                _maximumMovesInRound = _playersInGame.Count;
+            }
         }
 
         private bool CanMakeBid()
@@ -85,7 +90,6 @@ namespace AGPoker.Entites.Game.Turns
 
         private void SetTurnCounters()
         {
-            RemoveFoldedPlayersFromTurn();
             _maximumMovesInRound = _playersInGame.Count;
             _movesInTurn = 0;
         }
