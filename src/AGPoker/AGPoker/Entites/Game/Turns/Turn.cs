@@ -60,8 +60,19 @@ namespace AGPoker.Entites.Game.Turns
             _roundNumber++;
         }
 
+        public void NextTurn()
+        {
+            if (!CanStartNextTurn())
+                throw new ArgumentException("Cannot start next turn.");
+        }
+
+        private bool CanStartNextTurn()
+        {
+            return IsTheLastRound() && IsTheLastOnePlayer();
+        }
+
         private bool IsTheLastRound()
-            => _roundNumber > 4;
+            => _roundNumber == 4;
 
         private bool EarlierRoundFinished()
             => _movesInTurn == _maximumMovesInRound;

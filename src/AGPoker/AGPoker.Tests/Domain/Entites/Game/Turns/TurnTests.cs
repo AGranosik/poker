@@ -323,7 +323,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         {
             EveryPlayerCall();
             EveryPlayerCall();
-            EveryPlayerCall();
             TwoPlayersLastAfterBetting();
 
             var func = () => _turn.NextRound();
@@ -333,7 +332,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void NextRound_CannotStart5thRound_Success()
         {
-            EveryPlayerCall();
             EveryPlayerCall();
             EveryPlayerCall();
             EveryPlayerCall();
