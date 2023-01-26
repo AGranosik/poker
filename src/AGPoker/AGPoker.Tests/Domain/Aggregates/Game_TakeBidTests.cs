@@ -56,6 +56,15 @@ namespace AGPoker.Tests.Domain.Aggregates
         }
 
         [Test]
+        public void TakeBid_RoundClosedCannotTakeBet_ThrowsException()
+        {
+            AllPlayersCalled();
+
+            var func = () => _game.Call(_players[3]);
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
         public void TakeBid_SimpleBid_Success()
         {
             var playerTurn = _players.Last();
@@ -63,12 +72,6 @@ namespace AGPoker.Tests.Domain.Aggregates
             var bid = playerTurn.Raise(chips.Amount);
             _game.Raise(bid);
             _game.Stack.Value.Value.Should().Be(60);
-        }
-
-        [Test]
-        public void Takebid_CannotCheckIfNotEqualsToHighestBid_ThrowsException()
-        {
-
         }
 
         [Test]
@@ -106,6 +109,14 @@ namespace AGPoker.Tests.Domain.Aggregates
             {
                 _game.Join(player);
             }
+        }
+
+        private void AllPlayersCalled()
+        {
+            _game.Call(_players[3]);
+            _game.Call(_players[0]);
+            _game.Call(_players[1]);
+            _game.Call(_players[2]);
         }
     }
 }

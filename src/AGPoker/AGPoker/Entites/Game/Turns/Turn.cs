@@ -27,7 +27,7 @@ namespace AGPoker.Entites.Game.Turns
         public static Turn Start(List<Player> players)
             => new(players);
 
-        public void Bet(BidType bidType)
+        public void Bet(BidType bidType) //
         {
             if (!CanMakeBid())
                 throw new ArgumentException("Next move cannot be performed.");

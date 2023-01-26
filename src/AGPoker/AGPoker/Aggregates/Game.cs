@@ -31,7 +31,7 @@ namespace AGPoker.Aggregates
         private Deck _deck;
         public Player Owner { get; init; }
         public GameLimit Limit { get; init; }
-        public Stack Stack { get; init; }
+        public Stack Stack { get; init; } // crupier
         public IReadOnlyCollection<Player> Players
             => _players.AsReadOnly();
 
@@ -45,7 +45,8 @@ namespace AGPoker.Aggregates
             TakeBidFromBlinds();
             GiveHandToThePlayers();
         }
-
+        // leave game but its optional
+        // should check if this should not give 
         public void Fold(Player player)
         {
             if (!Turn.IsThisPlayerTurn(player))
@@ -60,6 +61,8 @@ namespace AGPoker.Aggregates
             if (!Turn.IsThisPlayerTurn(player))
                 throw new ArgumentException("No player turn.");
 
+            // stack should have validation as well?
+            // every move validation like: is his turn, should look for winner, can afford a bid?, check if its not all in bet
             Stack.Call(player);
             Turn.Bet(BidType.Call);
         }
