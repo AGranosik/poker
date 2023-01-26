@@ -69,6 +69,7 @@ namespace AGPoker.Entites.Game.Turns
         private void StartTurn()
         {
             _currentPlayerIndex = _dealerIndex;
+            _roundNumber = 1;
             SetPlayersInGame();
             SetDealerIndex();
             SetTurnCounters();
@@ -77,7 +78,7 @@ namespace AGPoker.Entites.Game.Turns
 
         private void SetDealerIndex()
         {
-            if (_dealerIndex >= _playersInGame.Count)
+            if (_dealerIndex >= _playersInGame.Count - 1)
                 _dealerIndex = 0;
             else
                 _dealerIndex++;
