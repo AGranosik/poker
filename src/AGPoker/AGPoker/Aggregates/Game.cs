@@ -49,31 +49,21 @@ namespace AGPoker.Aggregates
         // should check if this should not give 
         public void Fold(Player player)
         {
-            if (!Turn.IsThisPlayerTurn(player))
-                throw new ArgumentException("No player in the game.");
-            Turn.Bet(BidType.Fold);
+            Turn.Bet(player, BidType.Fold);
         }
 
         public void Call(Player player)
         {
-            //check if need to take some bet from player
-            // stack should have option for player to call
-            if (!Turn.IsThisPlayerTurn(player))
-                throw new ArgumentException("No player turn.");
-
-            // stack should have validation as well?
-            // every move validation like: is his turn, should look for winner, can afford a bid?, check if its not all in bet
+            // no need for validaiton here because its Stack & turn resposibility,
+            // nothing would have been saved because this method will throw exception anyway
             Stack.Call(player);
-            Turn.Bet(BidType.Call);
+            Turn.Bet(player, BidType.Call);
         }
 
         public void Raise(Bid bid)
         {
-            if (!Turn.IsThisPlayerTurn(bid.Player))
-                throw new ArgumentException("No player in the game.");
-
             Stack.Raise(bid);
-            Turn.Bet(bid.BidType);
+            Turn.Bet(bid.Player, bid.BidType);
         }
 
         public void GiveHandToThePlayers()

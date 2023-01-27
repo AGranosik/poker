@@ -27,9 +27,9 @@ namespace AGPoker.Entites.Game.Turns
         public static Turn Start(List<Player> players)
             => new(players);
 
-        public void Bet(BidType bidType) //
+        public void Bet(Player player, BidType bidType) //
         {
-            if (!CanMakeBid())
+            if (!CanMakeBid() || !IsThisPlayerTurn(player))
                 throw new ArgumentException("Next move cannot be performed.");
             RemovePlayerFromTurnIfNeccessary(bidType);
 
@@ -37,7 +37,7 @@ namespace AGPoker.Entites.Game.Turns
             SetNextPlayerIndex();
         }
 
-        public bool IsThisPlayerTurn(Player player)
+        private bool IsThisPlayerTurn(Player player)
         {
             var playerIndex = _players.IndexOf(player);
             return playerIndex >= 0 && _playersInGame.Contains(playerIndex) && _currentPlayerIndex == playerIndex;
