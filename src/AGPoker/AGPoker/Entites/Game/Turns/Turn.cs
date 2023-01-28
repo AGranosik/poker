@@ -11,15 +11,15 @@ namespace AGPoker.Entites.Game.Turns
             StartTurn();
         }
 
-        public Player Dealer { get; private set; }
+        public Player Dealer { get; private set; } // first bet from player to the left so last in list
         public Player SmallBlindPlayer { get; private set; }
         public Player BigBlindPlayer { get; private set; }
 
         private List<Player> _players = new();
         private List<int> _playersInGame = new();
         private List<int> _playersToRemove = new();
-        private int _currentPlayerIndex = -1;
-        private int _dealerIndex = -1;
+        private int _currentPlayerIndex = 0;
+        private int _dealerIndex = 0;
         private int _movesInTurn = 1;
         private int _maximumMovesInRound = 0;
         private int _roundNumber = 1;
@@ -68,10 +68,8 @@ namespace AGPoker.Entites.Game.Turns
 
         private void StartTurn()
         {
-            _currentPlayerIndex = _dealerIndex;
             _roundNumber = 1;
             SetPlayersInGame();
-            SetDealerIndex();
             SetTurnCounters();
             SetTrio();
         }
@@ -95,6 +93,8 @@ namespace AGPoker.Entites.Game.Turns
 
         private void SetTurnMove(BidType bidType) // into another clas -> Circle
         {
+            // should check how many players in game?
+            // because right now someone will have no idea why its not counted as move.
             if (bidType == BidType.Raise)
                 _movesInTurn = 1;
             else if (bidType == BidType.Fold)
@@ -107,7 +107,7 @@ namespace AGPoker.Entites.Game.Turns
         {
             if (bidType == BidType.Fold)
             {
-                _playersInGame.RemoveAt(_currentPlayerIndex);
+                _playersInGame.Remove(_currentPlayerIndex);
                 _maximumMovesInRound = _playersInGame.Count;
             }
         }
@@ -134,32 +134,28 @@ namespace AGPoker.Entites.Game.Turns
             SetDealer();
             SetSmallBlind();
             SetBigBlind();
-            SetNextPlayerIndex();
         }
 
         private void SetDealer()
         {
-            SetNextPlayerIndex();
-            Dealer = _players[_currentPlayerIndex];
+            Dealer = _players[_players.Count -1];
         }
 
         private void SetSmallBlind()
         {
-            SetNextPlayerIndex();
-            SmallBlindPlayer = _players[_currentPlayerIndex];
+            SmallBlindPlayer = _players[_players.Count - 2];
         }
 
         private void SetBigBlind()
         {
-            SetNextPlayerIndex();
-            BigBlindPlayer = _players[_currentPlayerIndex];
+            BigBlindPlayer = _players[_players.Count - 3];
         }
 
         private void SetNextPlayerIndex()
         {
-            if(_currentPlayerIndex >= _playersInGame.Count - 1)
+            if(_currentPlayerIndex == _playersInGame.Count - 1)
             {
-                _currentPlayerIndex = _dealerIndex;
+                _currentPlayerIndex = 0;
             }
             else
             {

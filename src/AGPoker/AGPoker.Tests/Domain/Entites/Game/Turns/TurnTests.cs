@@ -22,15 +22,16 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
                 Player.Create("hehe3", "hehe2"),
                 Player.Create("hehe4", "hehe2"),
                 Player.Create("hehe5", "hehe2"),
-
+                Player.Create("hehe6", "hehe6"),
             };
 
             _playerInOrder = new List<Player>
             {
-                _players[3],
+                _players[4],
                 _players[0],
                 _players[1],
-                _players[2]
+                _players[2],
+                _players[3]
             };
 
             _turn = Turn.Start(_players);
@@ -81,7 +82,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         {
             var bidTypeChecked = BidType.Call;
             for(int i =0; i < _players.Count; i++)
-                _turn.Bet(_playerInOrder[i], bidTypeChecked);
+                _turn.Bet(_players[i], bidTypeChecked);
         }
 
         [Test]
@@ -89,18 +90,18 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         {
             var bidTypeChecked = BidType.Call;
             for (int i = 0; i < _players.Count; i++)
-                _turn.Bet(_playerInOrder[i], bidTypeChecked);
+                _turn.Bet(_players[i], bidTypeChecked);
 
-            var func = () => _turn.Bet(_players[3], bidTypeChecked);
+            var func = () => _turn.Bet(_players[0], bidTypeChecked);
             func.Should().Throw<ArgumentException>();
         }
 
         [Test]
-        public void Next_EveryoneFoldedExceptFirstPlayer_Success()
+        public void Next_EveryoneFoldedExceptLastPlayer_Success()
         {
             var bidTypeFolded = BidType.Fold;
             for (int i = 0; i < _players.Count - 1; i++)
-                _turn.Bet(_playerInOrder[i], bidTypeFolded);
+                _turn.Bet(_players[i], bidTypeFolded);
         }
 
         [Test]
@@ -108,7 +109,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         {
             var bidTypePassed = BidType.Fold;
             for (int i = 0; i < _players.Count - 1; i++)
-                _turn.Bet(_playerInOrder[i], bidTypePassed);
+                _turn.Bet(_players[i], bidTypePassed);
 
             var func = () => _turn.Bet(_playerInOrder[3], bidTypePassed);
             func.Should().Throw<ArgumentException>();
@@ -119,34 +120,35 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         {
             var foldedBet = BidType.Call;
             for (int i = 0; i < 2; i++)
-                _turn.Bet(_playerInOrder[i], foldedBet);
+                _turn.Bet(_players[i], foldedBet);
 
-            _turn.Bet(_playerInOrder[2], BidType.Raise);
+            _turn.Bet(_players[2], BidType.Raise);
 
-            _turn.Bet(_playerInOrder[3], foldedBet);
-            _turn.Bet(_playerInOrder[0], foldedBet);
-            _turn.Bet(_playerInOrder[1], foldedBet);
+            _turn.Bet(_players[3], foldedBet);
+            _turn.Bet(_players[4], foldedBet);
+            _turn.Bet(_players[0], foldedBet);
+            _turn.Bet(_players[1], foldedBet);
 
-            var func = () => _turn.Bet(_playerInOrder[2], foldedBet);
+            var func = () => _turn.Bet(_players[2], foldedBet);
             func.Should().Throw<ArgumentException>();
         }
 
         [Test]
-        public void Next_HigherBidAfterAnotherThamCircleClosed_Success()
+        public void Next_HigherBidAfterAnotherThanCircleClosed_Success()
         {
             var checkedBid = BidType.Call;
             var higherBid = BidType.Raise;
             for (int i = 0; i < 2; i++)
-                _turn.Bet(_playerInOrder[i], checkedBid);
+                _turn.Bet(_players[i], checkedBid);
 
-            _turn.Bet(_playerInOrder[2], higherBid);
-            _turn.Bet(_playerInOrder[3], checkedBid);
-            _turn.Bet(_playerInOrder[0], higherBid);
+            _turn.Bet(_players[2], higherBid);
+            _turn.Bet(_players[3], checkedBid);
+            _turn.Bet(_players[4], higherBid);
 
             for (int i = 0; i < _players.Count-1; i++)
-                _turn.Bet(_playerInOrder[i+1], checkedBid);
+                _turn.Bet(_players[i], checkedBid);
 
-            var func = () => _turn.Bet(_playerInOrder[0], checkedBid);
+            var func = () => _turn.Bet(_players[4], checkedBid);
             func.Should().Throw<ArgumentException>();
         }
 
@@ -156,13 +158,13 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             var checkedBid = BidType.Call;
             var allIn = BidType.AllIn;
 
-            for (int i = 0; i < 2; i++)
-                _turn.Bet(_playerInOrder[i], checkedBid);
+            for (int i = 0; i < 3; i++)
+                _turn.Bet(_players[i], checkedBid);
 
-            _turn.Bet(_playerInOrder[2], allIn);
-            _turn.Bet(_playerInOrder[3], checkedBid);
+            _turn.Bet(_players[3], allIn);
+            _turn.Bet(_players[4], checkedBid);
 
-            var func = () => _turn.Bet(_playerInOrder[0], checkedBid); // to make sure circle is closed
+            var func = () => _turn.Bet(_players[0], checkedBid); // to make sure circle is closed
             func.Should().Throw<ArgumentException>();
         }
 
@@ -177,9 +179,9 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         public void NextRound_CannotStartIfThereIsNotMoreThan1PlayerLeft_ThrowsException()
         {
             for (int i = 0; i < _players.Count-2; i++)
-                _turn.Bet(_playerInOrder[i], BidType.Fold);
+                _turn.Bet(_players[i], BidType.Fold);
 
-            _turn.Bet(_playerInOrder[2], BidType.Call);
+            _turn.Bet(_players[3], BidType.Call);
 
             var func = () => _turn.NextRound();
             func.Should().Throw<ArgumentException>();
@@ -197,14 +199,14 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void NextRound_OnlyPlayersInGameStayAtNextRound_Success()
         {
-            _turn.Bet(_playerInOrder[0], BidType.Fold);
-            for (int i = 0; i < _players.Count - 1; i++)
-                _turn.Bet(_playerInOrder[i+1], BidType.Call);
+            _turn.Bet(_players[0], BidType.Fold);
+            for (int i = 1; i < _players.Count - 1; i++)
+                _turn.Bet(_players[i], BidType.Call);
 
             _turn.NextRound();
 
-            for (int i = 0; i < 3; i++)
-                _turn.Bet(_playerInOrder[i+1], BidType.Call);
+            for (int i = 0; i < 4; i++)
+                _turn.Bet(_players[i+1], BidType.Call);
 
             var func = () => _turn.Bet(_playerInOrder[1], BidType.Call);
             func.Should().Throw<ArgumentException>();
@@ -369,7 +371,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         private void EveryPlayerCall()
         {
             for (int i = 0; i < _players.Count; i++)
-                _turn.Bet(_playerInOrder[i], BidType.Call);
+                _turn.Bet(_players[i], BidType.Call);
 
             _turn.NextRound();
         }
