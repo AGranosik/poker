@@ -31,10 +31,10 @@ namespace AGPoker.Entites.Game.Turns
         {
             if (!CanMakeBid() || !IsThisPlayerTurn(player))
                 throw new ArgumentException("Next move cannot be performed.");
-            RemovePlayerFromTurnIfNeccessary(bidType);
 
             SetTurnMove(bidType);
             SetNextPlayerIndex();
+            RemovePlayerFromTurnIfNeccessary(player, bidType);
         }
 
         private bool IsThisPlayerTurn(Player player)
@@ -103,11 +103,11 @@ namespace AGPoker.Entites.Game.Turns
                 _movesInTurn++;
         }
 
-        private void RemovePlayerFromTurnIfNeccessary(BidType bidType)
+        private void RemovePlayerFromTurnIfNeccessary(Player player,BidType bidType)
         {
             if (bidType == BidType.Fold)
             {
-                _playersInGame.Remove(_currentPlayerIndex);
+                _playersInGame.Remove(_players.IndexOf(player));
                 _maximumMovesInRound = _playersInGame.Count;
             }
         }
@@ -153,13 +153,14 @@ namespace AGPoker.Entites.Game.Turns
 
         private void SetNextPlayerIndex()
         {
-            if(_currentPlayerIndex == _playersInGame.Count - 1)
+            var index = _playersInGame.IndexOf(_currentPlayerIndex);
+            if(index == _playersInGame.Count - 1)
             {
-                _currentPlayerIndex = 0;
+                _currentPlayerIndex = _playersInGame[0];
             }
             else
             {
-                _currentPlayerIndex++;
+                _currentPlayerIndex = _playersInGame[index+1];
             }
         }
 
