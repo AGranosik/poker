@@ -12,7 +12,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
     {
         private Turn _turn;
         private List<Player> _players;
-        private List<Player> _playerInOrder;
 
         [SetUp]
         public void SetUp()
@@ -24,15 +23,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
                 Player.Create("hehe4", "hehe2"),
                 Player.Create("hehe5", "hehe2"),
                 Player.Create("hehe6", "hehe6"),
-            };
-
-            _playerInOrder = new List<Player>
-            {
-                _players[4],
-                _players[0],
-                _players[1],
-                _players[2],
-                _players[3]
             };
 
             _turn = Turn.Start(_players);
@@ -94,7 +84,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
                 _turn.Bet(_players[i], bidTypeChecked);
 
             var func = () => _turn.Bet(_players[0], bidTypeChecked);
-            func.Should().Throw<ArgumentException>();
+            func.Should().Throw<CannotBetException>();
         }
 
         [Test]
@@ -112,7 +102,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             for (int i = 0; i < _players.Count - 1; i++)
                 _turn.Bet(_players[i], bidTypePassed);
 
-            var func = () => _turn.Bet(_playerInOrder[3], bidTypePassed);
+            var func = () => _turn.Bet(_players[4], bidTypePassed);
             func.Should().Throw<CannotBetException>();
         }
 
@@ -206,10 +196,10 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
 
             _turn.NextRound();
 
-            for (int i = 0; i < 4; i++)
-                _turn.Bet(_players[i+1], BidType.Call);
+            for (int i = 1; i < _players.Count; i++)
+                _turn.Bet(_players[i], BidType.Call);
 
-            var func = () => _turn.Bet(_playerInOrder[1], BidType.Call);
+            var func = () => _turn.Bet(_players[1], BidType.Call);
             func.Should().Throw<CannotBetException>();
 
         }

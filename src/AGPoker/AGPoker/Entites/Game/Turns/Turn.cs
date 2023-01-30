@@ -9,6 +9,7 @@ namespace AGPoker.Entites.Game.Turns
         private Turn(List<Player> players) //should be there any player for turn?
         {
             _players = players;
+            _dealerIndex = _players.Count - 4;
             StartTurn();
         }
 
@@ -73,14 +74,12 @@ namespace AGPoker.Entites.Game.Turns
             SetPlayersInGame();
             SetTurnCounters();
             SetTrio();
+            SetDealerIndex();
         }
 
         private void SetDealerIndex()
         {
-            if (_dealerIndex >= _playersInGame.Count - 1)
-                _dealerIndex = 0;
-            else
-                _dealerIndex++;
+            _dealerIndex = GetNextPlayerIndex(_dealerIndex);
         }
 
         private bool CanStartNextTurn()
@@ -139,29 +138,34 @@ namespace AGPoker.Entites.Game.Turns
 
         private void SetDealer()
         {
-            Dealer = _players[_players.Count -1];
+            Dealer = _players[GetNextPlayerIndex(_dealerIndex)];
         }
 
         private void SetSmallBlind()
         {
-            SmallBlindPlayer = _players[_players.Count - 2];
+            SmallBlindPlayer = _players[GetNextPlayerIndex(_players.IndexOf(Dealer))];
         }
 
         private void SetBigBlind()
         {
-            BigBlindPlayer = _players[_players.Count - 3];
+            BigBlindPlayer = _players[GetNextPlayerIndex(_players.IndexOf(BigBlindPlayer))];
         }
 
         private void SetNextPlayerIndex()
         {
             var index = _playersInGame.IndexOf(_currentPlayerIndex);
-            if(index == _playersInGame.Count - 1)
+            _currentPlayerIndex = GetNextPlayerIndex(index);
+        }
+
+        private int GetNextPlayerIndex(int index)
+        {
+            if (index == _playersInGame.Count - 1)
             {
-                _currentPlayerIndex = _playersInGame[0];
+                return _playersInGame[0];
             }
             else
             {
-                _currentPlayerIndex = _playersInGame[index+1];
+                return _playersInGame[index + 1];
             }
         }
 
