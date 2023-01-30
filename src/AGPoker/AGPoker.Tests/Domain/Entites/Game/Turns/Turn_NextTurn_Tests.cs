@@ -13,7 +13,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         private Turn _turn;
         private Turn _secondTurn;
         private List<Player> _players;
-        private List<Player> _playerInOrder;
 
         [SetUp]
         public void SetUp()
@@ -26,14 +25,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
                 Player.Create("hehe5", "hehe2"),
                 Player.Create("hehe6", "hehe2"),
 
-            };
-
-            _playerInOrder = new List<Player>
-            {
-                _players[3],
-                _players[0],
-                _players[1],
-                _players[2]
             };
 
             _turn = Turn.Start(_players);
