@@ -1,5 +1,6 @@
 ﻿using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Stacks.ValueObjects;
+using AGPoker.Exceptions;
 
 namespace AGPoker.Entites.Game.Turns
 {
@@ -30,7 +31,7 @@ namespace AGPoker.Entites.Game.Turns
         public void Bet(Player player, BidType bidType) //
         {
             if (!CanMakeBid() || !IsThisPlayerTurn(player))
-                throw new ArgumentException("Next move cannot be performed.");
+                throw new CannotBetException("Next move cannot be performed.");
 
             SetTurnMove(bidType);
             SetNextPlayerIndex();
@@ -46,13 +47,13 @@ namespace AGPoker.Entites.Game.Turns
         public void NextRound()
         {
             if (IsTheLastRound())
-                throw new ArgumentException("It was last round.");
+                throw new CannotStartNextRound("It was last round.");
 
             if (!EarlierRoundFinished())
-                throw new ArgumentException("Earlier round doesnt finished.");
+                throw new CannotStartNextRound("Earlier round doesnt finished.");
 
             if (IsTheLastOnePlayer())
-                throw new ArgumentException("Not enough players.");
+                throw new CannotStartNextRound("Not enough players.");
 
             SetTurnCounters();
             _roundNumber++;
@@ -61,7 +62,7 @@ namespace AGPoker.Entites.Game.Turns
         public void NextTurn()
         {
             if (!CanStartNextTurn())
-                throw new ArgumentException("Cannot start next turn.");
+                throw new CannotStartNextTurn("Cannot start next turn.");
 
             StartTurn();
         }
