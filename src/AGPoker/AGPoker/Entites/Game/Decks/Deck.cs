@@ -3,7 +3,7 @@ using AGPoker.Entites.Game.Decks.ValueObjects;
 
 namespace AGPoker.Entites.Game.Decks
 {
-    public class Deck : Entity // each deck is unique for the game
+    public class Deck : Entity
     {
         private List<Card> _cards = new();
         private static Random _random = new Random();

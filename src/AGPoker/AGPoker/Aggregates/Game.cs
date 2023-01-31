@@ -46,7 +46,6 @@ namespace AGPoker.Aggregates
             GiveHandToThePlayers();
         }
         // leave game but its optional
-        // should check if this should not give 
         public void Fold(Player player)
         {
             Turn.Bet(player, BidType.Fold);
@@ -54,8 +53,6 @@ namespace AGPoker.Aggregates
 
         public void Call(Player player)
         {
-            // no need for validaiton here because its Stack & turn resposibility,
-            // nothing would have been saved because this method will throw exception anyway
             Stack.Call(player);
             Turn.Bet(player, BidType.Call);
         }
@@ -79,7 +76,7 @@ namespace AGPoker.Aggregates
             }   
         }
 
-        private List<Card> TakeCards(int n) // probably should be rand
+        private List<Card> TakeCards(int n)
         {
             var cards = new List<Card>(n);
             for(int i =0; i < n; i++)
@@ -118,7 +115,7 @@ namespace AGPoker.Aggregates
             => Turn = Turn.Start(_players);
         private void CanBegin()
         {
-            if (_players.Count <= 1) //use game limit
+            if (_players.Count <= 1)
                 throw new Exception("Not enough players.");
         }
 

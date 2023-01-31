@@ -1,4 +1,6 @@
-﻿using AGPoker.Entites.Game.Game.Players;
+﻿using System;
+using AGPoker.Core;
+using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Exceptions;
 
@@ -13,7 +15,7 @@ namespace AGPoker.Entites.Game.Turns
             StartTurn();
         }
 
-        public Player Dealer { get; private set; } // first bet from player to the left so last in list
+        public Player Dealer { get; private set; }
         public Player SmallBlindPlayer { get; private set; }
         public Player BigBlindPlayer { get; private set; }
 
@@ -31,10 +33,10 @@ namespace AGPoker.Entites.Game.Turns
 
         public void Bet(Player player, BidType bidType) //
         {
-            if (!CanMakeBid() || !IsThisPlayerTurn(player))
+            if (!CanBetBeMade() || !IsThisPlayerTurn(player))
                 throw new CannotBetException("Next move cannot be performed.");
 
-            SetTurnMove(bidType);
+            SetTurnBet(bidType);
             SetNextPlayerIndex();
             RemovePlayerFromTurnIfNeccessary(player, bidType);
         }
@@ -56,7 +58,7 @@ namespace AGPoker.Entites.Game.Turns
             if (IsTheLastOnePlayer())
                 throw new CannotStartNextRound("Not enough players.");
 
-            SetTurnCounters();
+            ResetTurnCounters();
             _roundNumber++;
         }
 
@@ -72,14 +74,14 @@ namespace AGPoker.Entites.Game.Turns
         {
             _roundNumber = 1;
             SetPlayersInGame();
-            SetTurnCounters();
+            ResetTurnCounters();
             SetTrio();
             SetDealerIndex();
         }
 
         private void SetDealerIndex()
         {
-            _dealerIndex = GetNextPlayerIndex(_dealerIndex);
+            _dealerIndex = Circle.GetNextInCircle(_dealerIndex, _playersInGame);
         }
 
         private bool CanStartNextTurn()
@@ -91,10 +93,8 @@ namespace AGPoker.Entites.Game.Turns
         private bool EarlierRoundFinished()
             => _movesInTurn == _maximumMovesInRound || IsTheLastOnePlayer();
 
-        private void SetTurnMove(BidType bidType) // into another clas -> Circle
+        private void SetTurnBet(BidType bidType)
         {
-            // should check how many players in game?
-            // because right now someone will have no idea why its not counted as move.
             if (bidType == BidType.Raise)
                 _movesInTurn = 1;
             else if (bidType == BidType.Fold)
@@ -112,7 +112,7 @@ namespace AGPoker.Entites.Game.Turns
             }
         }
 
-        private bool CanMakeBid()
+        private bool CanBetBeMade()
             => _movesInTurn < _maximumMovesInRound && !IsTheLastOnePlayer();
 
         private bool IsTheLastOnePlayer()
@@ -123,7 +123,7 @@ namespace AGPoker.Entites.Game.Turns
             _playersInGame = Enumerable.Range(0, _players.Count).ToList();
         }
 
-        private void SetTurnCounters()
+        private void ResetTurnCounters()
         {
             _maximumMovesInRound = _playersInGame.Count;
             _movesInTurn = 0;
@@ -138,35 +138,22 @@ namespace AGPoker.Entites.Game.Turns
 
         private void SetDealer()
         {
-            Dealer = _players[GetNextPlayerIndex(_dealerIndex)];
+            Dealer = _players[Circle.GetNextInCircle(_dealerIndex, _playersInGame)];
         }
 
         private void SetSmallBlind()
         {
-            SmallBlindPlayer = _players[GetNextPlayerIndex(_players.IndexOf(Dealer))];
+            SmallBlindPlayer = _players[Circle.GetNextInCircle(_players.IndexOf(Dealer), _playersInGame)];
         }
 
         private void SetBigBlind()
         {
-            BigBlindPlayer = _players[GetNextPlayerIndex(_players.IndexOf(BigBlindPlayer))];
+            BigBlindPlayer = _players[Circle.GetNextInCircle(_players.IndexOf(BigBlindPlayer), _playersInGame)];
         }
 
         private void SetNextPlayerIndex()
         {
-            var index = _playersInGame.IndexOf(_currentPlayerIndex);
-            _currentPlayerIndex = GetNextPlayerIndex(index);
-        }
-
-        private int GetNextPlayerIndex(int index)
-        {
-            if (index == _playersInGame.Count - 1)
-            {
-                return _playersInGame[0];
-            }
-            else
-            {
-                return _playersInGame[index + 1];
-            }
+            _currentPlayerIndex = Circle.GetNextInCircle(_currentPlayerIndex, _playersInGame);
         }
 
     }
