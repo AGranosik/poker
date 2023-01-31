@@ -22,7 +22,7 @@ namespace AGPoker.Entites.Game.Stacks
         public void Call(Player player)
             => _pots.First().Call(player);
 
-        public void Raise(Bid bid)
+        public void Raise(Bet bid)
             => _pots.First().Raise(bid);
     }
 }

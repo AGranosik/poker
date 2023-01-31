@@ -23,14 +23,17 @@ namespace AGPoker.Entites.Game.Game.Players
 
         private List<Card> _cards = new();
 
-        public Bid Call()
-            => Bid.Call(this);
+        public Bet Call()
+            => Bet.Call(this);
 
-        public Bid Raise(Money amount)
+        public Bet Raise(Money amount)
         {
             var bidChips = Chips.TakeAwayChips(amount);
-            return Bid.Create(bidChips, this, LastChipsWereTaken());
+            return Bet.Create(bidChips, this, LastChipsWereTaken());
         }
+
+        public Bet Fold()
+            => Bet.Fold(this);
 
         public void TakeCards(List<Card> cards)
         {

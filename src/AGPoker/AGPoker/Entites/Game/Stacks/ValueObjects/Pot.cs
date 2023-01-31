@@ -1,4 +1,5 @@
 ﻿using AGPoker.Common.ValueObjects;
+using AGPoker.Core.Exceptions;
 using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.ValueObjects;
 
@@ -8,7 +9,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
     {
         // all in pot
         // should create new pot if necessary 
-        private List<Bid> _bids = new();
+        private List<Bet> _bids = new();
         private Money _highestBid = Money.Create(0);
 
         private Pot() { }
@@ -20,11 +21,23 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public Money Value
             => Money.Create(_bids.Sum(b => b.Chips.Amount.Value));
 
-        public void Raise(Bid bid)
+
+        public void Fold(Bet bet)
+        {
+            if (!IsFoldBet(bet))
+                throw new NotProperKindOfBetException();
+
+            if (IsPlayerFoldedBefore(bet.Player))
+                throw new PlayerFoldedBeforeException();
+
+            _bids.Add(bet);
+        }
+
+        public void Raise(Bet bid)
         {
             var playerBids = TakePlayerBids(bid);
             var playerBidAmount = GetPlayerBidAmount(playerBids);
-            BidValidation(playerBidAmount);
+            RaiseValidation(playerBidAmount);
             SetHighestBidIfNeccessary(playerBidAmount);
 
             _bids.Add(bid);
@@ -35,15 +48,15 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             var playerMoney = Money.Create(_bids.Where(b => b.Player == player)
                 .Sum(b => b.Chips.Amount.Value));
 
-            Bid bid;
+            Bet bid;
             if(ShouldPlayerGiveChips(playerMoney))
             {
                 var missingChips = _highestBid - playerMoney;
-                bid = Bid.Create(Chips.Create(missingChips.Value), player, BidType.Call);
+                bid = Bet.Create(Chips.Create(missingChips.Value), player, BidType.Call);
             }
             else
             {
-                bid = Bid.Call(player);
+                bid = Bet.Call(player);
             }
             _bids.Add(bid);
         }
@@ -57,7 +70,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             return playerMoney < _highestBid;
         }
 
-        private void BidValidation(int playerBidAmount)
+        private void RaiseValidation(int playerBidAmount)
         {
             if (playerBidAmount < _highestBid.Value)
                 throw new ArgumentException();
@@ -69,14 +82,20 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
                 _highestBid = Money.Create(playerBidAmount);
         }
 
-        private int GetPlayerBidAmount(List<Bid> playerBids)
+        private int GetPlayerBidAmount(List<Bet> playerBids)
             => playerBids.Sum(b => b.Chips.Amount.Value);
 
-        private List<Bid> TakePlayerBids(Bid currentBid)
+        private List<Bet> TakePlayerBids(Bet currentBid)
         {
             var bids = _bids.Where(b => b.Player == currentBid.Player).ToList();
             bids.Add(currentBid);
             return bids;
         }
+
+        private bool IsFoldBet(Bet bet)
+            => bet.BidType == BidType.Fold && bet.Chips.Amount.Value == 0; //compare with value objects
+
+        private bool IsPlayerFoldedBefore(Player player)
+            => _bids.Any(b => BidType.Fold == b.BidType && b.Player == player);
     }
 }

@@ -57,7 +57,7 @@ namespace AGPoker.Aggregates
             Turn.Bet(player, BidType.Call);
         }
 
-        public void Raise(Bid bid)
+        public void Raise(Bet bid)
         {
             Stack.Raise(bid);
             Turn.Bet(bid.Player, bid.BidType);
