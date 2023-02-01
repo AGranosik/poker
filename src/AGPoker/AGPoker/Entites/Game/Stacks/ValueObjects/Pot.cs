@@ -33,14 +33,14 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             _bids.Add(bet);
         }
 
-        public void Raise(Bet bid)
+        public void Raise(Bet bet)
         {
-            var playerBids = TakePlayerBids(bid);
-            var playerBidAmount = GetPlayerBidAmount(playerBids);
-            RaiseValidation(playerBidAmount);
+            var playerBids = TakePlayerBids(bet);
+            var playerBidAmount = GetPlayerBetAmount(playerBids);
+            RaiseValidation(playerBidAmount, bet.Player);
             SetHighestBidIfNeccessary(playerBidAmount);
 
-            _bids.Add(bid);
+            _bids.Add(bet);
         }
 
         public void Call(Player player)
@@ -70,10 +70,13 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             return playerMoney < _highestBid;
         }
 
-        private void RaiseValidation(int playerBidAmount)
+        private void RaiseValidation(int playerBidAmount, Player player)
         {
             if (playerBidAmount < _highestBid.Value)
-                throw new ArgumentException();
+                throw new BetTooLowException();
+
+            if (IsPlayerFoldedBefore(player))
+                throw new PlayerFoldedBeforeException();
         }
 
         private void SetHighestBidIfNeccessary(int playerBidAmount)
@@ -82,7 +85,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
                 _highestBid = Money.Create(playerBidAmount);
         }
 
-        private int GetPlayerBidAmount(List<Bet> playerBids)
+        private int GetPlayerBetAmount(List<Bet> playerBids)
             => playerBids.Sum(b => b.Chips.Amount.Value);
 
         private List<Bet> TakePlayerBids(Bet currentBid)
