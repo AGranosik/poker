@@ -52,7 +52,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             if(ShouldPlayerGiveChips(playerMoney))
             {
                 var missingChips = _highestBid - playerMoney;
-                bid = Bet.Create(Chips.Create(missingChips.Value), player, BidType.Call);
+                bid = 
             }
             else
             {
