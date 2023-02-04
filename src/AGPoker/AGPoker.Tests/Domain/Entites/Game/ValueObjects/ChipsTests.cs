@@ -29,13 +29,5 @@ namespace AGPoker.Tests.Domain.Entites.Game.ValueObjects
             var func = () => chips.TakeAwayChips(Money.Create(4));
             func.Should().Throw<ArgumentException>();
         }
-
-        [Test]
-        public void TakeAwayChips_CannotTake0_ThrowsException()
-        {
-            var chips = Chips.Create(2);
-            var func = () => chips.TakeAwayChips(Money.Create(0));
-            func.Should().Throw<ArgumentException>();
-        }
     }
 }

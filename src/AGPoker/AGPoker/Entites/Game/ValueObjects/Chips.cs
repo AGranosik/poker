@@ -23,7 +23,7 @@ namespace AGPoker.Entites.Game.ValueObjects
         
         private void CanTakeAwayPartOfChips(Money amount)
         {
-            if (amount > Amount || amount.Value == 0)
+            if (amount > Amount || amount.Value < 0)
                 throw new ArgumentNullException("Cannot take away that amount of chips.");
         }
     }

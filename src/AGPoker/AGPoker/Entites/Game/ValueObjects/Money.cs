@@ -26,7 +26,7 @@ namespace AGPoker.Entites.Game.ValueObjects
             => Create(money1.Value - money2.Value);
 
         public static bool operator ==(Money money1, Money money2)
-            => money1.Value == money2.Value;
+            =>  money1.Value == money2.Value;
 
         public static bool operator !=(Money money1, Money money2)
             => !(money1 == money2);

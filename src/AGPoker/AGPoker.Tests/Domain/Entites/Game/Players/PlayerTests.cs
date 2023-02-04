@@ -46,7 +46,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
         }
 
         [Test]
-        public void MakeBid_CannotBeHigherThanCurrentAmount_ThrowsException()
+        public void MakeBet_CannotBeHigherThanCurrentAmount_ThrowsException()
         {
             var player = Player.Create("hehe", "hehe");
             var moneyToTake = Money.Create(520);
@@ -55,25 +55,25 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
         }
 
         [Test]
-        public void MakeBid_Check_Success()
+        public void MakeBid_Call_Success()
         {
             var player = Player.Create("hehe", "hehe");
-            var bid = player.Call();
-            bid.Should().NotBeNull();
-            (bid.Chips.Amount.Value == 0).Should().BeTrue();
-            bid.BidType.Should().Be(BidType.Call);
+            var bet = player.Call();
+            bet.Should().NotBeNull();
+            (bet.Chips.Amount.Value == 0).Should().BeTrue();
+            bet.BidType.Should().Be(BidType.Call);
         }
 
         [Test]
-        public void MakeBid_CanBeEqualToCurrentAmount_AllInFlag()
+        public void MakeBet_CanBeEqualToCurrentAmount_AllInFlag()
         {
             var player = Player.Create("hehe", "hehe");
             var moneyToTake = Money.Create(500);
-            var bid = player.Raise(moneyToTake);
-            bid.Should().NotBeNull();
-            (bid.Player == player).Should().BeTrue();
-            (bid.Chips.Amount == moneyToTake).Should().BeTrue();
-            bid.AllIn.Should().BeTrue();
+            var bet = player.Raise(moneyToTake);
+            bet.Should().NotBeNull();
+            (bet.Player == player).Should().BeTrue();
+            (bet.Chips.Amount == moneyToTake).Should().BeTrue();
+            bet.AllIn.Should().BeTrue();
         }
 
         [Test]

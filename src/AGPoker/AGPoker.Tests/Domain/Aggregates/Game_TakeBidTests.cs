@@ -82,7 +82,6 @@ namespace AGPoker.Tests.Domain.Aggregates
             var firstPlayer = _players[0];
             var secondPlayer = _players[1];
 
-
             _game.Call(firstPlayer);
             _game.Call(secondPlayer);
             _game.Call(_dealer); 

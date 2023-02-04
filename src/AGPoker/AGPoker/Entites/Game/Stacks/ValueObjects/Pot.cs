@@ -33,7 +33,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             _bids.Add(bet);
         }
 
-        public void Raise(Bet bet)
+        public void Raise(Bet bet) // player and Money
         {
             var playerBids = TakePlayerBids(bet);
             var playerBidAmount = GetPlayerBetAmount(playerBids);
@@ -48,17 +48,17 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             var playerMoney = Money.Create(_bids.Where(b => b.Player == player)
                 .Sum(b => b.Chips.Amount.Value));
 
-            Bet bid;
-            if(ShouldPlayerGiveChips(playerMoney))
+            Bet bet;
+            if (ShouldPlayerGiveChips(playerMoney))
             {
                 var missingChips = _highestBid - playerMoney;
-                bid = 
+                bet = player.Call(missingChips);
             }
             else
             {
-                bid = Bet.Call(player);
+                bet = player.Call();
             }
-            _bids.Add(bid);
+            _bids.Add(bet);
         }
 
         public static Pot Create()

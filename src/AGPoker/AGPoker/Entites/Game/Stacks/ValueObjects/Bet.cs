@@ -25,8 +25,8 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public static Bet Create(Chips chips, Player player, BidType bidType)
             => new(chips, player, bidType);
 
-        public static Bet Call(Player player)
-            => new(Chips.Create(0), player, BidType.Call);
+        public static Bet Call(Player player, Chips chips)
+            => new(chips, player, BidType.Call);
 
         public static Bet Fold(Player player)
             => new(Chips.Create(0), player, BidType.Fold);
