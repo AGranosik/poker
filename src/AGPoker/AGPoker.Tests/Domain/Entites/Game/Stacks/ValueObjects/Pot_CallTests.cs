@@ -16,10 +16,19 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [SetUp]
         public void SetUp()
         {
-            _player = Player.Create("hehe", "eheh", 20);
+            _player = Player.Create("hehe", "eheh");
             _secondPlayer = Player.Create("heasdasdhe", "eheh");
             _pot = Pot.Create();
             _pot.Raise(_secondPlayer.Raise(Money.Create(15)));
+        }
+
+        [Test]
+        public void Call_ChipsSHouldBeTakenToTHeHighestBid_Success()
+        {
+            var func = () => _pot.Call(_player);
+            func.Should().NotThrow();
+
+            _pot.Value.Value.Should().Be(30);
         }
 
         [Test]
@@ -27,12 +36,23 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         {
             var moneyBeforeBet = _player.Chips.Amount.Value;
 
-
             var func = () => _pot.Call(_player);
             func.Should().NotThrow();
 
             var moneyAfterBet = _player.Chips.Amount.Value;
-            (moneyBeforeBet - moneyAfterBet).Should().Be(5);
+            moneyAfterBet.Should().Be(485);
+        }
+
+        [Test]
+        public void Call_OnlyMissingChipsShouldBeTaken_Success()
+        {
+            var bet = _player.Raise(Money.Create(30));
+            _pot.Raise(bet);
+
+            var func = () => _pot.Call(_secondPlayer);
+            func.Should().NotThrow();
+
+            _player.Chips.Amount.Value.Should().Be(470);
         }
     }
 }
