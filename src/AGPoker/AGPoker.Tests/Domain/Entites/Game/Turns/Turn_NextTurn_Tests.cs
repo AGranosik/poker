@@ -68,7 +68,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             EveryPlayerCall(_turn);
 
             for (int i = 0; i < 4; i++)
-                _turn.Bet(_players[i], BidType.Call);
+                _turn.Bet(_players[i], BetType.Call);
 
             var func = () => _turn.NextTurn();
             func.Should().Throw<CannotStartNextTurn>();
@@ -166,32 +166,32 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
 
         private void ThreePlayersLastAfterBetting(Turn turn)
         {
-            turn.Bet(_players[0], BidType.Call);
-            turn.Bet(_players[1], BidType.Fold);
-            turn.Bet(_players[2], BidType.Call);
-            turn.Bet(_players[3], BidType.Raise);
-            turn.Bet(_players[4], BidType.Raise);
-            turn.Bet(_players[0], BidType.Raise);
-            turn.Bet(_players[2], BidType.Call);
-            turn.Bet(_players[3], BidType.Raise);
-            turn.Bet(_players[4], BidType.Call);
-            turn.Bet(_players[0], BidType.Call);
-            turn.Bet(_players[2], BidType.Fold);
+            turn.Bet(_players[0], BetType.Call);
+            turn.Bet(_players[1], BetType.Fold);
+            turn.Bet(_players[2], BetType.Call);
+            turn.Bet(_players[3], BetType.Raise);
+            turn.Bet(_players[4], BetType.Raise);
+            turn.Bet(_players[0], BetType.Raise);
+            turn.Bet(_players[2], BetType.Call);
+            turn.Bet(_players[3], BetType.Raise);
+            turn.Bet(_players[4], BetType.Call);
+            turn.Bet(_players[0], BetType.Call);
+            turn.Bet(_players[2], BetType.Fold);
         }
 
         private void AllToTheNextOneWithoutOne(Turn turn)
         {
             for (int i = 0; i < _players.Count - 1; i++)
-                turn.Bet(_players[i], BidType.Call);
+                turn.Bet(_players[i], BetType.Call);
 
-            turn.Bet(_players[4], BidType.Fold);
+            turn.Bet(_players[4], BetType.Fold);
             turn.NextRound();
         }
 
         private void EveryPlayerCall(Turn turn, bool startNextRound = true)
         {
             for (int i = 0; i < _players.Count; i++)
-                turn.Bet(_players[i], BidType.Call);
+                turn.Bet(_players[i], BetType.Call);
 
             if(startNextRound)
                 turn.NextRound();

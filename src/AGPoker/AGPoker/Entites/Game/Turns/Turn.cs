@@ -1,8 +1,11 @@
-﻿using System;
-using AGPoker.Core;
+﻿using AGPoker.Core;
 using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Exceptions;
+
+// solution segregations
+// remove chips?
+// override comparators so dont have use .value .value 
 
 namespace AGPoker.Entites.Game.Turns
 {
@@ -10,6 +13,7 @@ namespace AGPoker.Entites.Game.Turns
     {
         private Turn(List<Player> players) //should be there any player for turn?
         {
+            PlayersValidation(players);
             _players = players;
             _dealerIndex = _players.Count - 4;
             StartTurn();
@@ -31,7 +35,7 @@ namespace AGPoker.Entites.Game.Turns
         public static Turn Start(List<Player> players)
             => new(players);
 
-        public void Bet(Player player, BidType bidType) //
+        public void Bet(Player player, BetType bidType) //
         {
             if (!CanBetBeMade() || !IsThisPlayerTurn(player))
                 throw new CannotBetException("Next move cannot be performed.");
@@ -70,6 +74,12 @@ namespace AGPoker.Entites.Game.Turns
             StartTurn();
         }
 
+        private void PlayersValidation(List<Player> players)
+        {
+            if (players is null || players.Count < 3)
+                throw new ArgumentException(nameof(players));
+        }
+
         private void StartTurn()
         {
             _roundNumber = 1;
@@ -93,19 +103,19 @@ namespace AGPoker.Entites.Game.Turns
         private bool EarlierRoundFinished()
             => _movesInTurn == _maximumMovesInRound || IsTheLastOnePlayer();
 
-        private void SetTurnBet(BidType bidType)
+        private void SetTurnBet(BetType bidType)
         {
-            if (bidType == BidType.Raise)
+            if (bidType == BetType.Raise)
                 _movesInTurn = 1;
-            else if (bidType == BidType.Fold)
+            else if (bidType == BetType.Fold)
                 return;
             else
                 _movesInTurn++;
         }
 
-        private void RemovePlayerFromTurnIfNeccessary(Player player,BidType bidType)
+        private void RemovePlayerFromTurnIfNeccessary(Player player,BetType bidType)
         {
-            if (bidType == BidType.Fold)
+            if (bidType == BetType.Fold)
             {
                 _playersInGame.Remove(_players.IndexOf(player));
                 _maximumMovesInRound = _playersInGame.Count;

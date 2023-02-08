@@ -8,7 +8,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
     {
         // check if its not all in
         // split into smaller ones.
-        private Bet(Chips chips, Player player, BidType bidType) // set type of bid?
+        private Bet(Chips chips, Player player, BetType bidType) // set type of bid?
         {
             CreationValidation(chips, player);
             Chips = chips;
@@ -18,18 +18,18 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         public Chips Chips { get; init; }
         public Player Player { get; set; }
-        public BidType BidType { get; init; }
+        public BetType BidType { get; init; }
         public bool AllIn
-             => BidType == BidType.AllIn;
+             => BidType == BetType.AllIn;
 
-        public static Bet Create(Chips chips, Player player, BidType bidType)
+        public static Bet Create(Chips chips, Player player, BetType bidType)
             => new(chips, player, bidType);
 
         public static Bet Call(Player player, Chips chips)
-            => new(chips, player, BidType.Call);
+            => new(chips, player, BetType.Call);
 
         public static Bet Fold(Player player)
-            => new(Chips.Create(0), player, BidType.Fold);
+            => new(Chips.Create(0), player, BetType.Fold);
 
         private static void CreationValidation(Chips chips, Player player)
         {
@@ -44,7 +44,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         }
     }
 
-    public enum BidType
+    public enum BetType
     {
         Fold,
         Call,

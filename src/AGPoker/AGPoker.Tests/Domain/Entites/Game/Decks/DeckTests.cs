@@ -29,7 +29,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Decks
         }
 
         [Test]
-        // no duplicates
         public void Deck_GetAllCards_Success()
         {
             var alreadyDrawnCards = new List<Card>(52);

@@ -14,9 +14,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         private Pot() { }
 
-        //save every bid
         // highest bid
-        // player passed do not count to highest bid
 
         public Money Value
             => Money.Create(_bids.Sum(b => b.Chips.Amount.Value));
@@ -96,9 +94,9 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         }
 
         private bool IsFoldBet(Bet bet)
-            => bet.BidType == BidType.Fold && bet.Chips.Amount.Value == 0; //compare with value objects
+            => bet.BidType == BetType.Fold && bet.Chips.Amount.Value == 0; //compare with value objects
 
         private bool IsPlayerFoldedBefore(Player player)
-            => _bids.Any(b => BidType.Fold == b.BidType && b.Player == player);
+            => _bids.Any(b => BetType.Fold == b.BidType && b.Player == player);
     }
 }

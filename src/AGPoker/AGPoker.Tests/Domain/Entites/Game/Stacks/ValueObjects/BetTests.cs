@@ -12,28 +12,28 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void Bet_ChipsCannotBeNull_ThrowsException()
         {
-            var func = () => Bet.Create(null, null, BidType.Raise);
+            var func = () => Bet.Create(null, null, BetType.Raise);
             func.Should().Throw<ArgumentNullException>();
         }
 
         [Test]
         public void Bet_PlayerCannotBeNull_ThrowsException()
         {
-            var func = () => Bet.Create(Chips.Create(2), null, BidType.Raise);
+            var func = () => Bet.Create(Chips.Create(2), null, BetType.Raise);
             func.Should().Throw<ArgumentNullException>();
         }
 
         [Test]
         public void Bet_ChipsCannotBeLowerThan_ThrowsException()
         {
-            var func = () => Bet.Create(Chips.Create(-2), Player.Create("hehe", "hehe"), BidType.Call);
+            var func = () => Bet.Create(Chips.Create(-2), Player.Create("hehe", "hehe"), BetType.Call);
             func.Should().Throw<ArgumentException>();
         }
 
         [Test]
         public void Bet_ChipsCanBe0_Sucess()
         {
-            var func = () => Bet.Create(Chips.Create(0), Player.Create("hehe", "hehe"), BidType.Call);
+            var func = () => Bet.Create(Chips.Create(0), Player.Create("hehe", "hehe"), BetType.Call);
             func.Should().NotThrow<ArgumentException>();
         }
     }

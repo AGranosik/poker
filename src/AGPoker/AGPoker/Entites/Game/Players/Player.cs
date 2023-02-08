@@ -26,7 +26,7 @@ namespace AGPoker.Entites.Game.Game.Players
         public Bet Call(Money amount = null)
         {
             var chips = Chips.TakeAwayChips(amount ?? Money.Create(0));
-            return Bet.Create(chips, this, BidType.Call);
+            return Bet.Create(chips, this, BetType.Call);
         }
 
         public Bet Raise(Money amount)
@@ -44,8 +44,8 @@ namespace AGPoker.Entites.Game.Game.Players
             _cards.AddRange(cards);
         }
 
-        public BidType LastChipsWereTaken()
-            => Chips.Amount.Value == 0 ? BidType.AllIn : BidType.Call;
+        public BetType LastChipsWereTaken()
+            => Chips.Amount.Value == 0 ? BetType.AllIn : BetType.Call;
 
         private static void CheckIfCardsNotNullOrEmpty(List<Card> cards)
         {

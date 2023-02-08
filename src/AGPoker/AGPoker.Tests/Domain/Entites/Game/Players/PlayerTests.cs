@@ -61,7 +61,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
             var bet = player.Call();
             bet.Should().NotBeNull();
             (bet.Chips.Amount.Value == 0).Should().BeTrue();
-            bet.BidType.Should().Be(BidType.Call);
+            bet.BidType.Should().Be(BetType.Call);
         }
 
         [Test]

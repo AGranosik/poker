@@ -48,19 +48,19 @@ namespace AGPoker.Aggregates
         // leave game but its optional
         public void Fold(Player player)
         {
-            Turn.Bet(player, BidType.Fold);
+            Turn.Bet(player, BetType.Fold);
         }
 
         public void Call(Player player)
         {
             Stack.Call(player);
-            Turn.Bet(player, BidType.Call);
+            Turn.Bet(player, BetType.Call);
         }
 
-        public void Raise(Bet bid)
+        public void Raise(Bet bet)
         {
-            Stack.Raise(bid);
-            Turn.Bet(bid.Player, bid.BidType);
+            Stack.Raise(bet);
+            Turn.Bet(bet.Player, bet.BidType);
         }
 
         public void GiveHandToThePlayers()
