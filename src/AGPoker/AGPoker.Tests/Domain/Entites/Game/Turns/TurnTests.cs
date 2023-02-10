@@ -53,7 +53,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         }
 
         [Test]
-        public void Creation_WOrksFor3Players_Success()
+        public void Creation_WorksFor3Players_Success()
         {
             var players = new List<Player>
             {

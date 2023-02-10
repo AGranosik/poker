@@ -158,7 +158,7 @@ namespace AGPoker.Entites.Game.Turns
 
         private void SetBigBlind()
         {
-            BigBlindPlayer = _players[Circle.GetNextInCircle(_players.IndexOf(BigBlindPlayer), _playersInGame)];
+            BigBlindPlayer = _players[Circle.GetNextInCircle(_players.IndexOf(SmallBlindPlayer), _playersInGame)];
         }
 
         private void SetNextPlayerIndex()
