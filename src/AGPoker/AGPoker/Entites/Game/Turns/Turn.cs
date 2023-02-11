@@ -15,7 +15,7 @@ namespace AGPoker.Entites.Game.Turns
         {
             PlayersValidation(players);
             _players = players;
-            _dealerIndex = _players.Count - 4;
+            SetDealerIndexAtStart();
             StartTurn();
         }
 
@@ -92,6 +92,12 @@ namespace AGPoker.Entites.Game.Turns
         private void SetDealerIndex()
         {
             _dealerIndex = Circle.GetNextInCircle(_dealerIndex, _playersInGame);
+        }
+
+        private void SetDealerIndexAtStart()
+        {
+            var dealer = Circle.GetPrevious(_players.Last(), _players, 3);
+            _dealerIndex = _players.IndexOf(dealer);
         }
 
         private bool CanStartNextTurn()

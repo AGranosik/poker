@@ -61,5 +61,75 @@ namespace AGPoker.Tests.Domain.Core
             var nextPlayerIndex = _players.IndexOf(nextPlayer);
             nextPlayerIndex.Should().Be(0);
         }
+
+        [Test]
+        public void GetPrevious_CurrentElementCannotBeNull_ThrowsException()
+        {
+            var func = () => Circle.GetPrevious<Player>(null, null, 1);
+            func.Should().Throw<ArgumentNullException>();
+        }
+
+        [Test]
+        public void GetPrevious_ListCannotBeNull_ThrowsException()
+        {
+            var func = () => Circle.GetPrevious(Player.Create("hehe", "hehe"), null, 1);
+            func.Should().Throw<ArgumentNullException>();
+        }
+
+        [Test]
+        public void GetPrevious_MoveBackCannotBeNegative_ThrowsException()
+        {
+            var func = () => Circle.GetPrevious(Player.Create("hehe", "hehe"), _players, -11);
+            func.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void GetPrevious_MoveBackBe0_ThrowsException()
+        {
+            var func = () => Circle.GetPrevious(Player.Create("hehe", "hehe"), _players, 0);
+            func.Should().Throw<ArgumentException>();
+        }
+
+
+        [Test]
+        public void GetPrevious_ElementNotList_ThrowsException()
+        {
+            var func = () => Circle.GetPrevious(Player.Create("hehe", "hehe"), _players, 2);
+            func.Should().Throw<ArgumentNullException>();
+        }
+
+        [Test]
+        public void GetPrevious_GetPreviousOne_Success()
+        {
+            var previousPlayer = Circle.GetPrevious(_players[3], _players, 1);
+            var nextPlayerIndex = _players.IndexOf(previousPlayer);
+            nextPlayerIndex.Should().Be(2);
+        }
+
+        [Test]
+        public void GetPrevious_FirstElementAtList_Success()
+        {
+            var previousPlayer = Circle.GetPrevious(_players[0], _players, 1);
+            var nextPlayerIndex = _players.IndexOf(previousPlayer);
+            nextPlayerIndex.Should().Be(3);
+        }
+
+        [Test]
+        public void GetPrevious_FirstElementAtList_Success2()
+        {
+            var previousPlayer = Circle.GetPrevious(_players[0], _players, 3);
+            var nextPlayerIndex = _players.IndexOf(previousPlayer);
+            nextPlayerIndex.Should().Be(1);
+        }
+
+
+        [Test]
+        public void GetPrevious_FirstElementAtListMultipleCicles_Success()
+        {
+            var previousPlayer = Circle.GetPrevious(_players[0], _players, 17);
+            var nextPlayerIndex = _players.IndexOf(previousPlayer);
+            nextPlayerIndex.Should().Be(3);
+        }
+
     }
 }
