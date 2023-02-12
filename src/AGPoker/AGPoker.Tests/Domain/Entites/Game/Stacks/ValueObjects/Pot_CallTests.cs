@@ -34,12 +34,12 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void Call_ChipsShouldBeTakenFromPlayer_Success()
         {
-            var moneyBeforeBet = _player.Chips.Amount.Value;
+            var moneyBeforeBet = _player.Money.Value;
 
             var func = () => _pot.Call(_player);
             func.Should().NotThrow();
 
-            var moneyAfterBet = _player.Chips.Amount.Value;
+            var moneyAfterBet = _player.Money.Value;
             moneyAfterBet.Should().Be(485);
         }
 
@@ -52,7 +52,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
             var func = () => _pot.Call(_secondPlayer);
             func.Should().NotThrow();
 
-            _player.Chips.Amount.Value.Should().Be(470);
+            _player.Money.Value.Should().Be(470);
         }
     }
 }

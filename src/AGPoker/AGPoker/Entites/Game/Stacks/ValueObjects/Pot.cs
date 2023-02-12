@@ -17,7 +17,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         // highest bid
 
         public Money Value
-            => Money.Create(_bids.Sum(b => b.Chips.Amount.Value));
+            => Money.Create(_bids.Sum(b => b.Money.Value));
 
 
         public void Fold(Bet bet)
@@ -44,7 +44,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public void Call(Player player)
         {
             var playerMoney = Money.Create(_bids.Where(b => b.Player == player)
-                .Sum(b => b.Chips.Amount.Value));
+                .Sum(b => b.Money.Value));
 
             Bet bet;
             if (ShouldPlayerGiveChips(playerMoney))
@@ -84,7 +84,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         }
 
         private int GetPlayerBetAmount(List<Bet> playerBids)
-            => playerBids.Sum(b => b.Chips.Amount.Value);
+            => playerBids.Sum(b => b.Money.Value);
 
         private List<Bet> TakePlayerBids(Bet currentBid)
         {
@@ -94,7 +94,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         }
 
         private bool IsFoldBet(Bet bet)
-            => bet.BidType == BetType.Fold && bet.Chips.Amount.Value == 0; //compare with value objects
+            => bet.BidType == BetType.Fold && bet.Money == Money.None;
 
         private bool IsPlayerFoldedBefore(Player player)
             => _bids.Any(b => BetType.Fold == b.BidType && b.Player == player);

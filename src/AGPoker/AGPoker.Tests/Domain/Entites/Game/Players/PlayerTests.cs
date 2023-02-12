@@ -60,7 +60,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
             var player = Player.Create("hehe", "hehe");
             var bet = player.Call();
             bet.Should().NotBeNull();
-            (bet.Chips.Amount.Value == 0).Should().BeTrue();
+            (bet.Money.Value == 0).Should().BeTrue();
             bet.BidType.Should().Be(BetType.Call);
         }
 
@@ -72,7 +72,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
             var bet = player.Raise(moneyToTake);
             bet.Should().NotBeNull();
             (bet.Player == player).Should().BeTrue();
-            (bet.Chips.Amount == moneyToTake).Should().BeTrue();
+            (bet.Money == moneyToTake).Should().BeTrue();
             bet.AllIn.Should().BeTrue();
         }
 

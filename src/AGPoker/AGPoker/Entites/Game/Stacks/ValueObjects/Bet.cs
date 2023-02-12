@@ -8,39 +8,39 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
     {
         // check if its not all in
         // split into smaller ones.
-        private Bet(Chips chips, Player player, BetType bidType) // set type of bid?
+        private Bet(Money money, Player player, BetType bidType) // set type of bid?
         {
-            CreationValidation(chips, player);
-            Chips = chips;
+            CreationValidation(money, player);
+            Money = money;
             Player = player;
             BidType = bidType;
         }
 
-        public Chips Chips { get; init; }
+        public Money Money { get; init; }
         public Player Player { get; set; }
         public BetType BidType { get; init; }
         public bool AllIn
              => BidType == BetType.AllIn;
 
-        public static Bet Create(Chips chips, Player player, BetType bidType)
-            => new(chips, player, bidType);
+        public static Bet Create(Money money, Player player, BetType bidType)
+            => new(money, player, bidType);
 
-        public static Bet Call(Player player, Chips chips)
-            => new(chips, player, BetType.Call);
+        public static Bet Call(Player player, Money money)
+            => new(money, player, BetType.Call);
 
         public static Bet Fold(Player player)
-            => new(Chips.Create(0), player, BetType.Fold);
+            => new(Money.None, player, BetType.Fold);
 
-        private static void CreationValidation(Chips chips, Player player)
+        private static void CreationValidation(Money money, Player player)
         {
-            if(chips is null)
-                throw new ArgumentNullException(nameof(chips));
+            if(money is null)
+                throw new ArgumentNullException(nameof(money));
 
             if (player is null)
                 throw new ArgumentNullException(nameof(player));
 
-            if(chips.Amount.Value < 0)
-                throw new ArgumentException(nameof(chips.Amount));
+            if(money.Value < 0)
+                throw new ArgumentException(nameof(money.Value));
         }
     }
 

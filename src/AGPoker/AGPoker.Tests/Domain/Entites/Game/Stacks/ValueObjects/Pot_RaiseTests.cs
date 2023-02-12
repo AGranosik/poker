@@ -47,7 +47,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void Raise_CanBeEqualToTheHighestBet_Success()
         {
-            var chipsBeforeBet = _player.Chips.Amount.Value;
+            var chipsBeforeBet = _player.Money.Value;
 
             var highestBet = Money.Create(30);
             _pot.Raise(_secondPlayer.Raise(highestBet));
@@ -56,13 +56,13 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
             var func = () => _pot.Raise(_player.Raise(lowerBet));
             func.Should().NotThrow();
 
-            ((chipsBeforeBet - 30) == _player.Chips.Amount.Value).Should().BeTrue();
+            ((chipsBeforeBet - 30) == _player.Money.Value).Should().BeTrue();
         }
 
         [Test]
         public void Raise_CanBeEqualInTwoBets_Success()
         {
-            var chipsBeforeBet = _player.Chips.Amount.Value;
+            var chipsBeforeBet = _player.Money.Value;
             var lowerBet = Money.Create(10);
             _pot.Raise(_player.Raise(lowerBet));
 
@@ -73,7 +73,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
             var func = () => _pot.Raise(_player.Raise(toEqualBet));
             func.Should().NotThrow();
 
-            ((chipsBeforeBet - 30) == _player.Chips.Amount.Value).Should().BeTrue();
+            ((chipsBeforeBet - 30) == _player.Money.Value).Should().BeTrue();
         }
     }
 }

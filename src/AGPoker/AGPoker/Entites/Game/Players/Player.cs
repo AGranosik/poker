@@ -8,16 +8,16 @@ namespace AGPoker.Entites.Game.Game.Players
 {
     public class Player : Entity
     {
-        private Player(PlayerName playerName, PlayerSurname playerSurname, Chips chips)
+        private Player(PlayerName playerName, PlayerSurname playerSurname, Money money)
         {
             PlayerName = playerName;
             PlayerSurname = playerSurname;
-            Chips = chips;
+            Money = money;
         }
 
         public PlayerName PlayerName { get; init; }
         public PlayerSurname PlayerSurname { get; init; }
-        public Chips Chips { get; init; }
+        public Money Money { get; init; }
         public IReadOnlyCollection<Card> Cards
             => _cards.AsReadOnly();
 
@@ -25,14 +25,15 @@ namespace AGPoker.Entites.Game.Game.Players
 
         public Bet Call(Money amount = null)
         {
-            var chips = Chips.TakeAwayChips(amount ?? Money.Create(0));
-            return Bet.Create(chips, this, BetType.Call);
+            if(amount is not null)
+                Money.Split(amount);
+            return Bet.Create(amount ?? Money.None, this, BetType.Call);
         }
 
         public Bet Raise(Money amount)
         {
-            var bidChips = Chips.TakeAwayChips(amount);
-            return Bet.Create(bidChips, this, LastChipsWereTaken());
+            Money.Split(amount);
+            return Bet.Create(amount, this, LastChipsWereTaken());
         }
 
         public Bet Fold()
@@ -45,7 +46,7 @@ namespace AGPoker.Entites.Game.Game.Players
         }
 
         public BetType LastChipsWereTaken()
-            => Chips.Amount.Value == 0 ? BetType.AllIn : BetType.Call;
+            => !Money.Any ? BetType.AllIn : BetType.Call;
 
         private static void CheckIfCardsNotNullOrEmpty(List<Card> cards)
         {
@@ -54,7 +55,7 @@ namespace AGPoker.Entites.Game.Game.Players
         }
 
         public static Player Create(string playerName, string playerSurname, int chips = 500)
-            => new(PlayerName.Create(playerName), PlayerSurname.Create(playerSurname), Chips.Create(chips));
+            => new(PlayerName.Create(playerName), PlayerSurname.Create(playerSurname), Money.Create(chips));
 
         public static bool operator ==(Player player1, Player player2)
         {

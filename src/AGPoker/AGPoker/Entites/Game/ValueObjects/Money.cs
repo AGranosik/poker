@@ -1,4 +1,5 @@
-﻿using AGPoker.Common.ValueObjects;
+﻿using System.Runtime.CompilerServices;
+using AGPoker.Common.ValueObjects;
 
 namespace AGPoker.Entites.Game.ValueObjects
 {
@@ -9,10 +10,18 @@ namespace AGPoker.Entites.Game.ValueObjects
             Value = value;
         }
 
-        public int Value { get; init; }
+        public int Value { get; private set; }
 
+        public static Money None
+            => new(0);
         public static Money Create(int value)
             => new(value);
+
+        public void Split(Money amount)
+        {
+            SplitValidation(amount);
+            Value -= amount.Value;
+        }
 
         private void CreationValidation(int value)
         {
@@ -20,6 +29,12 @@ namespace AGPoker.Entites.Game.ValueObjects
             {
                 throw new ArgumentException(nameof(value));
             }
+        }
+
+        private void SplitValidation(Money amount)
+        {
+            if(amount.Value > Value)
+                throw new ArgumentException(nameof(amount));
         }
 
         public static Money operator -(Money money1, Money money2)
@@ -42,5 +57,8 @@ namespace AGPoker.Entites.Game.ValueObjects
 
         public static bool operator <=(Money money1, Money money2)
             => money1.Value <= money2.Value;
+
+        public bool Any
+            => Value != 0;
     }
 }
