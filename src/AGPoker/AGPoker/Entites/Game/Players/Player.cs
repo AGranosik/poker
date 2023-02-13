@@ -27,13 +27,16 @@ namespace AGPoker.Entites.Game.Game.Players
         {
             if(amount is not null)
                 Money.Split(amount);
-            return Bet.Create(amount ?? Money.None, this, BetType.Call);
+            return Bet.Call(this, amount ?? Money.None);
         }
 
         public Bet Raise(Money amount)
         {
             Money.Split(amount);
-            return Bet.Create(amount, this, LastChipsWereTaken());
+            if (LastChipsWereTaken())
+                return Bet.AllIn(amount, this);
+
+            return Bet.Raise(amount, this);
         }
 
         public Bet Fold()
@@ -45,8 +48,8 @@ namespace AGPoker.Entites.Game.Game.Players
             _cards.AddRange(cards);
         }
 
-        public BetType LastChipsWereTaken()
-            => !Money.Any ? BetType.AllIn : BetType.Call;
+        public bool LastChipsWereTaken()
+            => !Money.Any;
 
         private static void CheckIfCardsNotNullOrEmpty(List<Card> cards)
         {

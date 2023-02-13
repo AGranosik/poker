@@ -94,9 +94,9 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         }
 
         private bool IsFoldBet(Bet bet)
-            => bet.BidType == BetType.Fold && bet.Money == Money.None;
+            => bet.BetType == BetType.Fold && bet.Money == Money.None;
 
         private bool IsPlayerFoldedBefore(Player player)
-            => _bids.Any(b => BetType.Fold == b.BidType && b.Player == player);
+            => _bids.Any(b => BetType.Fold == b.BetType && b.Player == player);
     }
 }

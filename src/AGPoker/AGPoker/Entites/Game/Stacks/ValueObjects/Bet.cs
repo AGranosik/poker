@@ -6,24 +6,26 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 {
     public class Bet : ValueObject // refactor to larger folders
     {
-        // check if its not all in
-        // split into smaller ones.
         private Bet(Money money, Player player, BetType bidType) // set type of bid?
         {
             CreationValidation(money, player);
             Money = money;
             Player = player;
-            BidType = bidType;
+            BetType = bidType;
         }
 
         public Money Money { get; init; }
         public Player Player { get; set; }
-        public BetType BidType { get; init; }
-        public bool AllIn
-             => BidType == BetType.AllIn;
+        public BetType BetType { get; init; }
 
-        public static Bet Create(Money money, Player player, BetType bidType)
-            => new(money, player, bidType);
+        public static Bet AllIn(Money money, Player player)
+            => new Bet(money, player, BetType.AllIn);
+
+        public static Bet Raise(Money money, Player player)
+        {
+            RaiseValidation(money);
+            return new(money, player, BetType.Raise);
+        }
 
         public static Bet Call(Player player, Money money)
             => new(money, player, BetType.Call);
@@ -41,6 +43,12 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
             if(money.Value < 0)
                 throw new ArgumentException(nameof(money.Value));
+        }
+
+        private static void RaiseValidation(Money money)
+        {
+            if (money is null || !money.Any)
+                throw new ArgumentException();
         }
     }
 

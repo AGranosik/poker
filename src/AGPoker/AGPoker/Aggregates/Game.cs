@@ -60,7 +60,7 @@ namespace AGPoker.Aggregates
         public void Raise(Bet bet)
         {
             Stack.Raise(bet);
-            Turn.Bet(bet.Player, bet.BidType);
+            Turn.Bet(bet.Player, bet.BetType);
         }
 
         public void GiveHandToThePlayers()

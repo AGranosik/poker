@@ -41,7 +41,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void Fold_CanFoldDespiteArlierBets_Success()
         {
-            _pot.Raise(Bet.Create(Money.Create(20), _player, BetType.Raise));
+            _pot.Raise(Bet.Raise(Money.Create(20), _player));
             var bet = _player.Fold();
             var func = () => _pot.Fold(bet);
             func.Should().NotThrow();
