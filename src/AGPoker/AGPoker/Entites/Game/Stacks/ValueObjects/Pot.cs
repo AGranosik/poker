@@ -9,16 +9,21 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
     {
         // all in pot
         // should create new pot if necessary 
-        private List<Bet> _bids = new();
+        private List<Bet> _bets = new();
         private Money _highestBid = Money.Create(0);
 
         private Pot() { }
 
-        // highest bid
-
         public Money Value
-            => Money.Create(_bids.Sum(b => b.Money.Value));
+            => Money.Create(_bets.Sum(b => b.Money.Value));
 
+        public bool IsAllIn
+            => _bets.Any(b => b.IsAllIn());
+
+        public List<Player> Winners
+            => _bets
+            .Where(b => b.Money == _highestBid)
+            .Select(b => b.Player).ToList();
 
         public void Fold(Bet bet)
         {
@@ -28,7 +33,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             if (IsPlayerFoldedBefore(bet.Player))
                 throw new PlayerFoldedBeforeException();
 
-            _bids.Add(bet);
+            _bets.Add(bet);
         }
 
         public void Raise(Bet bet) // player and Money
@@ -38,12 +43,12 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             RaiseValidation(playerBidAmount, bet.Player);
             SetHighestBidIfNeccessary(playerBidAmount);
 
-            _bids.Add(bet);
+            _bets.Add(bet);
         }
 
         public void Call(Player player)
         {
-            var playerMoney = Money.Create(_bids.Where(b => b.Player == player)
+            var playerMoney = Money.Create(_bets.Where(b => b.Player == player)
                 .Sum(b => b.Money.Value));
 
             Bet bet;
@@ -56,12 +61,11 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             {
                 bet = player.Call();
             }
-            _bids.Add(bet);
+            _bets.Add(bet);
         }
 
         public static Pot Create()
             => new();
-
 
         private bool ShouldPlayerGiveChips(Money playerMoney)
         {
@@ -88,7 +92,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         private List<Bet> TakePlayerBids(Bet currentBid)
         {
-            var bids = _bids.Where(b => b.Player == currentBid.Player).ToList();
+            var bids = _bets.Where(b => b.Player == currentBid.Player).ToList();
             bids.Add(currentBid);
             return bids;
         }
@@ -97,6 +101,6 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             => bet.BetType == BetType.Fold && bet.Money == Money.None;
 
         private bool IsPlayerFoldedBefore(Player player)
-            => _bids.Any(b => BetType.Fold == b.BetType && b.Player == player);
+            => _bets.Any(b => BetType.Fold == b.BetType && b.Player == player);
     }
 }

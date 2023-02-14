@@ -73,7 +73,7 @@ namespace AGPoker.Tests.Domain.Aggregates
             var money = Money.Create(30);
             var bid = playerTurn.Raise(money);
             _game.Raise(bid);
-            _game.Stack.Value.Value.Should().Be(60);
+            _game.Stack.Worth.Value.Should().Be(60);
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace AGPoker.Tests.Domain.Aggregates
             _game.Call(_smallBlind);
             _game.Call(_bigBlind);
 
-            _game.Stack.Value.Value.Should().Be(100);
+            _game.Stack.Worth.Value.Should().Be(100);
         }
 
         [Test]

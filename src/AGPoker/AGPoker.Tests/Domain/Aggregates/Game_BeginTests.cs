@@ -47,7 +47,7 @@ namespace AGPoker.Tests.Domain.Aggregates
             AddPlayersToGame();
             _game.Begin();
 
-            _game.Stack.Value.Value.Should().Be(30);
+            _game.Stack.Worth.Value.Should().Be(30);
         }
 
         [Test]

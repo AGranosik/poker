@@ -17,9 +17,11 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public Money Money { get; init; }
         public Player Player { get; set; }
         public BetType BetType { get; init; }
+        public bool IsAllIn()
+            => BetType.AllIn == BetType;
 
-        public static Bet AllIn(Money money, Player player)
-            => new Bet(money, player, BetType.AllIn);
+        public static Bet AllIn(Player player)
+            => new(player.Money, player, BetType.AllIn);
 
         public static Bet Raise(Money money, Player player)
         {

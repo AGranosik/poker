@@ -5,6 +5,7 @@ using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Entites.Game.Stacks
 {
+    //remove from winners
     public class Stack : Entity
     {
         private List<Pot> _pots = new();
@@ -16,13 +17,25 @@ namespace AGPoker.Entites.Game.Stacks
         public static Stack Create()
             => new();
 
-        public Money Value
+        public Money Worth
             => Money.Create(_pots.Sum(p => p.Value.Value));
 
         public void Call(Player player)
             => _pots.First().Call(player);
 
-        public void Raise(Bet bid)
-            => _pots.First().Raise(bid);
+        public IReadOnlyCollection<Pot> Pots
+            => _pots.AsReadOnly();
+
+        public void Raise(Bet bet)
+        {
+            if (bet.IsAllIn())
+            {
+
+            }
+            else
+            {
+                _pots.First().Raise(bet);
+            }
+        }
     }
 }
