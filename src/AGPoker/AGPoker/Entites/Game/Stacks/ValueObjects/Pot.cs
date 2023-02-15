@@ -10,7 +10,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         // all in pot
         // should create new pot if necessary 
         private List<Bet> _bets = new();
-        private Money _highestBid = Money.Create(0);
+        private Money _highestBet = Money.Create(0);
 
         private Pot() { }
 
@@ -20,10 +20,22 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public bool IsAllIn
             => _bets.Any(b => b.IsAllIn());
 
-        public List<Player> Winners
-            => _bets
-            .Where(b => b.Money == _highestBid)
-            .Select(b => b.Player).ToList();
+        public PotWinner GetWinners()
+        {
+            var groppedBets = _bets.GroupBy(b => b.Player)
+                .Where(gp => gp.Any(b => b.BetType != BetType.Fold))
+                .Select(gp => new
+                {
+                    Player = gp.Key,
+                    SumOfBets = Money.Create(gp.Sum(m => m.Money.Value))
+                })
+                .ToList();
+
+            var winners = groppedBets.Where(b => b.SumOfBets == _highestBet).ToList();
+            var winPrize = PrizePerWinner(winners.Count);
+
+            return PotWinner.Create(winners.Select(w => w.Player).ToList(), winPrize);
+        }
 
         public void Fold(Bet bet)
         {
@@ -54,7 +66,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             Bet bet;
             if (ShouldPlayerGiveChips(playerMoney))
             {
-                var missingChips = _highestBid - playerMoney;
+                var missingChips = _highestBet - playerMoney;
                 bet = player.Call(missingChips);
             }
             else
@@ -67,14 +79,24 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public static Pot Create()
             => new();
 
+        private Money PrizePerWinner(int numberOfWinners)
+        {
+            if (numberOfWinners == 0)
+                return Money.None;
+
+            var moneyInPot = _bets.Sum(b => b.Money.Value);
+
+            return Money.Create((moneyInPot / numberOfWinners)); // dont give a f*ck about remainder.
+        }
+
         private bool ShouldPlayerGiveChips(Money playerMoney)
         {
-            return playerMoney < _highestBid;
+            return playerMoney < _highestBet;
         }
 
         private void RaiseValidation(int playerBidAmount, Player player)
         {
-            if (playerBidAmount < _highestBid.Value)
+            if (playerBidAmount < _highestBet.Value)
                 throw new BetTooLowException();
 
             if (IsPlayerFoldedBefore(player))
@@ -83,8 +105,8 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         private void SetHighestBidIfNeccessary(int playerBidAmount)
         {
-            if (playerBidAmount > _highestBid.Value)
-                _highestBid = Money.Create(playerBidAmount);
+            if (playerBidAmount > _highestBet.Value)
+                _highestBet = Money.Create(playerBidAmount);
         }
 
         private int GetPlayerBetAmount(List<Bet> playerBids)

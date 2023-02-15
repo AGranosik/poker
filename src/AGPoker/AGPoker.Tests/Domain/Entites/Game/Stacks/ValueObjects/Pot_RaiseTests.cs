@@ -75,5 +75,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
 
             ((chipsBeforeBet - 30) == _player.Money.Value).Should().BeTrue();
         }
+
+        // rais should be to specific money so we should take earlier bets to account
     }
 }
