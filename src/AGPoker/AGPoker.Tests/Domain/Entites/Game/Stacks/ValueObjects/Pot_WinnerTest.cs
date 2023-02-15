@@ -21,7 +21,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
             winners.Should().BeEmpty();
         }
 
-        [Test]
-        public void 
+        //[Test]
+        //public void 
     }
 }
