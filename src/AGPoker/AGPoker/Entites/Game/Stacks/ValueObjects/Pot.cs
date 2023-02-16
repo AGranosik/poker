@@ -48,10 +48,11 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             _bets.Add(bet);
         }
 
+        // raise works as 'add my money to pot not like 'i want the highest be to be like: amount' 
         public void Raise(Bet bet) // player and Money
         {
-            var playerBids = TakePlayerBids(bet);
-            var playerBidAmount = GetPlayerBetAmount(playerBids);
+            var playerBets = TakePlayerBets(bet);
+            var playerBidAmount = GetPlayerBetAmount(playerBets);
             RaiseValidation(playerBidAmount, bet.Player);
             SetHighestBidIfNeccessary(playerBidAmount);
 
@@ -112,7 +113,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         private int GetPlayerBetAmount(List<Bet> playerBids)
             => playerBids.Sum(b => b.Money.Value);
 
-        private List<Bet> TakePlayerBids(Bet currentBid)
+        private List<Bet> TakePlayerBets(Bet currentBid)
         {
             var bids = _bets.Where(b => b.Player == currentBid.Player).ToList();
             bids.Add(currentBid);

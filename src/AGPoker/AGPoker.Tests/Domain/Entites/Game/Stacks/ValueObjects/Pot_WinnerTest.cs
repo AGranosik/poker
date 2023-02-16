@@ -69,7 +69,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
             var winners = _pot.GetWinners();
             winners.Should().NotBeNull();
             winners.Winners.Count.Should().Be(1);
-            winners.WinningPrize.Value.Should().Be(163);
+            winners.WinningPrize.Value.Should().Be(196);
             (winners.Winners.First() == _players[1]).Should().BeTrue();
         }
     }
