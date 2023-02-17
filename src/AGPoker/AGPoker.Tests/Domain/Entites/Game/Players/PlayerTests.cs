@@ -107,5 +107,26 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
             cards.All(c => playerCards.Any(pc => c == pc))
                 .Should().BeTrue();
         }
+
+        [Test]
+        public void AllIn_AllMoneyWereTaken_Success()
+        {
+            var moneyAmount = 20;
+            var player = Player.Create("hhh", "hhhh", moneyAmount);
+            var bet = player.AllIn();
+            bet.Money.Value.Should().Be(20);
+            (player.Money == Money.None).Should().BeTrue();
+        }
+
+        [Test]
+        public void AllIn_RaiseBetTakesAllMoneyItsAllInBet_Success()
+        {
+            var moneyAmount = 20;
+            var player = Player.Create("hhh", "hhhh", moneyAmount);
+            var bet = player.Raise(Money.Create(moneyAmount));
+            bet.Money.Value.Should().Be(20);
+            (player.Money == Money.None).Should().BeTrue();
+            bet.BetType.Should().Be(BetType.AllIn);
+        }
     }
 }

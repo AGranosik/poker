@@ -29,6 +29,11 @@ namespace AGPoker.Entites.Game.Stacks
         public List<PotWinner> GetWinners()
             => _pots.Select(p => p.GetWinners()).ToList();
 
+        //public void AllIn(Player player)
+        //{
+        //    var bet = player
+        //}
+
         public void Raise(Bet bet)
         {
             if (bet.IsAllIn())

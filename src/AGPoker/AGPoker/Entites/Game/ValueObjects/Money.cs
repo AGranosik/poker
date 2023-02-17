@@ -23,6 +23,14 @@ namespace AGPoker.Entites.Game.ValueObjects
             Value -= amount.Value;
         }
 
+        public Money TakeAll()
+        {
+            var result = Money.Create(Value);
+            Value = 0;
+
+            return result;
+        }
+
         private void CreationValidation(int value)
         {
             if (value < 0)

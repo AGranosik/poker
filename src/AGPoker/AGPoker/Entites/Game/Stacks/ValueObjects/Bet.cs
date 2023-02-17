@@ -20,8 +20,8 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public bool IsAllIn()
             => BetType.AllIn == BetType;
 
-        public static Bet AllIn(Player player)
-            => new(player.Money, player, BetType.AllIn);
+        public static Bet AllIn(Player player, Money money)
+            => new(money, player, BetType.AllIn);
 
         public static Bet Raise(Money money, Player player)
         {

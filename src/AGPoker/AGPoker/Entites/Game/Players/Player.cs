@@ -23,6 +23,8 @@ namespace AGPoker.Entites.Game.Game.Players
 
         private List<Card> _cards = new();
 
+        public Bet AllIn()
+            => Bet.AllIn(this, Money.TakeAll());
         public Bet Call(Money amount = null)
         {
             if(amount is not null)
@@ -33,7 +35,7 @@ namespace AGPoker.Entites.Game.Game.Players
         public Bet Raise(Money amount)
         {
             if (LastChipsGonnaBeTaken(amount))
-                return Bet.AllIn(this);
+                return AllIn();
 
             Money.Split(amount);
             return Bet.Raise(amount, this);
