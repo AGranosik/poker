@@ -26,6 +26,9 @@ namespace AGPoker.Entites.Game.Stacks
         public IReadOnlyCollection<Pot> Pots
             => _pots.AsReadOnly();
 
+        public List<PotWinner> GetWinners()
+            => _pots.Select(p => p.GetWinners()).ToList();
+
         public void Raise(Bet bet)
         {
             if (bet.IsAllIn())
@@ -37,5 +40,8 @@ namespace AGPoker.Entites.Game.Stacks
                 _pots.First().Raise(bet);
             }
         }
+
+        public void Fold(Bet bet)
+            => _pots.First().Fold(bet);
     }
 }
