@@ -29,16 +29,23 @@ namespace AGPoker.Entites.Game.Stacks
         public List<PotWinner> GetWinners()
             => _pots.Select(p => p.GetWinners()).ToList();
 
-        //public void AllIn(Player player)
-        //{
-        //    var bet = player
-        //}
+        public void AllIn(Player player)
+        {
+            var bet = player.AllIn();
+            var notAllInPot = _pots.FirstOrDefault(p => !p.IsAllIn);
+            if (notAllInPot is null)
+                throw new ArgumentException("Pot doesnt exist.");
+
+
+
+            _pots.First().AllIn(bet.Player);
+        }
 
         public void Raise(Bet bet)
         {
             if (bet.IsAllIn())
             {
-
+                //_pots.First().AllIn(bet.Player);
             }
             else
             {

@@ -14,6 +14,8 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         private Pot() { }
 
+        public Money HighestBet
+            => Money.Create(_highestBet.Value);
         public Money Value
             => Money.Create(_bets.Sum(b => b.Money.Value));
 
@@ -51,7 +53,8 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         // raise works as 'add my money to pot not like 'i want the highest be to be like: amount' 
         public void Raise(Bet bet) // player and Money
         {
-            var playerBets = TakePlayerBets(bet);
+            var playerBets = GetPlayerBets(bet);
+            playerBets.Add(bet);
             var playerBidAmount = GetPlayerBetAmount(playerBets);
             RaiseValidation(playerBidAmount, bet.Player);
             SetHighestBidIfNeccessary(playerBidAmount);
@@ -75,6 +78,26 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
                 bet = player.Call();
             }
             _bets.Add(bet);
+        }
+
+        public void AllIn(Player player) //shouldnt be bet everywhere??
+        {
+            var bet = player.AllIn();
+            _bets.Add(bet);
+            var playersBetAmount = GetPlayerBetAmount()
+            SetHighestBidIfNeccessary()
+        }
+
+        public bool CanTakeAllInBetPart(Bet bet)
+        {
+            if (!IsAllInBet(bet))
+                throw new ArgumentException();
+
+            var playerBets = GetPlayerBets(bet);
+            playerBets.Add(bet);
+            var betsAmount = GetPlayerBetAmount(playerBets);
+
+            return betsAmount > _highestBet.Value;
         }
 
         public static Pot Create()
@@ -113,16 +136,17 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         private int GetPlayerBetAmount(List<Bet> playerBids)
             => playerBids.Sum(b => b.Money.Value);
 
-        private List<Bet> TakePlayerBets(Bet currentBid)
+        private List<Bet> GetPlayerBets(Bet currentBid)
         {
             var bids = _bets.Where(b => b.Player == currentBid.Player).ToList();
-            bids.Add(currentBid);
             return bids;
         }
 
         private bool IsFoldBet(Bet bet)
             => bet.BetType == BetType.Fold && bet.Money == Money.None;
 
+        private bool IsAllInBet(Bet bet)
+            => bet.BetType == BetType.AllIn && bet.Player.Money == Money.None;
         private bool IsPlayerFoldedBefore(Player player)
             => _bets.Any(b => BetType.Fold == b.BetType && b.Player == player);
     }

@@ -36,5 +36,13 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
             var func = () => Bet.Call(Player.Create("hehe", "hehe"), Money.None);
             func.Should().NotThrow<ArgumentException>();
         }
+
+        [Test]
+        public void Bet_AllInBetIsThatType_Success()
+        {
+            var bet = Bet.AllIn(Player.Create("hehe", "hehe"), Money.Create(20));
+            bet.Should().NotBeNull();
+            bet.BetType.Should().Be(BetType.AllIn);
+        }
     }
 }
