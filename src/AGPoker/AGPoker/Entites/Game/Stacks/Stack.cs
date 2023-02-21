@@ -24,7 +24,7 @@ namespace AGPoker.Entites.Game.Stacks
             => _pots.First().Call(player);
 
         public IReadOnlyCollection<Pot> Pots
-            => _pots.AsReadOnly();
+            => _pots.OrderBy(p => p.HighestBet.Value).ToList().AsReadOnly();
 
         public List<PotWinner> GetWinners()
             => _pots.Select(p => p.GetWinners()).ToList();
@@ -36,9 +36,27 @@ namespace AGPoker.Entites.Game.Stacks
             if (notAllInPot is null)
                 throw new ArgumentException("Pot doesnt exist.");
 
+            var pots = Pots;
 
+            for(int i =0; i < pots.Count && bet.Money.Any; i++)
+            {
+                var pot = pots.ElementAt(i);
+                if (pot.CanTakeAllInBetPart(bet))
+                {
+                    pot.TakePartOfAllInBet(bet);
+                }
+                else
+                {
 
-            _pots.First().AllIn(bet.Player);
+                }
+            }
+
+            if(bet.Money.Any)
+            {
+                _pots.Add(Pot.Create(bet));
+            }
+
+            //_pots.First().AllIn(bet.Player);
         }
 
         public void Raise(Bet bet)

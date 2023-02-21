@@ -58,7 +58,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void CanTakeAllInBetPart_BetsSmallerThanHighest_ReturnsFalse()
         { 
-            _pot.Raise(_secondPlayer.Raise(Money.Create(90)));
+            _pot.Raise(_secondPlayer.Raise(Money.Create(190)));
             var allInBet = _player.AllIn();
             var result = _pot.CanTakeAllInBetPart(allInBet);
             result.Should().BeFalse();

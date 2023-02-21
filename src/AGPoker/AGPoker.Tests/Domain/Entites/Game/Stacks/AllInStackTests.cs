@@ -12,8 +12,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
     {
         private Stack _stack;
         private Player _player = Player.Create("hehe", "hehe", 100);
-        private Player _player2 = Player.Create("hehe", "hehe", 200);
-        private Player _player3 = Player.Create("hehe", "hehe", 300);
+        private Player _player2 = Player.Create("hehe2", "hehe", 200);
+        private Player _player3 = Player.Create("hehe3", "hehe", 300);
 
         [SetUp]
         public void SetUp()
@@ -57,8 +57,11 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             _stack.AllIn(_player2);
 
             _stack.Pots.Count.Should().Be(2);
-            _stack.Pots.All(p => p.IsAllIn)
+            _stack.Pots.Any(p => p.IsAllIn)
                 .Should().BeTrue();
+
+
+            var thirdPlayer // check if there is a good winner in each pot.
 
             _stack.Pots.Count(p => p.HighestBet.Value == 200)
                 .Should().Be(1);

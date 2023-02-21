@@ -14,6 +14,11 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         private Pot() { }
 
+        private Pot(Bet bet) // tests
+        {
+            _bets.Add(bet);
+            SetHighestBidIfNeccessary(bet.Money.Value);
+        }
         public Money HighestBet
             => Money.Create(_highestBet.Value);
         public Money Value
@@ -84,8 +89,8 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         {
             var bet = player.AllIn();
             _bets.Add(bet);
-            var playersBetAmount = GetPlayerBetAmount()
-            SetHighestBidIfNeccessary()
+            var playerBetsAmount = GetPlayerBetAmount(GetPlayerBets(bet));
+            SetHighestBidIfNeccessary(playerBetsAmount);
         }
 
         public bool CanTakeAllInBetPart(Bet bet)
@@ -100,8 +105,24 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             return betsAmount > _highestBet.Value;
         }
 
+        public void TakePartOfAllInBet(Bet bet)
+        {
+            if (!CanTakeAllInBetPart(bet))
+                throw new ArgumentException();
+
+            var playerBets = GetPlayerBets(bet);
+            playerBets.Add(bet);
+            var betsAmount = GetPlayerBetAmount(playerBets);
+
+            var howMuchToTake = Money.Create(_highestBet.Value - betsAmount);
+            bet.Money.Split(howMuchToTake); // method in bet where we checking if its an all in bet.
+        }
+
         public static Pot Create()
             => new();
+
+        public static Pot Create(Bet bet)
+            => new(bet);
 
         private Money PrizePerWinner(int numberOfWinners)
         {
