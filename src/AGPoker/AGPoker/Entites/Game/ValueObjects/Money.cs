@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using AGPoker.Common.ValueObjects;
+﻿using AGPoker.Common.ValueObjects;
 
 namespace AGPoker.Entites.Game.ValueObjects
 {
@@ -19,6 +18,9 @@ namespace AGPoker.Entites.Game.ValueObjects
 
         public void Split(Money amount)
         {
+            if (amount == this)
+                throw new ArgumentException();
+
             SplitValidation(amount);
             Value -= amount.Value;
         }

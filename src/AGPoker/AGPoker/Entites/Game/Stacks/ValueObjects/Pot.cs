@@ -118,6 +118,15 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             bet.Money.Split(howMuchToTake); // method in bet where we checking if its an all in bet.
         }
 
+        //public Pot SplitIntoSmaller(Bet newHigestBet)
+        //{
+        //    var playersWithHigherBet = _bets.GroupBy(b => b.Player)
+        //        .Where(b => b.Sum(bet => bet.Money.Value) > newHigestBet.Money.Value)
+        //        .Select(b => b.Key);
+
+        //    // cut bets into new highest bet.
+        //}
+
         public static Pot Create()
             => new();
 

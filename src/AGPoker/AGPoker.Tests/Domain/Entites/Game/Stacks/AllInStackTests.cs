@@ -60,14 +60,20 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             _stack.Pots.Any(p => p.IsAllIn)
                 .Should().BeTrue();
 
+            var oldPot = _stack.Pots.First(p => p.HighestBet.Value == 200);
 
-            var thirdPlayer // check if there is a good winner in each pot.
+            oldPot.Should().NotBeNull();
+            var oldPotWinners = oldPot.GetWinners();
+            oldPotWinners.Should().NotBeNull();
+            oldPotWinners.Winners.Count.Should().Be(1);
+            oldPotWinners.WinningPrize.Value.Should().Be(400);
 
-            _stack.Pots.Count(p => p.HighestBet.Value == 200)
-                .Should().Be(1);
+            var newPot = _stack.Pots.First(p => p.HighestBet.Value == 50);
+            newPot.Should().NotBeNull();
+            var newPotWinners = newPot.GetWinners();
 
-            _stack.Pots.Count(p => p.HighestBet.Value == 50)
-                .Should().Be(1);
+            newPotWinners.Winners.Count.Should().Be(1);
+            newPotWinners.WinningPrize.Value.Should().Be(50);
         }
     }
 }

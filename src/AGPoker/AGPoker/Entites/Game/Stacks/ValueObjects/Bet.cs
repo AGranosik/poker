@@ -35,6 +35,12 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public static Bet Fold(Player player)
             => new(Money.None, player, BetType.Fold);
 
+        public Bet CutIntoSmaller(Money moneyToTakeOut)
+        {
+            Money.Split(moneyToTakeOut);
+            return new(moneyToTakeOut, Player, BetType.Cut);
+        }
+
         private static void CreationValidation(Money money, Player player)
         {
             if(money is null)
@@ -59,6 +65,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         Fold,
         Call,
         Raise,
-        AllIn
+        AllIn,
+        Cut
     }
 }
