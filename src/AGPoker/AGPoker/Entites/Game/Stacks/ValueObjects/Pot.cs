@@ -85,15 +85,15 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             _bets.Add(bet);
         }
 
-        public void AllIn(Player player) //shouldnt be bet everywhere??
+        public void AllIn(Bet bet) //shouldnt be bet everywhere??
         {
-            var bet = player.AllIn();
             _bets.Add(bet);
             var playerBetsAmount = GetPlayerBetAmount(GetPlayerBets(bet));
+            RaiseValidation(playerBetsAmount, bet.Player);
             SetHighestBidIfNeccessary(playerBetsAmount);
         }
 
-        public bool CanTakeAllInBetPart(Bet bet)
+        public bool CanTakeAllInBetPart(Bet bet) //tests
         {
             if (!IsAllInBet(bet))
                 throw new ArgumentException();
@@ -102,7 +102,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             playerBets.Add(bet);
             var betsAmount = GetPlayerBetAmount(playerBets);
 
-            return betsAmount > _highestBet.Value;
+            return betsAmount >= _highestBet.Value;
         }
 
         public void TakePartOfAllInBet(Bet bet)
@@ -118,14 +118,15 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             bet.Money.Split(howMuchToTake); // method in bet where we checking if its an all in bet.
         }
 
-        //public Pot SplitIntoSmaller(Bet newHigestBet)
-        //{
-        //    var playersWithHigherBet = _bets.GroupBy(b => b.Player)
-        //        .Where(b => b.Sum(bet => bet.Money.Value) > newHigestBet.Money.Value)
-        //        .Select(b => b.Key);
+        public Pot SplitIntoSmaller(Bet newHigestBet)
+        {
+            // group or take out some bets and mark some of them as splited
+            var playersWithHigherBet = _bets.GroupBy(b => b.Player)
+                .Where(b => b.Sum(bet => bet.Money.Value) > newHigestBet.Money.Value)
+                .Select(b => b.Key);
 
-        //    // cut bets into new highest bet.
-        //}
+            // cut bets into new highest bet.
+        }
 
         public static Pot Create()
             => new();
@@ -142,6 +143,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
             return Money.Create((moneyInPot / numberOfWinners)); // dont give a f*ck about remainder.
         }
+
 
         private bool ShouldPlayerGiveChips(Money playerMoney)
         {

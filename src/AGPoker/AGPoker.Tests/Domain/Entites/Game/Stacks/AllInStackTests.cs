@@ -19,7 +19,10 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         public void SetUp()
         {
             _stack = Stack.Create();
-        }
+            _player = Player.Create("hehe", "hehe", 100);
+            _player2 = Player.Create("hehe2", "hehe", 200);
+            _player3 = Player.Create("hehe3", "hehe", 300);
+    }
 
         //cases:
         // current pot can be all in pot

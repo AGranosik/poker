@@ -40,7 +40,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void CanTakeAllInBetPart_BetsHigherThanHighest_ReturnsTrue()
         {
-            _pot.AllIn(_player);
+            _pot.AllIn(_player.AllIn());
             var allInBet = _secondPlayer.AllIn();
             var result = _pot.CanTakeAllInBetPart(allInBet);
             result.Should().BeTrue();
@@ -67,7 +67,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         [Test]
         public void Validation_IsAllInBet_Success()
         {
-            _pot.AllIn(_player);
+            _pot.AllIn(_player.AllIn());
             _pot.IsAllIn.Should().BeTrue();
         }
     }

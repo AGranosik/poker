@@ -37,26 +37,24 @@ namespace AGPoker.Entites.Game.Stacks
                 throw new ArgumentException("Pot doesnt exist.");
 
             var pots = Pots;
-
+            Pot lastPot;
             for(int i =0; i < pots.Count && bet.Money.Any; i++)
             {
-                var pot = pots.ElementAt(i);
-                if (pot.CanTakeAllInBetPart(bet))
+                lastPot = pots.ElementAt(i);
+                if (ShouldTakePartOfBet(bet, lastPot))
                 {
-                    pot.TakePartOfAllInBet(bet);
+                    lastPot.TakePartOfAllInBet(bet);
                 }
                 else
                 {
-
+                    lastPot.AllIn(bet);
                 }
             }
 
-            if(bet.Money.Any)
+            if (bet.Money.Any)
             {
                 _pots.Add(Pot.Create(bet));
             }
-
-            //_pots.First().AllIn(bet.Player);
         }
 
         public void Raise(Bet bet)
@@ -73,5 +71,8 @@ namespace AGPoker.Entites.Game.Stacks
 
         public void Fold(Bet bet)
             => _pots.First().Fold(bet);
+
+        private bool ShouldTakePartOfBet(Bet bet, Pot pot)
+            => pot.IsAllIn && pot.CanTakeAllInBetPart(bet);
     }
 }

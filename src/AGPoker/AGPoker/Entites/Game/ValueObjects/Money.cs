@@ -27,7 +27,7 @@ namespace AGPoker.Entites.Game.ValueObjects
 
         public Money TakeAll()
         {
-            var result = Money.Create(Value);
+            var result = Create(Value);
             Value = 0;
 
             return result;
