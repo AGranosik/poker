@@ -47,6 +47,9 @@ namespace AGPoker.Entites.Game.ValueObjects
                 throw new ArgumentException(nameof(amount));
         }
 
+        public static Money operator +(Money money1, Money money2)
+            => Create(money1.Value + money2.Value);
+
         public static Money operator -(Money money1, Money money2)
             => Create(money1.Value - money2.Value);
 

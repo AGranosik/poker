@@ -4,7 +4,7 @@ using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Entites.Game.Stacks.ValueObjects
 {
-    public class Bet : ValueObject // refactor to larger folders
+    public class Bet : ValueObject // refactor to larger folders && (maybe) into different bet types instead variable inside this one
     {
         private Bet(Money money, Player player, BetType bidType) // set type of bid?
         {

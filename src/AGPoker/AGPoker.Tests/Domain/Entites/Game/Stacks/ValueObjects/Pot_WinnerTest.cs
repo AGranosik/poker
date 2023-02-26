@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
 {
     [TestFixture]
-    internal class Pot_WinnerTest
+    internal class Pot_WinnerTest //merge into one file
     {
         private Pot _pot;
         private List<Player> _players = new List<Player>

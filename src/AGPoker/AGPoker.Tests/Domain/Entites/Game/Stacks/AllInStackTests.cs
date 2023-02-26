@@ -29,7 +29,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         // create enxt one because the first is already all in and player has highest value in it
         // create enxt one because the first is already all in and player has no highest value in it
         // create enxt one because the first is already all in but player has not enought to even highest bet, so create the third pot 
-        //  
+        //  all when the same player bets in pot
 
         [Test]
         public void AllIn_AllInPotCreated_Success()

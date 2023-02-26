@@ -118,14 +118,20 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             bet.Money.Split(howMuchToTake); // method in bet where we checking if its an all in bet.
         }
 
-        public Pot SplitIntoSmaller(Bet newHigestBet)
+        public IReadOnlyCollection<Bet> SplitIntoSmaller(Bet newHigestBet)
         {
-            // group or take out some bets and mark some of them as splited
-            var playersWithHigherBet = _bets.GroupBy(b => b.Player)
-                .Where(b => b.Sum(bet => bet.Money.Value) > newHigestBet.Money.Value)
-                .Select(b => b.Key);
+            SplitIntoSmallerValidation();
+
+            var betsAboveHighest = new List<Bet>();
+            var allPlayers = _bets.Select(b => b.Player)
+                .Distinct()
+                .ToList();
+
+            foreach (var player in allPlayers)
+                betsAboveHighest.AddRange(SplitPlayerBetsUntilEqualNewHighestBet(newHigestBet, player));
 
             // cut bets into new highest bet.
+            return betsAboveHighest;
         }
 
         public static Pot Create()
@@ -133,6 +139,34 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         public static Pot Create(Bet bet)
             => new(bet);
+
+        private List<Bet> SplitPlayerBetsUntilEqualNewHighestBet(Bet newHighestBet, Player player)
+        {
+            var playerBets = _bets.Where(b => b.Player == player);
+            var betsAboveHighestBet = new List<Bet>();
+            Money sum = Money.None;
+            var highestBetValue = newHighestBet.Money;
+
+            foreach(var bet in playerBets)
+            {
+                var newSum = sum + bet.Money;
+
+                if (sum > highestBetValue)
+                    betsAboveHighestBet.Add(bet);
+                else if (newSum > highestBetValue)
+                    betsAboveHighestBet.Add(bet); // split bet if neccessary
+
+                sum = newSum;
+            }
+
+            return betsAboveHighestBet;
+        }
+
+        private void SplitIntoSmallerValidation()
+        {
+            if (_bets is null || _bets.Count() == 0)
+                throw new ArgumentException();
+        }
 
         private Money PrizePerWinner(int numberOfWinners)
         {
