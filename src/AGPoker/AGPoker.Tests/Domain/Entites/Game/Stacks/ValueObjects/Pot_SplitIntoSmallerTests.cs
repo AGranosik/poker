@@ -1,4 +1,5 @@
-﻿using AGPoker.Entites.Game.Game.Players;
+﻿using System.Security.Cryptography;
+using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Entites.Game.ValueObjects;
 using FluentAssertions;
@@ -83,6 +84,40 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
             result.Count.Should().Be(2);
             result.All(b => (b.Player == _player && b.Money.Value == 20) || (b.Player == _player2 && b.Money.Value == 20))
                 .Should().BeTrue();
+        }
+
+        [Test]
+        public void SplitBets_HigherBets_ReturnList() // simple = no need to split
+        {
+            _pot.Raise(Bet.Raise(Money.Create(20), _player));
+            _pot.Raise(Bet.Raise(Money.Create(25), _player2));
+            _pot.Raise(Bet.Raise(Money.Create(15), _player2));
+
+            var result = _pot.SplitIntoSmaller(Bet.Raise(Money.Create(20), _player2));
+            result.Should().NotBeNull();
+            result.Count.Should().Be(2);
+            result.All(b => b.Player == _player2 && (b.Money.Value == 15 || b.Money.Value == 5))
+                .Should().BeTrue();
+        }
+
+        [Test]
+        public void SplitBets_MultipleSplits_ReturnList()
+        {
+
+            _pot.Raise(Bet.Raise(Money.Create(10), _player));
+            _pot.Raise(Bet.Raise(Money.Create(10), _player2));
+            _pot.Raise(Bet.Raise(Money.Create(10), _player3));
+            _pot.Raise(Bet.Raise(Money.Create(10), _player3));
+            _pot.Raise(Bet.Raise(Money.Create(10), _player2));
+            _pot.Raise(Bet.Raise(Money.Create(10), _player));
+            _pot.Raise(Bet.Raise(Money.Create(10), _player));
+            _pot.Raise(Bet.Raise(Money.Create(10), _player2));
+
+            var result = _pot.SplitIntoSmaller(Bet.Raise(Money.Create(12), _player2));
+            result.Should().NotBeNull();
+            result.Count.Should().Be(5);
+            var sumOfBets = result.Sum(b => b.Money.Value);
+            sumOfBets.Should().Be(44);
         }
     }
 }

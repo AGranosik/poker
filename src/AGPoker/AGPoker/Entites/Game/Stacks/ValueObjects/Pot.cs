@@ -151,10 +151,14 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             {
                 var newSum = sum + bet.Money;
 
-                if (sum > highestBetValue)
+                if (sum >= highestBetValue)
                     betsAboveHighestBet.Add(bet);
                 else if (newSum > highestBetValue)
-                    betsAboveHighestBet.Add(bet); // split bet if neccessary
+                {
+                    var howMuchToTakeFromBet = newSum - highestBetValue;
+                    var splitedBet = bet.Split(howMuchToTakeFromBet);
+                    betsAboveHighestBet.Add(splitedBet); // split bet if neccessary
+                }
 
                 sum = newSum;
             }

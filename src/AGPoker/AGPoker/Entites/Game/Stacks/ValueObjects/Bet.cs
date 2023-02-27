@@ -16,7 +16,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         public Money Money { get; init; }
         public Player Player { get; set; }
-        public BetType BetType { get; init; }
+        public BetType BetType { get; private set; }
         public bool IsAllIn()
             => BetType.AllIn == BetType;
 
@@ -35,9 +35,10 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public static Bet Fold(Player player)
             => new(Money.None, player, BetType.Fold);
 
-        public Bet CutIntoSmaller(Money moneyToTakeOut)
+        public Bet Split(Money moneyToTakeOut)
         {
             Money.Split(moneyToTakeOut);
+            BetType = BetType.Cut; //shoud be a flag to leave some history
             return new(moneyToTakeOut, Player, BetType.Cut);
         }
 

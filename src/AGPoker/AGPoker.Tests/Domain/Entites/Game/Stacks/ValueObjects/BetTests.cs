@@ -50,7 +50,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         public void Bet_FoldedBetCannotBeCut_ThrowsException()
         {
             var foldedBet = _player.Fold();
-            var func = () => foldedBet.CutIntoSmaller(Money.Create(20));
+            var func = () => foldedBet.Split(Money.Create(20));
             func.Should().Throw<ArgumentException>();
         }
 
@@ -58,7 +58,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         public void Bet_CutCannotBeHigherThanBetItself_ThrowsException()
         {
             var betToCut = _player.Raise(Money.Create(10));
-            var func = () => betToCut.CutIntoSmaller(Money.Create(20));
+            var func = () => betToCut.Split(Money.Create(20));
             func.Should().Throw<ArgumentException>();
         }
 
@@ -66,7 +66,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         public void Bet_CannotCutWholeBet_ThrowsException()
         {
             var betToCut = _player.Raise(Money.Create(10));
-            var func = () => betToCut.CutIntoSmaller(Money.Create(10));
+            var func = () => betToCut.Split(Money.Create(10));
             func.Should().Throw<ArgumentException>();
         }
 
@@ -74,7 +74,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         public void Bet_CutIntoSmaller_Success()
         {
             var betToCut = Bet.Call(_player, Money.Create(30));
-            var cutBet = betToCut.CutIntoSmaller(Money.Create(20));
+            var cutBet = betToCut.Split(Money.Create(20));
             cutBet.Should().NotBeNull();
             betToCut.Money.Value.Should().Be(10);
             cutBet.Money.Value.Should().Be(20);
