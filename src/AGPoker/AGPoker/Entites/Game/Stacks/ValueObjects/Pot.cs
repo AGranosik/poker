@@ -14,10 +14,13 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         private Pot() { }
 
-        private Pot(Bet bet) // tests
+        private Pot(List<Bet> bets) // tests
         {
-            _bets.Add(bet);
-            SetHighestBidIfNeccessary(bet.Money.Value);
+            _bets = bets;
+            var maxBet = _bets.GroupBy(b => b.Player)
+                .Max(p => p.Sum(x => x.Money.Value));
+
+            SetHighestBidIfNeccessary(maxBet);
         }
         public Money HighestBet
             => Money.Create(_highestBet.Value);
@@ -85,15 +88,16 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             _bets.Add(bet);
         }
 
-        public void AllIn(Bet bet) //shouldnt be bet everywhere??
+        public List<Bet> AllIn(Bet bet) //shouldnt be bet everywhere??
         {
             _bets.Add(bet);
             var playerBetsAmount = GetPlayerBetAmount(GetPlayerBets(bet));
-            RaiseValidation(playerBetsAmount, bet.Player);
-            SetHighestBidIfNeccessary(playerBetsAmount);
+            var result =  SplitIntoSmaller(bet); // set highest bet
+            SetHighestBidIfNeccessary(playerBetsAmount, result.Count > 0);
+            return result;
         }
 
-        public bool CanTakeAllInBetPart(Bet bet) //tests
+        public bool CanTakeAllInBetPart(Bet bet)
         {
             if (!IsAllInBet(bet))
                 throw new ArgumentException();
@@ -118,7 +122,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             bet.Money.Split(howMuchToTake); // method in bet where we checking if its an all in bet.
         }
 
-        public IReadOnlyCollection<Bet> SplitIntoSmaller(Bet newHigestBet)
+        public List<Bet> SplitIntoSmaller(Bet newHigestBet)
         {
             SplitIntoSmallerValidation();
 
@@ -137,8 +141,8 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public static Pot Create()
             => new();
 
-        public static Pot Create(Bet bet)
-            => new(bet);
+        public static Pot Create(List<Bet> bets)
+            => new(bets);
 
         private List<Bet> SplitPlayerBetsUntilEqualNewHighestBet(Bet newHighestBet, Player player)
         {
@@ -197,9 +201,9 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
                 throw new PlayerFoldedBeforeException();
         }
 
-        private void SetHighestBidIfNeccessary(int playerBidAmount)
+        private void SetHighestBidIfNeccessary(int playerBidAmount, bool wasSplited = false)
         {
-            if (playerBidAmount > _highestBet.Value)
+            if (wasSplited || playerBidAmount > _highestBet.Value)
                 _highestBet = Money.Create(playerBidAmount);
         }
 

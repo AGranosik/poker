@@ -36,7 +36,7 @@ namespace AGPoker.Entites.Game.Stacks
             if (notAllInPot is null)
                 throw new ArgumentException("Pot doesnt exist.");
 
-            var pots = Pots;
+            var pots = Pots.OrderBy;
             Pot lastPot;
             for(int i =0; i < pots.Count && bet.Money.Any; i++)
             {
@@ -47,13 +47,10 @@ namespace AGPoker.Entites.Game.Stacks
                 }
                 else
                 {
-                    lastPot.AllIn(bet);
+                    var bets = lastPot.AllIn(bet);
+                    if(bets.Any())
+                        _pots.Add(Pot.Create(bets));
                 }
-            }
-
-            if (bet.Money.Any)
-            {
-                _pots.Add(Pot.Create(bet));
             }
         }
 
