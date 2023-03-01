@@ -11,17 +11,19 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
     internal class AllInStackTests
     {
         private Stack _stack;
-        private Player _player = Player.Create("hehe", "hehe", 90);
-        private Player _player2 = Player.Create("hehe2", "hehe", 200);
-        private Player _player3 = Player.Create("hehe3", "hehe", 300);
+        private Player _player;
+        private Player _player2;
+        private Player _player3;
+        private Player _player4;
 
         [SetUp]
         public void SetUp()
         {
             _stack = Stack.Create();
-            _player = Player.Create("hehe", "hehe", 90);
-            _player2 = Player.Create("hehe2", "hehe", 200);
-            _player3 = Player.Create("hehe3", "hehe", 300);
+            _player = Player.Create("_player", "hehe", 90);
+            _player2 = Player.Create("_player2", "hehe", 200);
+            _player3 = Player.Create("_player3", "hehe", 300);
+            _player4 = Player.Create("_player4", "hehe", 100);
     }
 
         //cases:
@@ -104,6 +106,69 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             secondPotWinners.WinningPrize.Value.Should().Be(110);
 
             var thirdPot = _stack.Pots.First(p => p.HighestBet.Value == 50);
+            thirdPot.Should().NotBeNull();
+            var thirdPotWinners = thirdPot.GetWinners();
+            thirdPotWinners.Winners.Count.Should().Be(1);
+            thirdPotWinners.WinningPrize.Value.Should().Be(50);
+        }
+
+        [Test]
+        public void AllIn_SmallerAllInAfterAnother_EnoughPotsShouldBeCreated2()
+        {
+            _stack.Raise(Bet.Raise(Money.Create(250), _player3));
+            _stack.AllIn(_player2);
+            _stack.AllIn(_player4);
+
+
+            _stack.Pots.Count.Should().Be(3);
+            _stack.Pots.Any(p => p.IsAllIn)
+                .Should().BeTrue();
+
+            var firstPot = _stack.Pots.First(p => p.HighestBet.Value == 100);
+            firstPot.Should().NotBeNull();
+            var firstPotWinners = firstPot.GetWinners();
+            firstPotWinners.Winners.Count.Should().Be(3);
+            firstPotWinners.WinningPrize.Value.Should().Be(100);
+
+            var secondPot = _stack.Pots.Last(p => p.HighestBet.Value == 100);
+            secondPot.Should().NotBeNull();
+            var secondPotWinners = secondPot.GetWinners();
+            secondPotWinners.Winners.Count.Should().Be(2);
+            secondPotWinners.WinningPrize.Value.Should().Be(100);
+
+            var thirdPot = _stack.Pots.Last(p => p.HighestBet.Value == 50);
+            thirdPot.Should().NotBeNull();
+            var thirdPotWinners = thirdPot.GetWinners();
+            thirdPotWinners.Winners.Count.Should().Be(1);
+            thirdPotWinners.WinningPrize.Value.Should().Be(50);
+        }
+
+        [Test]
+        public void AllIn_SmallerAllInAfterAnother_EnoughPotsShouldBeCreated3()
+        {
+            _stack.Raise(Bet.Raise(Money.Create(250), _player3)); //250 -> 50
+            _stack.AllIn(_player2); //200 x2 -> 100 x3 
+            _stack.AllIn(_player); // 90 x4
+            _stack.AllIn(_player4); // 100 -> 10 x3
+
+
+            _stack.Pots.Count.Should().Be(4);
+            _stack.Pots.Any(p => p.IsAllIn)
+                .Should().BeTrue();
+
+            var firstPot = _stack.Pots.First(p => p.HighestBet.Value == 90);
+            firstPot.Should().NotBeNull();
+            var firstPotWinners = firstPot.GetWinners();
+            firstPotWinners.Winners.Count.Should().Be(4);
+            firstPotWinners.WinningPrize.Value.Should().Be(90);
+
+            var secondPot = _stack.Pots.Last(p => p.HighestBet.Value == 100);
+            secondPot.Should().NotBeNull();
+            var secondPotWinners = secondPot.GetWinners();
+            secondPotWinners.Winners.Count.Should().Be(2);
+            secondPotWinners.WinningPrize.Value.Should().Be(100);
+
+            var thirdPot = _stack.Pots.Last(p => p.HighestBet.Value == 50);
             thirdPot.Should().NotBeNull();
             var thirdPotWinners = thirdPot.GetWinners();
             thirdPotWinners.Winners.Count.Should().Be(1);
