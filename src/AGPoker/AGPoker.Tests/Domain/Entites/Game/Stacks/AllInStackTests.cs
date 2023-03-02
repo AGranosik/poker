@@ -147,7 +147,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         public void AllIn_SmallerAllInAfterAnother_EnoughPotsShouldBeCreated3()
         {
             _stack.Raise(Bet.Raise(Money.Create(250), _player3)); //250 -> 50
-            _stack.AllIn(_player2); //200 x2 -> 100 x3 
+            _stack.AllIn(_player2); //200 x2 -> 110 x2 -> 100 x3 
             _stack.AllIn(_player); // 90 x4
             _stack.AllIn(_player4); // 100 -> 10 x3
 
@@ -173,6 +173,76 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             var thirdPotWinners = thirdPot.GetWinners();
             thirdPotWinners.Winners.Count.Should().Be(1);
             thirdPotWinners.WinningPrize.Value.Should().Be(50);
+        }
+
+        [Test]
+        public void AllIn_SmallerAllInAfterAnother_EnoughPotsShouldBeCreated4()
+        {
+            _stack.Raise(Bet.Raise(Money.Create(250), _player3)); //250 -> 50
+            _stack.AllIn(_player2); //200 x2 -> 110 x2 -> 100 x3 
+            _stack.AllIn(_player4); // 100 -> 10 x3
+            _stack.AllIn(_player); // 90 x4
+
+
+            _stack.Pots.Count.Should().Be(4);
+            _stack.Pots.Any(p => p.IsAllIn)
+                .Should().BeTrue();
+
+            var firstPot = _stack.Pots.First(p => p.HighestBet.Value == 90);
+            firstPot.Should().NotBeNull();
+            var firstPotWinners = firstPot.GetWinners();
+            firstPotWinners.Winners.Count.Should().Be(4);
+            firstPotWinners.WinningPrize.Value.Should().Be(90);
+
+            var secondPot = _stack.Pots.Last(p => p.HighestBet.Value == 100);
+            secondPot.Should().NotBeNull();
+            var secondPotWinners = secondPot.GetWinners();
+            secondPotWinners.Winners.Count.Should().Be(2);
+            secondPotWinners.WinningPrize.Value.Should().Be(100);
+
+            var thirdPot = _stack.Pots.Last(p => p.HighestBet.Value == 50);
+            thirdPot.Should().NotBeNull();
+            var thirdPotWinners = thirdPot.GetWinners();
+            thirdPotWinners.Winners.Count.Should().Be(1);
+            thirdPotWinners.WinningPrize.Value.Should().Be(50);
+        }
+
+        [Test]
+        public void AllIn_SmallerAllInAfterAnotherNumberOfPlayerAsPriority_EnoughPotsShouldBeCreated5()
+        {
+            _stack.AllIn(_player); // 90 -> x4
+            _stack.AllIn(_player3); // 300 -> 210 -> 100
+            _stack.AllIn(_player2); // 200 -> 110 x2
+            _stack.AllIn(_player4); // 100 -> 10 x3
+
+
+            _stack.Pots.Count.Should().Be(4);
+            _stack.Pots.Any(p => p.IsAllIn)
+                .Should().BeTrue();
+
+            var firstPot = _stack.Pots.FirstOrDefault(p => p.HighestBet.Value == 90);
+            firstPot.Should().NotBeNull();
+            var firstPotWinners = firstPot.GetWinners();
+            firstPotWinners.Winners.Count.Should().Be(4);
+            firstPotWinners.WinningPrize.Value.Should().Be(90);
+
+            var secondPot = _stack.Pots.LastOrDefault(p => p.HighestBet.Value == 90);
+            secondPot.Should().NotBeNull();
+            var secondPotWinners = secondPot.GetWinners();
+            secondPotWinners.Winners.Count.Should().Be(1);
+            secondPotWinners.WinningPrize.Value.Should().Be(90);
+
+            var fourthPot = _stack.Pots.LastOrDefault(p => p.HighestBet.Value == 110);
+            fourthPot.Should().NotBeNull();
+            var fourthPottWinners = fourthPot.GetWinners();
+            fourthPottWinners.Winners.Count.Should().Be(2);
+            fourthPottWinners.WinningPrize.Value.Should().Be(110);
+
+            var thirdPot = _stack.Pots.LastOrDefault(p => p.HighestBet.Value == 10);
+            thirdPot.Should().NotBeNull();
+            var thirdPotWinners = thirdPot.GetWinners();
+            thirdPotWinners.Winners.Count.Should().Be(2);
+            thirdPotWinners.WinningPrize.Value.Should().Be(10);
         }
     }
 }

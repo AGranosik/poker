@@ -27,6 +27,9 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public Money Value
             => Money.Create(_bets.Sum(b => b.Money.Value));
 
+        public int NumberOfPlayers
+            => _bets.Select(b => b.Player).Distinct().Count();
+
         public bool IsAllIn
             => _bets.Any(b => b.IsAllIn());
 
@@ -109,7 +112,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             return betsAmount >= _highestBet.Value;
         }
 
-        public void TakePartOfAllInBet(Bet bet) //tests
+        public Bet TakePartOfAllInBet(Bet bet) //tests
         {
             if (!CanTakeAllInBetPart(bet))
                 throw new ArgumentException();
@@ -119,7 +122,9 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             var betsAmount = GetPlayerBetAmount(playerBets);
 
             var howMuchToTake = Money.Create(betsAmount - HighestBet.Value);
-            bet.Money.Split(howMuchToTake); // method in bet where we checking if its an all in bet.
+            var result = bet.Split(howMuchToTake);
+            _bets.Add(bet);
+            return result;
         }
 
         public List<Bet> SplitIntoSmaller(Bet newHigestBet)
@@ -151,7 +156,6 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             Money sum = Money.None;
             var highestBetValue = newHighestBet.Money;
 
-            // wrzucony bet jest rowny nowemu najwyzszemu
             foreach(var bet in playerBets)
             {
                 var newSum = sum + bet.Money;
@@ -184,7 +188,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
             var moneyInPot = _bets.Sum(b => b.Money.Value);
 
-            return Money.Create((moneyInPot / numberOfWinners)); // dont give a f*ck about remainder.
+            return Money.Create((moneyInPot / numberOfWinners)); // should be total
         }
 
 

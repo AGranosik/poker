@@ -32,24 +32,39 @@ namespace AGPoker.Entites.Game.Stacks
         public void AllIn(Player player)
         {
             var bet = player.AllIn();
-            var pots = Pots.Reverse().ToList();
+            var pots = Pots.OrderByDescending(p => p.IsAllIn)
+                .ThenBy(p => p.HighestBet.Value).ToList();
 
             Pot lastPot;
             for(int i =0; i < pots.Count && bet.Money.Any; i++)
             {
                 lastPot = pots.ElementAt(i);
+
                 if (ShouldTakePartOfBet(bet, lastPot))
                 {
-                    lastPot.TakePartOfAllInBet(bet);
+                    bet = lastPot.TakePartOfAllInBet(bet);
+                }
+                else if (!lastPot.IsAllIn)
+                {
+                    lastPot.AllIn(bet);
+                    bet = Bet.Fold(bet.Player);
+                    break;
                 }
                 else
                 {
                     var bets = lastPot.AllIn(bet);
-                    if(bets.Any())
+                    if (bets.Any())
+                    {
                         _pots.Add(Pot.Create(bets));
+                        bet = Bet.Fold(bet.Player);
+                    }
                     break;
                 }
             }
+
+            //case when all pots where iterated but there are still bet money left.
+            if (bet.Money.Any)
+                _pots.Add(Pot.Create(new List<Bet> { bet }));
         }
 
         public void Raise(Bet bet)
