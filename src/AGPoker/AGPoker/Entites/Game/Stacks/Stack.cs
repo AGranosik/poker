@@ -40,11 +40,11 @@ namespace AGPoker.Entites.Game.Stacks
             {
                 lastPot = pots.ElementAt(i);
 
-                if (ShouldTakePartOfBet(bet, lastPot))
+                if (lastPot.IsAllIn && ShouldTakePartOfBet(bet, lastPot))
                 {
                     bet = lastPot.TakePartOfAllInBet(bet);
                 }
-                else if (!lastPot.IsAllIn)
+                else if (!lastPot.IsAllIn && ShouldTakePartOfBet(bet, lastPot))
                 {
                     lastPot.AllIn(bet);
                     bet = Bet.Fold(bet.Player);
@@ -83,6 +83,6 @@ namespace AGPoker.Entites.Game.Stacks
             => _pots.First().Fold(bet);
 
         private bool ShouldTakePartOfBet(Bet bet, Pot pot)
-            => pot.IsAllIn && pot.CanTakeAllInBetPart(bet);
+            =>  pot.CanTakeAllInBetPart(bet);
     }
 }

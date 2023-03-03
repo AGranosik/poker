@@ -93,6 +93,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         public List<Bet> AllIn(Bet bet) //shouldnt be bet everywhere??
         {
+            //validation if there are any bets to split
             _bets.Add(bet);
             var playerBetsAmount = GetPlayerBetAmount(GetPlayerBets(bet));
             var result =  SplitIntoSmaller(bet); // set highest bet
