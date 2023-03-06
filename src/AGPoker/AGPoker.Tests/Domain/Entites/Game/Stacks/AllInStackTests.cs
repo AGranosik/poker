@@ -244,5 +244,43 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             thirdPotWinners.Winners.Count.Should().Be(2);
             thirdPotWinners.WinningPrize.Value.Should().Be(10);
         }
+
+        [Test]
+        public void AllIn_SmallerAllInAfterAnotherNumberOfPlayerAsPriority_EnoughPotsShouldBeCreated6()
+        {
+            _stack.AllIn(_player2); //  200 -> 110 -> 100 x2
+            _stack.AllIn(_player); // 90 x4
+            _stack.AllIn(_player4); // 10 x3
+            _stack.AllIn(_player3); // 100
+
+
+            _stack.Pots.Count.Should().Be(4);
+            _stack.Pots.Any(p => p.IsAllIn)
+                .Should().BeTrue();
+
+            var firstPot = _stack.Pots.FirstOrDefault(p => p.HighestBet.Value == 90);
+            firstPot.Should().NotBeNull();
+            var firstPotWinners = firstPot.GetWinners();
+            firstPotWinners.Winners.Count.Should().Be(4);
+            firstPotWinners.WinningPrize.Value.Should().Be(90);
+
+            var secondPot = _stack.Pots.FirstOrDefault(p => p.HighestBet.Value == 100);
+            secondPot.Should().NotBeNull();
+            var secondPotWinners = secondPot.GetWinners();
+            secondPotWinners.Winners.Count.Should().Be(2);
+            secondPotWinners.WinningPrize.Value.Should().Be(100);
+
+            var fourthPot = _stack.Pots.LastOrDefault(p => p.HighestBet.Value == 100);
+            fourthPot.Should().NotBeNull();
+            var fourthPottWinners = fourthPot.GetWinners();
+            fourthPottWinners.Winners.Count.Should().Be(1);
+            fourthPottWinners.WinningPrize.Value.Should().Be(100);
+
+            var thirdPot = _stack.Pots.LastOrDefault(p => p.HighestBet.Value == 10);
+            thirdPot.Should().NotBeNull();
+            var thirdPotWinners = thirdPot.GetWinners();
+            thirdPotWinners.Winners.Count.Should().Be(3);
+            thirdPotWinners.WinningPrize.Value.Should().Be(10);
+        }
     }
 }
