@@ -38,17 +38,11 @@ namespace AGPoker.Entites.Game.Stacks
             Pot lastPot;
             for(int i =0; i < pots.Count && bet.Money.Any; i++)
             {
-                lastPot = pots.ElementAt(i);
-
-                if (lastPot.IsAllIn && ShouldTakePartOfBet(bet, lastPot))
+                lastPot = pots[i];
+                var isAllInPot = lastPot.IsAllIn;
+                if (isAllInPot && CanTakePartOfBet(bet, lastPot))
                 {
-                    bet = lastPot.TakePartOfAllInBet(bet);
-                }
-                else if (!lastPot.IsAllIn && ShouldTakePartOfBet(bet, lastPot))
-                {
-                    lastPot.AllIn(bet);
-                    bet = Bet.Fold(bet.Player);
-                    break;
+                    lastPot.TakePartOfAllInBet(bet);
                 }
                 else
                 {
@@ -56,13 +50,10 @@ namespace AGPoker.Entites.Game.Stacks
                     if (bets.Any())
                     {
                         _pots.Add(Pot.Create(bets));
-                        bet = Bet.Fold(bet.Player);
                     }
-                    break;
+                    return;
                 }
             }
-
-            //case when all pots where iterated but there are still bet money left.
             if (bet.Money.Any)
                 _pots.Add(Pot.Create(new List<Bet> { bet }));
         }
@@ -82,7 +73,7 @@ namespace AGPoker.Entites.Game.Stacks
         public void Fold(Bet bet)
             => _pots.First().Fold(bet);
 
-        private bool ShouldTakePartOfBet(Bet bet, Pot pot)
+        private bool CanTakePartOfBet(Bet bet, Pot pot)
             =>  pot.CanTakeAllInBetPart(bet);
     }
 }

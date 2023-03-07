@@ -113,7 +113,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             return betsAmount >= _highestBet.Value;
         }
 
-        public Bet TakePartOfAllInBet(Bet bet) //tests
+        public void TakePartOfAllInBet(Bet bet) //tests
         {
             if (!CanTakeAllInBetPart(bet))
                 throw new ArgumentException();
@@ -123,9 +123,8 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             var betsAmount = GetPlayerBetAmount(playerBets);
 
             var howMuchToTake = Money.Create(betsAmount - HighestBet.Value);
-            var result = bet.Split(howMuchToTake);
-            _bets.Add(bet);
-            return result;
+            var result = bet.Split(bet.Money - howMuchToTake);
+            _bets.Add(result);
         }
 
         public List<Bet> SplitIntoSmaller(Bet newHigestBet)
