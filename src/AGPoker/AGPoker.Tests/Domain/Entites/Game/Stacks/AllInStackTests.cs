@@ -40,7 +40,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             _stack.AllIn(_player2);
 
             _stack.Pots.Count.Should().Be(1);
-            _stack.Pots.Any(p => p.IsAllIn)
+            _stack.Pots.Any(p => p.IsAllIn())
                 .Should().BeTrue();
         }
 
@@ -51,7 +51,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             _stack.AllIn(_player2);
 
             _stack.Pots.Count.Should().Be(1);
-            _stack.Pots.Any(p => p.IsAllIn)
+            _stack.Pots.Any(p => p.IsAllIn())
                 .Should().BeTrue();
         }
 
@@ -62,7 +62,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             _stack.AllIn(_player2);
 
             _stack.Pots.Count.Should().Be(2);
-            _stack.Pots.Any(p => p.IsAllIn)
+            _stack.Pots.Any(p => p.IsAllIn())
                 .Should().BeTrue();
 
             var oldPot = _stack.Pots.First(p => p.HighestBet.Value == 200);
@@ -90,7 +90,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
 
 
             _stack.Pots.Count.Should().Be(3);
-            _stack.Pots.Any(p => p.IsAllIn)
+            _stack.Pots.Any(p => p.IsAllIn())
                 .Should().BeTrue();
 
             var firstPot = _stack.Pots.First(p => p.HighestBet.Value == 90);
@@ -121,7 +121,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
 
 
             _stack.Pots.Count.Should().Be(3);
-            _stack.Pots.Any(p => p.IsAllIn)
+            _stack.Pots.Any(p => p.IsAllIn())
                 .Should().BeTrue();
 
             var firstPot = _stack.Pots.First(p => p.HighestBet.Value == 100);
@@ -153,7 +153,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
 
 
             _stack.Pots.Count.Should().Be(4);
-            _stack.Pots.Any(p => p.IsAllIn)
+            _stack.Pots.Any(p => p.IsAllIn())
                 .Should().BeTrue();
 
             var firstPot = _stack.Pots.First(p => p.HighestBet.Value == 90);
@@ -185,7 +185,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
 
 
             _stack.Pots.Count.Should().Be(4);
-            _stack.Pots.Any(p => p.IsAllIn)
+            _stack.Pots.Any(p => p.IsAllIn())
                 .Should().BeTrue();
 
             var firstPot = _stack.Pots.First(p => p.HighestBet.Value == 90);
@@ -217,7 +217,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
 
 
             _stack.Pots.Count.Should().Be(4);
-            _stack.Pots.Any(p => p.IsAllIn)
+            _stack.Pots.Any(p => p.IsAllIn())
                 .Should().BeTrue();
 
             var firstPot = _stack.Pots.FirstOrDefault(p => p.HighestBet.Value == 90);
@@ -255,7 +255,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
 
 
             _stack.Pots.Count.Should().Be(4);
-            _stack.Pots.Any(p => p.IsAllIn)
+            _stack.Pots.Any(p => p.IsAllIn())
                 .Should().BeTrue();
 
             var firstPot = _stack.Pots.FirstOrDefault(p => p.HighestBet.Value == 90);

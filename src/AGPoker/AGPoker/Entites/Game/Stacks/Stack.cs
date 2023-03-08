@@ -32,14 +32,14 @@ namespace AGPoker.Entites.Game.Stacks
         public void AllIn(Player player)
         {
             var bet = player.AllIn();
-            var pots = Pots.OrderByDescending(p => p.IsAllIn)
+            var pots = Pots.OrderByDescending(p => p.IsAllIn())
                 .ThenBy(p => p.HighestBet.Value).ToList();
 
             Pot lastPot;
             for(int i =0; i < pots.Count && bet.Money.Any; i++)
             {
                 lastPot = pots[i];
-                var isAllInPot = lastPot.IsAllIn;
+                var isAllInPot = lastPot.IsAllIn();
                 if (isAllInPot && CanTakePartOfBet(bet, lastPot))
                 {
                     lastPot.TakePartOfAllInBet(bet);

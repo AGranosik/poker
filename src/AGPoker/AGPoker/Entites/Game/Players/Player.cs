@@ -23,6 +23,8 @@ namespace AGPoker.Entites.Game.Game.Players
 
         private List<Card> _cards = new();
 
+        public bool AnyMoneyLeft()
+            => Money.Any;
         public Bet AllIn()
             => Bet.AllIn(this, Money.TakeAll());
         public Bet Call(Money amount = null)

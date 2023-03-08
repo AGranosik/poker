@@ -9,6 +9,7 @@ namespace AGPoker.Entites.Game.ValueObjects
             Value = value;
         }
 
+        //find a way to stop using value everywhere
         public int Value { get; private set; }
 
         public static Money None

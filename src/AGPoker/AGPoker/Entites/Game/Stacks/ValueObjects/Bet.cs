@@ -16,7 +16,10 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         public Money Money { get; init; }
         public Player Player { get; set; }
-        public BetType BetType { get; private set; }
+        public BetType BetType { get; init; }
+
+        public bool IsFolded()
+            => BetType.Fold == BetType;
         public bool IsAllIn()
             => BetType.AllIn == BetType;
 
@@ -65,7 +68,6 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         Fold,
         Call,
         Raise,
-        AllIn,
-        Cut
+        AllIn
     }
 }

@@ -68,7 +68,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         public void Validation_IsAllInBet_Success()
         {
             _pot.AllIn(_player.AllIn());
-            _pot.IsAllIn.Should().BeTrue();
+            _pot.IsAllIn().Should().BeTrue();
         }
     }
 }
