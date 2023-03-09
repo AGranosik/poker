@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using AGPoker.Common;
+﻿using AGPoker.Common;
 using AGPoker.Entites.Game.Decks;
 using AGPoker.Entites.Game.Decks.ValueObjects;
 using AGPoker.Entites.Game.Game.Players;
@@ -10,8 +9,6 @@ using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Aggregates
 {
-    // minimal bid
-    // minimal diff
     public class Game : IAggregateRoot // just to mark as aggregate root
     {
         private readonly int _handCards = 2;
@@ -24,14 +21,14 @@ namespace AGPoker.Aggregates
             _deck = Deck.Create();
         }
 
-        public static Game Create(Player owner, GameLimit limit) // domain objects or not....
+        public static Game Create(Player owner, GameLimit limit)
             => new(owner, limit);
 
         private List<Player> _players = new();
         private Deck _deck;
         public Player Owner { get; init; }
         public GameLimit Limit { get; init; }
-        public Stack Stack { get; init; } // crupier
+        public Stack Stack { get; init; }
         public IReadOnlyCollection<Player> Players
             => _players.AsReadOnly();
 

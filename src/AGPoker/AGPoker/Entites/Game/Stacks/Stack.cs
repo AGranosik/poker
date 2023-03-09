@@ -5,7 +5,6 @@ using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Entites.Game.Stacks
 {
-    //remove from winners
     public class Stack : Entity
     {
         private List<Pot> _pots = new();
@@ -40,7 +39,7 @@ namespace AGPoker.Entites.Game.Stacks
             {
                 lastPot = pots[i];
                 var isAllInPot = lastPot.IsAllIn();
-                if (isAllInPot && CanTakePartOfBet(bet, lastPot))
+                if (isAllInPot && lastPot.CanTakeAllInBetPart(bet))
                 {
                     lastPot.TakePartOfAllInBet(bet);
                 }
@@ -72,8 +71,5 @@ namespace AGPoker.Entites.Game.Stacks
 
         public void Fold(Bet bet)
             => _pots.First().Fold(bet);
-
-        private bool CanTakePartOfBet(Bet bet, Pot pot)
-            =>  pot.CanTakeAllInBetPart(bet);
     }
 }

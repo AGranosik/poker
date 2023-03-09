@@ -96,12 +96,10 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         public bool CanTakeAllInBetPart(Bet bet)
         {
-            if (!bet.IsAllIn() && bet.Money.Any)
+            if (!bet.IsAllIn())
                 throw new ArgumentException();
 
-            var playerBets = GetPlayerBets(bet.Player);
-            playerBets.Add(bet);
-            var betsAmount = playerBets.Sum(pb => pb.Money.Value);
+            var betsAmount = GetPlayerBetsWithActual(bet);
 
             return betsAmount >= _highestBet.Value;
         }
@@ -111,9 +109,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             if (!CanTakeAllInBetPart(bet))
                 throw new ArgumentException();
 
-            var playerBets = GetPlayerBets(bet.Player);
-            playerBets.Add(bet);
-            var betsAmount = playerBets.Sum(pb => pb.Money.Value);
+            var betsAmount = GetPlayerBetsWithActual(bet);
 
             var howMuchToTake = Money.Create(betsAmount - HighestBet.Value);
             var result = bet.Split(bet.Money - howMuchToTake);
@@ -139,6 +135,13 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public static Pot Create(List<Bet> bets)
             => new(bets);
 
+        public int GetPlayerBetsWithActual(Bet actualBet)
+        {
+            var playerBets = GetPlayerBets(actualBet.Player);
+            playerBets.Add(actualBet);
+            return playerBets.Sum(pb => pb.Money.Value);
+        }
+
         private List<Player> GetAllPlayers()
             => _bets.Select(b => b.Player).Distinct().ToList();
 
@@ -146,23 +149,25 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         {
             var playerBets = GetPlayerBets(player);
             var betsAboveHighestBet = new List<Bet>();
-            Money sum = Money.None;
-            var highestBetValue = newHighestBet.Money;
+            Money previousBetsSum = Money.None;
+            var highestBet = newHighestBet.Money;
 
             foreach(var bet in playerBets)
             {
-                var newSum = sum + bet.Money;
+                var actualBetsSum = previousBetsSum + bet.Money;
+                var isAlreadyAboveHigestBet = previousBetsSum >= highestBet;
+                var isNowAboveHighestBet = actualBetsSum > highestBet;
 
-                if (sum >= highestBetValue)
+                if (isAlreadyAboveHigestBet)
                     betsAboveHighestBet.Add(bet);
-                else if (newSum > highestBetValue)
+                else if (isNowAboveHighestBet)
                 {
-                    var howMuchToTakeFromBet = newSum - highestBetValue;
+                    var howMuchToTakeFromBet = actualBetsSum - highestBet;
                     var splitedBet = bet.Split(howMuchToTakeFromBet);
-                    betsAboveHighestBet.Add(splitedBet); // split bet if neccessary
+                    betsAboveHighestBet.Add(splitedBet);
                 }
 
-                sum = newSum;
+                previousBetsSum = actualBetsSum;
             }
 
             return betsAboveHighestBet;
