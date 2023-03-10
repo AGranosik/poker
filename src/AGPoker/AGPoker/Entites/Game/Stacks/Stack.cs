@@ -39,7 +39,7 @@ namespace AGPoker.Entites.Game.Stacks
             {
                 lastPot = pots[i];
                 var isAllInPot = lastPot.IsAllIn();
-                if (isAllInPot && lastPot.CanTakeAllInBetPart(bet))
+                if (lastPot.CanTakeAllInBetPart(bet))
                 {
                     lastPot.TakePartOfAllInBet(bet);
                 }

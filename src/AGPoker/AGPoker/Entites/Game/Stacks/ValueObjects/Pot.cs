@@ -60,7 +60,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         }
 
         // raise works as 'add my money to pot not like 'i want the highest be to be like: amount' 
-        public void Raise(Bet bet) // player and Money
+        public void Raise(Bet bet)
         {
             _bets.Add(bet);
             var playerBetsAmount = GetPlayerBetAmount(bet.Player);
@@ -85,7 +85,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             _bets.Add(bet);
         }
 
-        public List<Bet> AllIn(Bet bet) //shouldnt be bet everywhere?? // add tests where there are bets to split
+        public List<Bet> AllIn(Bet bet)// add tests where there are bets to split
         {
             _bets.Add(bet);
             var playerBetsAmount = GetPlayerBetAmount(bet.Player);
@@ -98,6 +98,9 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         {
             if (!bet.IsAllIn())
                 throw new ArgumentException();
+
+            if(!IsAllIn())
+                return false;
 
             var betsAmount = GetPlayerBetsWithActual(bet);
 
@@ -186,7 +189,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
             var moneyInPot = _bets.Sum(b => b.Money.Value);
 
-            return Money.Create(moneyInPot / numberOfWinners); // should be total
+            return Money.Create(moneyInPot / numberOfWinners);
         }
 
 

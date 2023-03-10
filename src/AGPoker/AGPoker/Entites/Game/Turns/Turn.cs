@@ -4,14 +4,13 @@ using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Exceptions;
 
 // solution segregations
-// remove chips?
 // override comparators so dont have use .value .value 
 
 namespace AGPoker.Entites.Game.Turns
 {
     public class Turn
     {
-        private Turn(List<Player> players) //should be there any player for turn?
+        private Turn(List<Player> players)
         {
             PlayersValidation(players);
             _players = players;
@@ -35,7 +34,7 @@ namespace AGPoker.Entites.Game.Turns
         public static Turn Start(List<Player> players)
             => new(players);
 
-        public void Bet(Player player, BetType bidType) //
+        public void Bet(Player player, BetType bidType)
         {
             if (!CanBetBeMade() || !IsThisPlayerTurn(player))
                 throw new CannotBetException("Next move cannot be performed.");

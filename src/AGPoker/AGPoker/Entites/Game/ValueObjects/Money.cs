@@ -9,7 +9,6 @@ namespace AGPoker.Entites.Game.ValueObjects
             Value = value;
         }
 
-        //find a way to stop using value everywhere
         public int Value { get; private set; }
 
         public static Money None
@@ -34,7 +33,7 @@ namespace AGPoker.Entites.Game.ValueObjects
             return result;
         }
 
-        private void CreationValidation(int value)
+        private static void CreationValidation(int value)
         {
             if (value < 0)
             {
