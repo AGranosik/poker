@@ -14,6 +14,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         private Pot(List<Bet> bets) // tests
         {
+            CreationValition(bets);
             _bets = bets;
             var maxBet = _bets.GroupBy(b => b.Player)
                 .Max(p => p.Sum(x => x.Money.Value));
@@ -143,6 +144,20 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             var playerBets = GetPlayerBets(actualBet.Player);
             playerBets.Add(actualBet);
             return playerBets.Sum(pb => pb.Money.Value);
+        }
+
+        public static void CreationValition(List<Bet> bets)
+        {
+            if (bets is null)
+                throw new ArgumentNullException();
+
+            if (bets.Count == 0)
+                throw new ArgumentException(nameof(bets));
+
+            var anyWithValue = bets.Any(b => !b.IsFolded() && b.Money.Any);
+
+            if(!anyWithValue)
+                throw new ArgumentException(nameof(bets));
         }
 
         private List<Player> GetAllPlayers()
