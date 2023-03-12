@@ -24,14 +24,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         }
 
         [Test]
-        public void Validation_CheckIfNotAllInAlready_ThrowsExcepton()
-        {
-            _pot.AllIn(_player.AllIn());
-            var func = () => _pot.AllIn(_player2.AllIn());
-            func.Should().Throw<ArgumentException>();
-        }
-
-        [Test]
         public void Split_AnyBetIsHigher_ReturnsEmptyList()
         {
             var allInPLayer = Player.Create("hehe", "sss", 40);
@@ -84,6 +76,29 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
 
             var bet = bets[0];
             bet.Money.Value.Should().Be(20);
+        }
+
+        [Test]
+        public void Split_ReturnBets2()
+        {
+            _pot.Raise(_player2.Raise(Money.Create(10)));
+            _pot.Raise(_player3.Raise(Money.Create(20)));
+            _pot.Raise(_player2.Raise(Money.Create(40)));
+            _pot.Raise(_player3.Raise(Money.Create(60)));
+            _pot.Raise(_player2.Raise(Money.Create(60))); //110
+            _pot.Raise(_player3.Raise(Money.Create(35)));
+            _pot.Raise(_player3.Raise(Money.Create(25))); //140
+            var result = _pot.AllIn(_player.AllIn());
+
+            result.Should().NotBeNullOrEmpty();
+            result.Count.Should().Be(3);
+            var player2Bet = result.First(r => r.Player == _player2);
+            player2Bet.Money.Value.Should().Be(10);
+
+            var player3Bets = result.Where(r => r.Player == _player3)
+                .ToList();
+            player3Bets.Count.Should().Be(2);
+            player3Bets.Sum(b => b.Money.Value).Should().Be(40);
         }
     }
 }

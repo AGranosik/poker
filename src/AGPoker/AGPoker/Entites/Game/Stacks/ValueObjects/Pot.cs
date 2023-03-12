@@ -31,7 +31,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             => _bets.Select(b => b.Player).Distinct().Count();
 
         public bool IsAllIn()
-            => _bets.Any(b => b.IsAllIn() && b.SplitedFrom == null);
+            => _bets.Any(b => b.IsAllIn());
 
         public PotWinner GetWinners()
         {
@@ -89,8 +89,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         public List<Bet> AllIn(Bet bet)// add tests where there are bets to split
         {
-            //check if is not all in already
-            if (IsAllIn() && bet.IsAllIn())
+            if (!bet.IsAllIn())
                 throw new ArgumentException();
 
             _bets.Add(bet);
