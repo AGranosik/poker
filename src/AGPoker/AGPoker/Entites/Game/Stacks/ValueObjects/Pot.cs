@@ -12,15 +12,16 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         private Pot() { }
 
-        private Pot(List<Bet> bets) // tests
+        private Pot(List<Bet> bets)
         {
             CreationValition(bets);
             _bets = bets;
             var maxBet = _bets.GroupBy(b => b.Player)
                 .Max(p => p.Sum(x => x.Money.Value));
 
-            SetHighestBidIfNeccessary(maxBet);
+            SetHighestBetIfNeccessary(Money.Create(maxBet));
         }
+
         public Money HighestBet
             => Money.Create(_highestBet.Value);
         public Money Value
@@ -30,7 +31,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             => _bets.Select(b => b.Player).Distinct().Count();
 
         public bool IsAllIn()
-            => _bets.Any(b => b.IsAllIn());
+            => _bets.Any(b => b.IsAllIn() && b.SplitedFrom == null);
 
         public PotWinner GetWinners()
         {
@@ -66,12 +67,12 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             _bets.Add(bet);
             var playerBetsAmount = GetPlayerBetAmount(bet.Player);
             RaiseValidation(playerBetsAmount, bet.Player);
-            SetHighestBidIfNeccessary(playerBetsAmount);
+            SetHighestBetIfNeccessary(playerBetsAmount);
         }
 
         public void Call(Player player)
         {
-            var playerMoney = Money.Create(GetPlayerBetAmount(player));
+            var playerMoney = GetPlayerBetAmount(player);
 
             Bet bet;
             if (ShouldPlayerGiveChips(playerMoney))
@@ -88,10 +89,14 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         public List<Bet> AllIn(Bet bet)// add tests where there are bets to split
         {
+            //check if is not all in already
+            if (IsAllIn() && bet.IsAllIn())
+                throw new ArgumentException();
+
             _bets.Add(bet);
             var playerBetsAmount = GetPlayerBetAmount(bet.Player);
-            var betsAboveHighest =  SplitIntoSmaller(bet);
-            SetHighestBidIfNeccessary(playerBetsAmount, betsAboveHighest.Count > 0);
+            var betsAboveHighest = SplitIntoSmaller(playerBetsAmount);
+            SetHighestBetIfNeccessary(playerBetsAmount, betsAboveHighest.Count > 0);
             return betsAboveHighest;
         }
 
@@ -120,7 +125,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             _bets.Add(result);
         }
 
-        public List<Bet> SplitIntoSmaller(Bet newHigestBet)
+        private List<Bet> SplitIntoSmaller(Money newHigestBet)
         {
             SplitIntoSmallerValidation();
 
@@ -163,24 +168,23 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         private List<Player> GetAllPlayers()
             => _bets.Select(b => b.Player).Distinct().ToList();
 
-        private List<Bet> SplitPlayerBetsUntilEqualNewHighestBet(Bet newHighestBet, Player player)
+        private List<Bet> SplitPlayerBetsUntilEqualNewHighestBet(Money newHighestBet, Player player)
         {
             var playerBets = GetPlayerBets(player);
             var betsAboveHighestBet = new List<Bet>();
             Money previousBetsSum = Money.None;
-            var highestBet = newHighestBet.Money;
 
             foreach(var bet in playerBets)
             {
                 var actualBetsSum = previousBetsSum + bet.Money;
-                var isAlreadyAboveHigestBet = previousBetsSum >= highestBet;
-                var isNowAboveHighestBet = actualBetsSum > highestBet;
+                var isAlreadyAboveHigestBet = previousBetsSum >= newHighestBet;
+                var isNowAboveHighestBet = actualBetsSum > newHighestBet;
 
                 if (isAlreadyAboveHigestBet)
                     betsAboveHighestBet.Add(bet);
                 else if (isNowAboveHighestBet)
                 {
-                    var howMuchToTakeFromBet = actualBetsSum - highestBet;
+                    var howMuchToTakeFromBet = actualBetsSum - newHighestBet;
                     var splitedBet = bet.Split(howMuchToTakeFromBet);
                     betsAboveHighestBet.Add(splitedBet);
                 }
@@ -211,23 +215,23 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         private bool ShouldPlayerGiveChips(Money playerMoney)
             => playerMoney < _highestBet;
 
-        private void RaiseValidation(int playerBetsValue, Player player)
+        private void RaiseValidation(Money playerBetsValue, Player player)
         {
-            if (playerBetsValue < _highestBet.Value)
+            if (playerBetsValue < _highestBet)
                 throw new BetTooLowException();
 
             if (IsPlayerFoldedBefore(player))
                 throw new PlayerFoldedBeforeException();
         }
 
-        private void SetHighestBidIfNeccessary(int playerBidAmount, bool wasSplited = false)
+        private void SetHighestBetIfNeccessary(Money playerBetAmount, bool wasSplited = false)
         {
-            if (wasSplited || playerBidAmount > _highestBet.Value)
-                _highestBet = Money.Create(playerBidAmount);
+            if (wasSplited || playerBetAmount > _highestBet)
+                _highestBet = playerBetAmount;
         }
 
-        private int GetPlayerBetAmount(Player player)
-            => GetPlayerBets(player).Sum(b => b.Money.Value);
+        private Money GetPlayerBetAmount(Player player)
+            => Money.Create(GetPlayerBets(player).Sum(b => b.Money.Value));
 
         private List<Bet> GetPlayerBets(Player player)
         {

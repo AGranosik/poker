@@ -45,7 +45,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         public Bet Split(Money moneyToTakeOut)
         {
-            Money.Split(moneyToTakeOut);//shoud be a flag to leave some history
+            Money.Split(moneyToTakeOut);
             var result = new Bet(moneyToTakeOut, Player, BetType, this);
             return result;
         }
