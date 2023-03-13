@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace AGPoker.Tests.Domain.Entites.Game.Stacks
 {
     [TestFixture]
-    internal class FoldTests
+    internal class Fold_StackTests
     {
         private Player _player;
         private Player _player2;

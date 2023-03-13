@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace AGPoker.Tests.Domain.Entites.Game.Stacks
 {
     [TestFixture]
-    internal class AllInStackTests
+    internal class AllIn_StackTests
     {
         private Stack _stack;
         private Player _player;

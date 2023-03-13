@@ -20,7 +20,7 @@ namespace AGPoker.Entites.Game.Stacks
             => Money.Create(_pots.Sum(p => p.Value.Value));
 
         public void Call(Player player)
-            => _pots.First().Call(player);
+            => _pots.ForEach(p => p.Call(player));
 
         public IReadOnlyCollection<Pot> Pots
             => _pots.OrderBy(p => p.HighestBet.Value).ToList().AsReadOnly();
