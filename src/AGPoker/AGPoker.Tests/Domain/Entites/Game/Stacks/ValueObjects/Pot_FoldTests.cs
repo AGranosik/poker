@@ -20,7 +20,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
             _pot = Pot.Create();
         }
 
-
         [Test]
         public void Fold_IsAFoldBet_ThrowsException()
         {
@@ -39,7 +38,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         }
 
         [Test]
-        public void Fold_CanFoldDespiteArlierBets_Success()
+        public void Fold_CanFoldDespiteErlierBets_Success()
         {
             _pot.Raise(Bet.Raise(Money.Create(20), _player));
             var bet = _player.Fold();

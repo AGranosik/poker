@@ -70,6 +70,6 @@ namespace AGPoker.Entites.Game.Stacks
         }
 
         public void Fold(Bet bet)
-            => _pots.First().Fold(bet);
+            => _pots.ForEach(p => p.Fold(bet));
     }
 }
