@@ -25,7 +25,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         public void CanTakeAllInBetPart_NoAllInBet_ThrowsException()
         {
             var foldBet = Bet.Fold(_player);
-            var func = () => _pot.CanTakeAllInBetPart(foldBet);
+            var func = () => _pot.CanTakeBetPart(foldBet);
             func.Should().Throw<ArgumentException>();
         }
 
@@ -33,7 +33,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         public void CanTakeAllInBetPart_NoAllInBet_ThrowsException2()
         {
             var callBet = Bet.Call(_player, _player.Money);
-            var func = () => _pot.CanTakeAllInBetPart(callBet);
+            var func = () => _pot.CanTakeBetPart(callBet);
             func.Should().Throw<ArgumentException>();
         }
 
@@ -42,7 +42,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         {
             _pot.AllIn(_player.AllIn());
             var allInBet = _secondPlayer.AllIn();
-            var result = _pot.CanTakeAllInBetPart(allInBet);
+            var result = _pot.CanTakeBetPart(allInBet);
             result.Should().BeTrue();
         }
 
@@ -51,7 +51,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         { 
             _pot.Raise(_secondPlayer.Raise(Money.Create(190)));
             var allInBet = _player.AllIn();
-            var result = _pot.CanTakeAllInBetPart(allInBet);
+            var result = _pot.CanTakeBetPart(allInBet);
             result.Should().BeFalse();
         }
 

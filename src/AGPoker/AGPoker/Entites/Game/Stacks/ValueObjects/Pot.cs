@@ -99,11 +99,8 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             return betsAboveHighest;
         }
 
-        public bool CanTakeAllInBetPart(Bet bet)
+        public bool CanTakeBetPart(Bet bet)
         {
-            if (!bet.IsAllIn())
-                throw new ArgumentException();
-
             if(!IsAllIn())
                 return false;
 
@@ -114,7 +111,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         public void TakePartOfAllInBet(Bet bet) //tests
         {
-            if (!CanTakeAllInBetPart(bet))
+            if (!CanTakeBetPart(bet))
                 throw new ArgumentException();
 
             var betsAmount = GetPlayerBetsWithActual(bet);

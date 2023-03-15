@@ -39,7 +39,7 @@ namespace AGPoker.Entites.Game.Stacks
             {
                 lastPot = pots[i];
                 var isAllInPot = lastPot.IsAllIn();
-                if (lastPot.CanTakeAllInBetPart(bet))
+                if (lastPot.CanTakeBetPart(bet))
                 {
                     lastPot.TakePartOfAllInBet(bet);
                 }
@@ -61,11 +61,31 @@ namespace AGPoker.Entites.Game.Stacks
         {
             if (bet.IsAllIn())
             {
-                //_pots.First().AllIn(bet.Player);
+                _pots.ForEach(p => p.AllIn(bet));
             }
             else
             {
-                _pots.First().Raise(bet);
+                Pot lastPot;
+                var pots = Pots.OrderByDescending(p => p.IsAllIn())
+                    .ThenBy(p => p.HighestBet.Value).ToList();
+                for (int i = 0; i < _pots.Count; i++)
+                {
+                    lastPot= pots[i];
+                    if (!bet.Money.Any)
+                        throw new ArgumentException("Not enough money.");
+                    if (lastPot.IsAllIn() && lastPot.CanTakeBetPart(bet))
+                    {
+                        lastPot.TakePartOfAllInBet(bet);
+                    }
+                    else
+                    {
+                        lastPot.Raise(bet);
+                        bet = Bet.Fold(bet.Player);
+                    }
+                    lastPot = pots[i];
+                }
+                if (bet.Money.Any)
+                    _pots.Add(Pot.Create(new List<Bet> { bet }));
             }
         }
 
