@@ -48,8 +48,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         [Test]
         public void MultiplePotsSinglePlayer_NotEnoughMney_ThrowsException()
         {
-            _stack.AllIn(_player);
-            _stack.AllIn(_player2);
+            _stack.AllIn(_player.AllIn());
+            _stack.AllIn(_player2.AllIn());
 
             var func = () => _stack.Call(_player4);
             func.Should().Throw<ArgumentException>();
@@ -58,8 +58,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         [Test]
         public void MultiplePots_EnoughMoney_Success()
         {
-            _stack.AllIn(_player);
-            _stack.AllIn(_player2);
+            _stack.AllIn(_player.AllIn());
+            _stack.AllIn(_player2.AllIn());
 
             var func = () => _stack.Call(_player3);
             func.Should().NotThrow();

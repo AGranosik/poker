@@ -27,7 +27,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         [Test]
         public void Fold_PlayerNotInPot_NoException()
         {
-            _stack.AllIn(_player);
+            _stack.AllIn(_player.AllIn());
             var func = () => _stack.Fold(_player2.Fold());
             func.Should().NotThrow();
 
@@ -56,8 +56,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         [Test]
         public void Fold_PlayerNotInAnyPot_NoException()
         {
-            _stack.AllIn(_player);
-            _stack.AllIn(_player3);
+            _stack.AllIn(_player.AllIn());
+            _stack.AllIn(_player3.AllIn());
             var func = () => _stack.Fold(_player2.Fold());
             func.Should().NotThrow();
 

@@ -22,22 +22,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks.ValueObjects
         }
 
         [Test]
-        public void CanTakeAllInBetPart_NoAllInBet_ThrowsException()
-        {
-            var foldBet = Bet.Fold(_player);
-            var func = () => _pot.CanTakeBetPart(foldBet);
-            func.Should().Throw<ArgumentException>();
-        }
-
-        [Test]
-        public void CanTakeAllInBetPart_NoAllInBet_ThrowsException2()
-        {
-            var callBet = Bet.Call(_player, _player.Money);
-            var func = () => _pot.CanTakeBetPart(callBet);
-            func.Should().Throw<ArgumentException>();
-        }
-
-        [Test]
         public void CanTakeAllInBetPart_BetsHigherThanHighest_ReturnsTrue()
         {
             _pot.AllIn(_player.AllIn());

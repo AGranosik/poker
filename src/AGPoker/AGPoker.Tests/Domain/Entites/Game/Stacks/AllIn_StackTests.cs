@@ -37,7 +37,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         public void AllIn_AllInPotCreated_Success()
         {
             _stack.Raise(Bet.Raise(Money.Create(80), _player));
-            _stack.AllIn(_player2);
+            _stack.AllIn(_player2.AllIn());
 
             _stack.Pots.Count.Should().Be(1);
             _stack.Pots.Any(p => p.IsAllIn())
@@ -48,7 +48,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         public void AllIn_AllInEqualToHighestBet_NoAdditionalPotCreated()
         {
             _stack.Raise(Bet.Raise(Money.Create(200), _player3));
-            _stack.AllIn(_player2);
+            _stack.AllIn(_player2.AllIn());
 
             _stack.Pots.Count.Should().Be(1);
             _stack.Pots.Any(p => p.IsAllIn())
@@ -59,7 +59,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         public void AllIn_AllInSmallerThenActualHighestBet_SecondPotShoulbeCreated()
         {
             _stack.Raise(Bet.Raise(Money.Create(250), _player3));
-            _stack.AllIn(_player2);
+            _stack.AllIn(_player2.AllIn());
 
             _stack.Pots.Count.Should().Be(2);
             _stack.Pots.Any(p => p.IsAllIn())
@@ -85,8 +85,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         public void AllIn_SmallerAllInAfterAnother_EnoughPotsShouldBeCreated()
         {
             _stack.Raise(Bet.Raise(Money.Create(250), _player3)); //90 x3 
-            _stack.AllIn(_player2);
-            _stack.AllIn(_player);
+            _stack.AllIn(_player2.AllIn());
+            _stack.AllIn(_player.AllIn());
 
 
             _stack.Pots.Count.Should().Be(3);
@@ -116,8 +116,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         public void AllIn_SmallerAllInAfterAnother_EnoughPotsShouldBeCreated2()
         {
             _stack.Raise(Bet.Raise(Money.Create(250), _player3));
-            _stack.AllIn(_player2);
-            _stack.AllIn(_player4);
+            _stack.AllIn(_player2.AllIn());
+            _stack.AllIn(_player4.AllIn());
 
 
             _stack.Pots.Count.Should().Be(3);
@@ -147,9 +147,9 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         public void AllIn_SmallerAllInAfterAnother_EnoughPotsShouldBeCreated3()
         {
             _stack.Raise(Bet.Raise(Money.Create(250), _player3)); //250 -> 50
-            _stack.AllIn(_player2); //200 x2 -> 110 x2 -> 100 x3 
-            _stack.AllIn(_player); // 90 x4
-            _stack.AllIn(_player4); // 100 -> 10 x3
+            _stack.AllIn(_player2.AllIn()); //200 x2 -> 110 x2 -> 100 x3 
+            _stack.AllIn(_player.AllIn()); // 90 x4
+            _stack.AllIn(_player4.AllIn()); // 100 -> 10 x3
 
 
             _stack.Pots.Count.Should().Be(4);
@@ -179,9 +179,9 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         public void AllIn_SmallerAllInAfterAnother_EnoughPotsShouldBeCreated4()
         {
             _stack.Raise(Bet.Raise(Money.Create(250), _player3)); //250 -> 50
-            _stack.AllIn(_player2); //200 x2 -> 110 x2 -> 100 x3 
-            _stack.AllIn(_player4); // 100 -> 10 x3
-            _stack.AllIn(_player); // 90 x4
+            _stack.AllIn(_player2.AllIn()); //200 x2 -> 110 x2 -> 100 x3 
+            _stack.AllIn(_player4.AllIn()); // 100 -> 10 x3
+            _stack.AllIn(_player.AllIn()); // 90 x4
 
 
             _stack.Pots.Count.Should().Be(4);
@@ -210,10 +210,10 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         [Test]
         public void AllIn_SmallerAllInAfterAnotherNumberOfPlayerAsPriority_EnoughPotsShouldBeCreated5()
         {
-            _stack.AllIn(_player); // 90 -> x4
-            _stack.AllIn(_player3); // 300 -> 210 -> 100
-            _stack.AllIn(_player2); // 200 -> 110 x2
-            _stack.AllIn(_player4); // 100 -> 10 x3
+            _stack.AllIn(_player.AllIn()); // 90 -> x4
+            _stack.AllIn(_player3.AllIn()); // 300 -> 210 -> 100
+            _stack.AllIn(_player2.AllIn()); // 200 -> 110 x2
+            _stack.AllIn(_player4.AllIn()); // 100 -> 10 x3
 
 
             _stack.Pots.Count.Should().Be(4);
@@ -248,10 +248,10 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
         [Test]
         public void AllIn_SmallerAllInAfterAnotherNumberOfPlayerAsPriority_EnoughPotsShouldBeCreated6()
         {
-            _stack.AllIn(_player2); //  200 -> 110 -> 100 x2
-            _stack.AllIn(_player); // 90 x4
-            _stack.AllIn(_player4); // 10 x3
-            _stack.AllIn(_player3); // 100
+            _stack.AllIn(_player2.AllIn()); //  200 -> 110 -> 100 x2
+            _stack.AllIn(_player.AllIn()); // 90 x4
+            _stack.AllIn(_player4.AllIn()); // 10 x3
+            _stack.AllIn(_player3.AllIn()); // 100
 
 
             _stack.Pots.Count.Should().Be(4);
