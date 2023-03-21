@@ -24,14 +24,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             _player2 = Player.Create("_player2", "hehe", 200);
             _player3 = Player.Create("_player3", "hehe", 300);
             _player4 = Player.Create("_player4", "hehe", 100);
-    }
-
-        //cases:
-        // current pot can be all in pot
-        // create enxt one because the first is already all in and player has highest value in it
-        // create enxt one because the first is already all in and player has no highest value in it
-        // create enxt one because the first is already all in but player has not enought to even highest bet, so create the third pot 
-        //  all when the same player bets in pot
+        }
 
         [Test]
         public void AllIn_AllInPotCreated_Success()

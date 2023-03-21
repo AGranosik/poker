@@ -3,9 +3,6 @@ using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Exceptions;
 
-// solution segregations
-// override comparators so dont have use .value .value 
-
 namespace AGPoker.Entites.Game.Turns
 {
     public class Turn
@@ -52,14 +49,8 @@ namespace AGPoker.Entites.Game.Turns
 
         public void NextRound()
         {
-            if (IsTheLastRound())
-                throw new CannotStartNextRound("It was last round.");
-
-            if (!EarlierRoundFinished())
-                throw new CannotStartNextRound("Earlier round doesnt finished.");
-
-            if (IsTheLastOnePlayer())
-                throw new CannotStartNextRound("Not enough players.");
+            if (!CanStartNextRound())
+                throw new CannotStartNextRound();
 
             ResetTurnCounters();
             _roundNumber++;
@@ -72,6 +63,9 @@ namespace AGPoker.Entites.Game.Turns
 
             StartTurn();
         }
+
+        public bool CanStartNextRound()
+            => !IsTheLastRound() && EarlierRoundFinished() && !IsTheLastOnePlayer();
 
         private void PlayersValidation(List<Player> players)
         {

@@ -39,25 +39,28 @@ namespace AGPoker.Aggregates
         {
             CanBegin();
             StartTurn();
-            TakeBidFromBlinds();
+            TakeBetFromBlinds();
             GiveHandToThePlayers();
         }
         // leave game but its optional
         public void Fold(Player player)
         {
             Turn.Bet(player, BetType.Fold);
+            StartNewTurnOrRoundIfNeccessary();
         }
 
         public void Call(Player player)
         {
             Stack.Call(player);
             Turn.Bet(player, BetType.Call);
+            StartNewTurnOrRoundIfNeccessary();
         }
 
         public void Raise(Bet bet)
         {
             Stack.Raise(bet);
             Turn.Bet(bet.Player, bet.BetType);
+            StartNewTurnOrRoundIfNeccessary();
         }
 
         public void GiveHandToThePlayers()
@@ -71,6 +74,12 @@ namespace AGPoker.Aggregates
                 skip += 2;
                 player.TakeCards(cardsToGive);
             }   
+        }
+
+        private void StartNewTurnOrRoundIfNeccessary()
+        {
+            if(Turn.CanStartNextRound())
+                Turn.NextRound();
         }
 
         private List<Card> TakeCards(int n)
@@ -116,7 +125,7 @@ namespace AGPoker.Aggregates
                 throw new Exception("Not enough players.");
         }
 
-        private void TakeBidFromBlinds()
+        private void TakeBetFromBlinds()
         {
             var smallBlindMoney = Money.Create(10);
             var bigBlindMoney = Money.Create(20);

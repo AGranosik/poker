@@ -109,7 +109,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             return betsAmount >= _highestBet.Value;
         }
 
-        public void TakePartOfAllInBet(Bet bet) //tests
+        public void TakePartOfAllInBet(Bet bet)
         {
             if (!CanTakeBetPart(bet))
                 throw new ArgumentException();

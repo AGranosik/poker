@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace AGPoker.Tests.Domain.Aggregates
 {
     [TestFixture]
-    internal class Game_TakeBidTests
+    internal class Game_TakeBetTests
     {
         private Game _game;
         private List<Player> _players;
