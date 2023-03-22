@@ -15,6 +15,14 @@ namespace AGPoker.Entites.Game.Decks
         public static Deck Create()
             => new(GetFullDeck());
 
+        public List<Card> TakeNextCards(int n)
+        {
+            var cards = new List<Card>(n);
+            for(int i=0; i < n; i++)
+                cards.Add(GetNextCard());
+            return cards;
+        }
+
         public Card GetNextCard()
         {
             var index = _random.Next(0, _cards.Count);

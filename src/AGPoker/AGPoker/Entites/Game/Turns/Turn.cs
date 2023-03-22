@@ -93,7 +93,7 @@ namespace AGPoker.Entites.Game.Turns
             _dealerIndex = _players.IndexOf(dealer);
         }
 
-        private bool CanStartNextTurn()
+        public bool CanStartNextTurn()
             => IsTheLastRound() && EarlierRoundFinished();
 
         private bool IsTheLastRound()

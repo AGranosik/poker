@@ -1,9 +1,8 @@
 ﻿using AGPoker.Common;
-using AGPoker.Entites.Game.Decks;
-using AGPoker.Entites.Game.Decks.ValueObjects;
 using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Stacks;
 using AGPoker.Entites.Game.Stacks.ValueObjects;
+using AGPoker.Entites.Game.Tables;
 using AGPoker.Entites.Game.Turns;
 using AGPoker.Entites.Game.ValueObjects;
 
@@ -11,21 +10,19 @@ namespace AGPoker.Aggregates
 {
     public class Game : IAggregateRoot // just to mark as aggregate root
     {
-        private readonly int _handCards = 2;
         private Game(Player owner, GameLimit limit)
         {
             CreateValidation(owner, limit);
             Owner = owner;
             Limit = limit;
             Stack = Stack.Create();
-            _deck = Deck.Create();
         }
 
         public static Game Create(Player owner, GameLimit limit)
             => new(owner, limit);
 
         private List<Player> _players = new();
-        private Deck _deck;
+        private Table _table;
         public Player Owner { get; init; }
         public GameLimit Limit { get; init; }
         public Stack Stack { get; init; }
@@ -40,7 +37,7 @@ namespace AGPoker.Aggregates
             CanBegin();
             StartTurn();
             TakeBetFromBlinds();
-            GiveHandToThePlayers();
+            _table = Table.PreFlop(_players);
         }
         // leave game but its optional
         public void Fold(Player player)
@@ -63,32 +60,10 @@ namespace AGPoker.Aggregates
             StartNewTurnOrRoundIfNeccessary();
         }
 
-        public void GiveHandToThePlayers()
-        {
-            var cardsToTake = _players.Count * _handCards;
-            var cards = TakeCards(cardsToTake);
-            int skip = 0;
-            foreach(var player in _players)
-            {
-                var cardsToGive = cards.Skip(skip).Take(_handCards).ToList();
-                skip += 2;
-                player.TakeCards(cardsToGive);
-            }   
-        }
-
         private void StartNewTurnOrRoundIfNeccessary()
         {
-            if(Turn.CanStartNextRound())
+            if(Turn.CanStartNextTurn())
                 Turn.NextRound();
-        }
-
-        private List<Card> TakeCards(int n)
-        {
-            var cards = new List<Card>(n);
-            for(int i =0; i < n; i++)
-                cards.Add(_deck.GetNextCard());
-
-            return cards;
         }
 
         public void Join(Player player)
