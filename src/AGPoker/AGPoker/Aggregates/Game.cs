@@ -62,8 +62,11 @@ namespace AGPoker.Aggregates
 
         private void StartNewTurnOrRoundIfNeccessary()
         {
-            if(Turn.CanStartNextTurn())
+            if (Turn.CanStartNextTurn())
+            {
                 Turn.NextRound();
+                _table.NextStage();
+            }
         }
 
         public void Join(Player player)

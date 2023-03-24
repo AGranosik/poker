@@ -39,7 +39,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             var table = Table.PreFlop(_players);
             table.Should().NotBeNull();
 
-            table.StartFlop();
+            table.NextStage();
             table.Flop.Should().NotBeNull();
             AllCardsAreUnique(table.Flop.Cards);
             var usedCards = _players.SelectMany(p => p.Cards).ToList();
@@ -54,8 +54,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             var table = Table.PreFlop(_players);
             table.Should().NotBeNull();
 
-            table.StartFlop();
-            table.StartTurn();
+            table.NextStage();
+            table.NextStage();
             table.Turn.Should().NotBeNull();
 
             var usedCards = _players.SelectMany(p => p.Cards).ToList();
@@ -71,9 +71,9 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             var table = Table.PreFlop(_players);
             table.Should().NotBeNull();
 
-            table.StartFlop();
-            table.StartTurn();
-            table.StartRiver();
+            table.NextStage();
+            table.NextStage();
+            table.NextStage();
             table.River.Should().NotBeNull();
 
             var usedCards = _players.SelectMany(p => p.Cards).ToList();
@@ -83,6 +83,19 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             AllCardsAreUnique(usedCards);
 
             table.River.Cards.Count.Should().Be(1);
+        }
+
+        [Test]
+        public void AfterRiver_CannotPastRiver_ThrowsException()
+        {
+            var table = Table.PreFlop(_players);
+            table.Should().NotBeNull();
+
+            table.NextStage();
+            table.NextStage();
+            table.NextStage();
+            var func = () => table.NextStage();
+            func.Should().Throw<InvalidOperationException>();
         }
 
         private void AllPlayersHasUniqueNumberOfCards(int n)

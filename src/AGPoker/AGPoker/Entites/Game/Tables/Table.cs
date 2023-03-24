@@ -21,7 +21,20 @@ namespace AGPoker.Entites.Game.Tables
             GiveHandToThePlayers();
         }
 
-        public void StartFlop()
+        public void NextStage()
+        {
+            if(WasRiver())
+                throw new InvalidOperationException();
+
+            if (WasTurn())
+                StartRiver();
+            else if (WasFlop())
+                StartTurn();
+            else if (WasPreFlop())
+                StartFlop();
+        }
+
+        private void StartFlop()
         {
             if (!WasPreFlop())
                 throw new ArgumentException();
@@ -29,7 +42,7 @@ namespace AGPoker.Entites.Game.Tables
             Flop = Flop.Create(_deck);
         }
 
-        public void StartTurn()
+        private void StartTurn()
         {
             if(!WasFlop())
                 throw new ArgumentException(nameof(Flop));
@@ -37,7 +50,7 @@ namespace AGPoker.Entites.Game.Tables
             Turn = TableTurn.Create(_deck);
         }
 
-        public void StartRiver()
+        private void StartRiver()
         {
             if (!WasTurn())
                 throw new ArgumentException(nameof(Turn));
@@ -48,11 +61,14 @@ namespace AGPoker.Entites.Game.Tables
         public static Table PreFlop(List<Player> players)
             => new(players);
 
+        private bool WasRiver()
+            => River != null;
+
         private bool WasTurn()
-            => WasFlop() || Turn != null;
+            => WasFlop() && Turn != null;
 
         private bool WasFlop()
-            => Flop != null || WasPreFlop();
+            => Flop != null && WasPreFlop();
 
         private bool WasPreFlop()
             => _players.All(p => p.Cards.Distinct().Count() == _handCards);
