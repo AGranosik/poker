@@ -40,7 +40,7 @@ namespace AGPoker.Entites.Game.Decks
             return Shuffle(notShuffledDeck);
         }
 
-        private static List<Card> Combine(IReadOnlyCollection<char> symbols, IReadOnlyCollection<string> values)
+        private static List<Card> Combine(IReadOnlyCollection<char> symbols, IReadOnlyCollection<ECardValue> values)
         {
             var result = new List<Card>(52);
             foreach(var symbol in symbols)

@@ -43,6 +43,7 @@ namespace AGPoker.Aggregates
         public void Fold(Player player)
         {
             Turn.Bet(player, BetType.Fold);
+            _table.Fold(player);
             StartNewTurnOrRoundIfNeccessary();
         }
 

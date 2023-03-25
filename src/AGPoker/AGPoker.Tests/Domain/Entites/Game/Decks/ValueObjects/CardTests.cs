@@ -18,7 +18,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Decks.ValueObjects
         [TestCase('A')]
         public void Card_NotValidSymbol_ThrowsException(char notValidSymbol)
         {
-            var func = () => new Card(notValidSymbol, "3");
+            var func = () => new Card(notValidSymbol, ECardValue.Three);
             func.Should().Throw<ArgumentException>();
         }
 
@@ -29,43 +29,25 @@ namespace AGPoker.Tests.Domain.Entites.Game.Decks.ValueObjects
         [TestCase('C')]
         public void Card_AllValidSymbol_ThrowsException(char validSymbol)
         {
-            var func = () => new Card(validSymbol, "3");
+            var func = () => new Card(validSymbol, ECardValue.Three);
             func.Should().NotThrow();
         }
 
         [Test]
-        [TestCase("1")]
-        [TestCase("Z")]
-        [TestCase("F")]
-        [TestCase("E")]
-        [TestCase("D")]
-        [TestCase("C")]
-        [TestCase("B")]
-        [TestCase("14")]
-        [TestCase("13")]
-        [TestCase("12")]
-        [TestCase("11")]
-        public void Card_NotAllValidValues_ThrowsException(string notValidValue)
-        {
-            var func = () => new Card('D', notValidValue);
-            func.Should().Throw<ArgumentException>();
-        }
-
-        [Test]
-        [TestCase("A")]
-        [TestCase("K")]
-        [TestCase("Q")]
-        [TestCase("J")]
-        [TestCase("10")]
-        [TestCase("9")]
-        [TestCase("8")]
-        [TestCase("7")]
-        [TestCase("6")]
-        [TestCase("5")]
-        [TestCase("4")]
-        [TestCase("3")]
-        [TestCase("2")]
-        public void Card_AllValidValues_ThrowsException(string validValue)
+        [TestCase(ECardValue.Ace)]
+        [TestCase(ECardValue.King)]
+        [TestCase(ECardValue.Quenn)]
+        [TestCase(ECardValue.Jack)]
+        [TestCase(ECardValue.Ten)]
+        [TestCase(ECardValue.Nine)]
+        [TestCase(ECardValue.Eight)]
+        [TestCase(ECardValue.Seven)]
+        [TestCase(ECardValue.Six)]
+        [TestCase(ECardValue.Five)]
+        [TestCase(ECardValue.Four)]
+        [TestCase(ECardValue.Three)]
+        [TestCase(ECardValue.Two)]
+        public void Card_AllValidValues_ThrowsException(ECardValue validValue)
         {
             var func = () => new Card('D', validValue);
             func.Should().NotThrow();

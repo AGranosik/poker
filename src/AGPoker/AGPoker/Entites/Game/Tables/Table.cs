@@ -21,6 +21,20 @@ namespace AGPoker.Entites.Game.Tables
             GiveHandToThePlayers();
         }
 
+        public IReadOnlyCollection<Player> GetWinners()
+        {
+            if (!AreAllPlayersHaveCards())
+                throw new InvalidOperationException();
+
+            return _players.AsReadOnly();
+        }
+
+        private bool AreAllPlayersHaveCards()
+            => _players.All(p => p.Cards.Count == 2);
+
+        public void Fold(Player player)
+            => _players.Remove(player);
+
         public void NextStage()
         {
             if(WasRiver())

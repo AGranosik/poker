@@ -8,25 +8,22 @@
         // C -> Club
 
         private static readonly List<char> _symbols = new() { 'D', 'H', 'S', 'C' };
-        private static readonly List<string> _values = new()
-        {
-            "A", "K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2"
-        };
-        public Card(char symbol, string value)
+        private static readonly List<ECardValue> _values = Enum.GetValues(typeof(ECardValue)).Cast<ECardValue>().ToList();
+        public Card(char symbol, ECardValue value)
         {
             Validation(symbol, value);
             Symbol = symbol;
             Value = value;
         }
         public char Symbol { get; init; }
-        public string Value { get; init; }
+        public ECardValue Value { get; init; }
 
         public static bool operator ==(Card card1, Card card2)
             => card1.Symbol == card2.Symbol && card1.Value == card2.Value;
 
         public static bool operator !=(Card card1, Card card2)
             => !(card1 == card2);
-        private void Validation(char symbol, string value)
+        private void Validation(char symbol, ECardValue value)
         {
             if (!_symbols.Contains(symbol))
                 throw new ArgumentException(nameof(symbol));
@@ -38,7 +35,15 @@
         public static IReadOnlyCollection<char> PossibleSymbols
             => _symbols.AsReadOnly();
 
-        public static IReadOnlyCollection<string> PossibleValues
+        public static IReadOnlyCollection<ECardValue> PossibleValues
             => _values.AsReadOnly();
     }
+
+
+    public enum ECardValue
+    {
+        Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Quenn, King, Ace
+    }
+
+
 }
