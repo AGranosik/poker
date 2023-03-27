@@ -7,11 +7,9 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
         public static CardResult GetCombination(List<Card> cards)
         {
             CardsValidation(cards);
-            var isStraight = IsStraight(cards);
-            var isFLush = IsFlush(cards);
-
-            if (isStraight && isFLush)
-                return new CardResult(Combination.StraightFlush, ECardValue.Four);
+            var isStraighFLush = IsStraightFlush(cards);
+            if (isStraighFLush is not null)
+                return isStraighFLush;
 
             return null;
         }
@@ -25,27 +23,67 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                 throw new InvalidOperationException();
         }
 
-        private static bool IsStraight(List<Card> cards)
+        private static CardResult? IsStraightFlush(List<Card> cards)
+        {
+            var isStraight = IsStraight(cards);
+            var isFlush = IsFlush(cards);
+            if(isStraight is not null && isFlush is not null)
+            {
+                if (isStraight.HighestCard > isFlush.HighestCard)
+                    return new CardResult(Combination.StraightFlush, isStraight.HighestCard);
+                
+                return new CardResult(Combination.StraightFlush, isFlush.HighestCard);
+            }
+
+            return null;
+        }
+
+        private static CardResult? IsStraight(List<Card> cards)
         {
             var orderedByValue = cards.OrderByDescending(x => x.Value).ToList();
-            int cardsInOrder = 0;
-            for(int i = 0; i < orderedByValue.Count -1; i++)
+            int cardsInOrder = 1;
+            var highestCard = ECardValue.Two;
+
+            for(int i = 0; i < orderedByValue.Count -1 && cardsInOrder < 5; i++)
             { 
                 var currentCard = orderedByValue[i];
                 var nextCard = orderedByValue[i + 1];
 
-                if ((currentCard.Value - nextCard.Value) == 1)
+                //next card has to be Two because its ordered by value
+                if(currentCard.Value == ECardValue.Three && cards.Any(c => c.Value == ECardValue.Ace))
+                {
+                    cardsInOrder+=2;
+                    highestCard = ECardValue.Five;
+                }
+                else if ((currentCard.Value - nextCard.Value) == 1)
+                {
                     cardsInOrder++;
+                    highestCard = nextCard.Value;
+                }
                 else
-                    cardsInOrder = 0;
+                {
+                    cardsInOrder = 1;
+                    highestCard = ECardValue.Two;
+                }
             }
 
-            return cardsInOrder >= 5;
+            return cardsInOrder >= 5 ? new CardResult(Combination.Straight, highestCard) : null;
         }
 
-        private static bool IsFlush(List<Card> cards)
-            => cards.GroupBy(c => c.Symbol)
-                .Any(s => s.Count() >= 5);
+        private static CardResult? IsFlush(List<Card> cards)
+        {
+            var flushCards = cards.GroupBy(c => c.Symbol)
+                .Where(s => s.Count() >= 5)
+                .SelectMany(s => s)
+                .ToList();
+
+            if (!flushCards.Any())
+                return null;
+
+
+
+            return new CardResult(Combination.Flush, GetHighestValue(flushCards));
+        }
 
         private static ECardValue GetHighestValue(List<Card> cards)
             => cards.Max(c => c.Value);
