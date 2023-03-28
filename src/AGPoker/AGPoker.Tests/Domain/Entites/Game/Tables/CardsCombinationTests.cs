@@ -154,5 +154,11 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             var result = CardsCombination.GetCombination(cards);
             result.Should().BeNull();
         }
+
+        [Test]
+        public void CardsCombination_FourOfKind_Success()
+        {
+
+        }
     }
 }
