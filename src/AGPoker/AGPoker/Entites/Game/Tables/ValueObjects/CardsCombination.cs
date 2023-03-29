@@ -10,8 +10,48 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
             var isStraighFLush = IsStraightFlush(cards);
             if (isStraighFLush is not null)
                 return isStraighFLush;
+            var valueCombination = GetCardValueCombination(cards);
+            if (valueCombination is not null)
+                return valueCombination;
 
 
+            return null;
+        }
+
+        private static CardResult? GetCardValueCombination(List<Card> cards)
+        {
+            var groupped = cards.GroupBy(c => c.Value);
+
+            var fourOfKind = IsFourOfKind(groupped);
+            if (fourOfKind is not null)
+                return fourOfKind;
+
+            var threeOfKind = IsThreeOfKind(groupped);
+            var twoOfKind = IsTwoOfKind(groupped);
+
+            if(threeOfKind is not null && twoOfKind is not null)
+            {
+
+            }
+
+            return null;
+        }
+
+        private static CardResult? IsTwoOfKind(IEnumerable<IGrouping<ECardValue, Card>> groupped)
+            => IsExactNumberOfCards(groupped, 2, Combination.TwoPair);
+
+        private static CardResult? IsThreeOfKind(IEnumerable<IGrouping<ECardValue, Card>> groupped)
+            => IsExactNumberOfCards(groupped, 3, Combination.ThreeOfKind);
+
+        private static CardResult? IsFourOfKind(IEnumerable<IGrouping<ECardValue, Card>> groupped)
+            => IsExactNumberOfCards(groupped, 4, Combination.FourOfKind);
+
+        private static CardResult? IsExactNumberOfCards(IEnumerable<IGrouping<ECardValue, Card>> grouppedCards, int numberOfSameCards, Combination resultCombination)
+        {
+            //better name
+            var sameCards = grouppedCards.FirstOrDefault(g => g.Count() == numberOfSameCards);
+            if(sameCards is not null)
+                return new CardResult(resultCombination, sameCards.Key);
 
             return null;
         }

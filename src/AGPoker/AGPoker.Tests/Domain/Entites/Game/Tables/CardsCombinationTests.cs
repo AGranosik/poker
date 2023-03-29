@@ -158,7 +158,41 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
         [Test]
         public void CardsCombination_FourOfKind_Success()
         {
+            var cards = new List<Card>
+            {
+                new Card('D', ECardValue.Ace),
+                new Card('H', ECardValue.Ace),
+                new Card('S', ECardValue.Ace),
+                new Card('C', ECardValue.Ace),
+                new Card('D', ECardValue.Six),
+                new Card('C', ECardValue.Jack),
+                new Card('C', ECardValue.Ten),
+            };
 
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.FourOfKind);
+            result.HighestCard.Should().Be(ECardValue.Ace);
+        }
+
+        [Test]
+        public void CardsCombination_FourOfKind_Success2()
+        {
+            var cards = new List<Card>
+            {
+                new Card('D', ECardValue.Ten),
+                new Card('C', ECardValue.Ten),
+                new Card('D', ECardValue.Six),
+                new Card('H', ECardValue.Ten),
+                new Card('C', ECardValue.Jack),
+                new Card('S', ECardValue.Ten),
+                new Card('C', ECardValue.Eight),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.FourOfKind);
+            result.HighestCard.Should().Be(ECardValue.Ten);
         }
     }
 }
