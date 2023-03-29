@@ -27,11 +27,14 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                 return fourOfKind;
 
             var threeOfKind = IsThreeOfKind(groupped);
-            var twoOfKind = IsTwoOfKind(groupped);
 
-            if(threeOfKind is not null && twoOfKind is not null)
+            if (threeOfKind is not null)
             {
-
+                var twoOfKindExceptThreeCardsAlreadyCHecked = IsTwoOfKind(groupped.Where(g => g.Key != threeOfKind.HighestCards.First()));
+                if(twoOfKindExceptThreeCardsAlreadyCHecked is not null)
+                {
+                    return new CardResult(Combination.FullHouse, threeOfKind.HighestCards);
+                }
             }
 
             return null;
@@ -49,9 +52,20 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
         private static CardResult? IsExactNumberOfCards(IEnumerable<IGrouping<ECardValue, Card>> grouppedCards, int numberOfSameCards, Combination resultCombination)
         {
             //better name
-            var sameCards = grouppedCards.FirstOrDefault(g => g.Count() == numberOfSameCards);
+            var sortedFromHighestToLowest = grouppedCards.OrderByDescending(gp => gp.Count())
+                .ThenByDescending(gp => gp.Key);
+
+            var sameCards = sortedFromHighestToLowest.FirstOrDefault(gp => gp.Count() >= numberOfSameCards);
+
             if(sameCards is not null)
-                return new CardResult(resultCombination, sameCards.Key);
+            {
+                var highestFromLowest = new List<ECardValue>
+                {
+                    sameCards.Key
+                };
+                highestFromLowest.AddRange(sortedFromHighestToLowest.Where(s => s.Key != sameCards.Key).Select(s => s.Key).ToList());
+                return new CardResult(resultCombination, highestFromLowest);
+            }
 
             return null;
         }
@@ -71,10 +85,10 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
             var isFlush = IsFlush(cards);
             if(isStraight is not null && isFlush is not null)
             {
-                if (isStraight.HighestCard > isFlush.HighestCard)
-                    return new CardResult(Combination.StraightFlush, isStraight.HighestCard);
+                if (isStraight.HighestCards.First() > isFlush.HighestCards.First())
+                    return new CardResult(Combination.StraightFlush, isStraight.HighestCards);
                 
-                return new CardResult(Combination.StraightFlush, isFlush.HighestCard);
+                return new CardResult(Combination.StraightFlush, isFlush.HighestCards);
             }
 
             return null;
@@ -109,7 +123,7 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                 }
             }
 
-            return cardsInOrder >= 5 ? new CardResult(Combination.Straight, highestCard) : null;
+            return cardsInOrder >= 5 ? new CardResult(Combination.Straight, new List<ECardValue> { highestCard }) : null;
         }
 
         private static CardResult? IsFlush(List<Card> cards)
@@ -124,7 +138,7 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
 
 
-            return new CardResult(Combination.Flush, GetHighestValue(flushCards));
+            return new CardResult(Combination.Flush, new List<ECardValue> { GetHighestValue(flushCards) });
         }
 
         private static ECardValue GetHighestValue(List<Card> cards)
@@ -133,14 +147,14 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
     public class CardResult
     {
-        public CardResult(Combination combination, ECardValue highestCard)
+        public CardResult(Combination combination, List<ECardValue> cardsOrder)
         {
             Combination = combination;
-            HighestCard = highestCard;
+            HighestCards = cardsOrder;
         }
 
         public Combination Combination { get; init; }
-        public ECardValue HighestCard { get; init; }
+        public List<ECardValue> HighestCards { get; init; }
     }
 
     public enum Combination

@@ -74,7 +74,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             var result = CardsCombination.GetCombination(cards);
             result.Should().NotBeNull();
             result.Combination.Should().Be(Combination.StraightFlush);
-            result.HighestCard.Should().Be(ECardValue.Eight);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Eight);
         }
 
         [Test]
@@ -94,7 +95,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             var result = CardsCombination.GetCombination(cards);
             result.Should().NotBeNull();
             result.Combination.Should().Be(Combination.StraightFlush);
-            result.HighestCard.Should().Be(ECardValue.Seven);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Seven);
         }
 
         [Test]
@@ -114,7 +116,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             var result = CardsCombination.GetCombination(cards);
             result.Should().NotBeNull();
             result.Combination.Should().Be(Combination.StraightFlush);
-            result.HighestCard.Should().Be(ECardValue.Ace);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Ace);
         }
 
         [Test]
@@ -134,7 +137,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             var result = CardsCombination.GetCombination(cards);
             result.Should().NotBeNull();
             result.Combination.Should().Be(Combination.StraightFlush);
-            result.HighestCard.Should().Be(ECardValue.Ace);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Ace);
         }
 
         [Test]
@@ -172,7 +176,10 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             var result = CardsCombination.GetCombination(cards);
             result.Should().NotBeNull();
             result.Combination.Should().Be(Combination.FourOfKind);
-            result.HighestCard.Should().Be(ECardValue.Ace);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Ace);
+            var secondCard = result.HighestCards.ElementAt(1);
+            secondCard.Should().Be(ECardValue.Jack);
         }
 
         [Test]
@@ -192,7 +199,79 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             var result = CardsCombination.GetCombination(cards);
             result.Should().NotBeNull();
             result.Combination.Should().Be(Combination.FourOfKind);
-            result.HighestCard.Should().Be(ECardValue.Ten);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Ten);
+            var secondCard = result.HighestCards.ElementAt(1);
+            secondCard.Should().Be(ECardValue.Jack);
+        }
+
+        [Test]
+        public void CardsCombination_FullHouse_Success()
+        {
+            var cards = new List<Card>
+            {
+                new Card('D', ECardValue.Ten),
+                new Card('C', ECardValue.Ten),
+                new Card('D', ECardValue.Six),
+                new Card('H', ECardValue.Ten),
+                new Card('C', ECardValue.Jack),
+                new Card('S', ECardValue.Jack),
+                new Card('C', ECardValue.Eight),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.FullHouse);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Ten);
+            var secondCard = result.HighestCards.ElementAt(1);
+            secondCard.Should().Be(ECardValue.Jack);
+        }
+
+        [Test]
+        public void CardsCombination_FullHouse_Success2()
+        {
+            var cards = new List<Card>
+            {
+                new Card('D', ECardValue.Ten),
+                new Card('C', ECardValue.Ten),
+                new Card('D', ECardValue.Ten),
+                new Card('H', ECardValue.Eight),
+                new Card('C', ECardValue.Jack),
+                new Card('S', ECardValue.Jack),
+                new Card('D', ECardValue.Jack),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.FullHouse);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Jack);
+            var secondCard = result.HighestCards.ElementAt(1);
+            secondCard.Should().Be(ECardValue.Ten);
+        }
+
+        [Test]
+        public void CardsCombination_FullHouse_Success3()
+        {
+            var cards = new List<Card>
+            {
+                new Card('D', ECardValue.Ten),
+                new Card('C', ECardValue.Ten),
+                new Card('D', ECardValue.Ten),
+                new Card('H', ECardValue.Ace),
+                new Card('C', ECardValue.Two),
+                new Card('S', ECardValue.Two),
+                new Card('D', ECardValue.Two),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.FullHouse);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Ten);
+            var secondCard = result.HighestCards.ElementAt(1);
+            secondCard.Should().Be(ECardValue.Two);
         }
     }
 }
