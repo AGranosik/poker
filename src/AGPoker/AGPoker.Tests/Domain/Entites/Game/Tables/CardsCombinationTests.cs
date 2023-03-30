@@ -146,7 +146,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
         {
             var cards = new List<Card>
             {
-                new Card('D', ECardValue.Ace),
+                new Card('H', ECardValue.Ace),
                 new Card('D', ECardValue.Three),
                 new Card('D', ECardValue.Four),
                 new Card('D', ECardValue.Five),
@@ -272,6 +272,75 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             highestCard.Should().Be(ECardValue.Ten);
             var secondCard = result.HighestCards.ElementAt(1);
             secondCard.Should().Be(ECardValue.Two);
+        }
+
+        [Test]
+        [TestCase('D')]
+        [TestCase('S')]
+        [TestCase('H')]
+        public void CardsCombination_Flush_Sucess(char symbol)
+        {
+            var cards = new List<Card>
+            {
+                new Card(symbol, ECardValue.Ace),
+                new Card(symbol, ECardValue.Ten),
+                new Card(symbol, ECardValue.Three),
+                new Card(symbol, ECardValue.Jack),
+                new Card('C', ECardValue.Four),
+                new Card('C', ECardValue.Five),
+                new Card(symbol, ECardValue.Two),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.Flush);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Ace);
+
+            var nextCard = result.HighestCards.ElementAt(1);
+            nextCard.Should().Be(ECardValue.Jack);
+
+            nextCard = result.HighestCards.ElementAt(2);
+            nextCard.Should().Be(ECardValue.Ten);
+
+            nextCard = result.HighestCards.ElementAt(3);
+            nextCard.Should().Be(ECardValue.Three);
+
+            nextCard = result.HighestCards.ElementAt(4);
+            nextCard.Should().Be(ECardValue.Two);
+        }
+
+        [Test]
+        public void CardsCombination_FLushWithMoreThan5_Success()
+        {
+            var cards = new List<Card>
+            {
+                new Card('C', ECardValue.Ten),
+                new Card('C', ECardValue.Three),
+                new Card('C', ECardValue.Jack),
+                new Card('C', ECardValue.Ace),
+                new Card('C', ECardValue.Four),
+                new Card('C', ECardValue.Five),
+                new Card('D', ECardValue.Two),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.Flush);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Ace);
+
+            var nextCard = result.HighestCards.ElementAt(1);
+            nextCard.Should().Be(ECardValue.Jack);
+
+            nextCard = result.HighestCards.ElementAt(2);
+            nextCard.Should().Be(ECardValue.Ten);
+
+            nextCard = result.HighestCards.ElementAt(3);
+            nextCard.Should().Be(ECardValue.Five);
+
+            nextCard = result.HighestCards.ElementAt(4);
+            nextCard.Should().Be(ECardValue.Four);
         }
     }
 }

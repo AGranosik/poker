@@ -10,9 +10,19 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
             var isStraighFLush = IsStraightFlush(cards);
             if (isStraighFLush is not null)
                 return isStraighFLush;
+
             var valueCombination = GetCardValueCombination(cards);
-            if (valueCombination is not null)
+
+            if (valueCombination?.Combination == Combination.FourOfKind)
                 return valueCombination;
+
+            if(valueCombination?.Combination == Combination.FullHouse)
+                return valueCombination;
+
+
+            var flush = IsFlush(cards);
+            if(flush is not null)
+                return flush;
 
 
             return null;
@@ -81,40 +91,43 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
         private static CardResult? IsStraightFlush(List<Card> cards)
         {
-            var isStraight = IsStraight(cards);
-            var isFlush = IsFlush(cards);
-            if(isStraight is not null && isFlush is not null)
-            {
-                if (isStraight.HighestCards.First() > isFlush.HighestCards.First())
-                    return new CardResult(Combination.StraightFlush, isStraight.HighestCards);
-                
-                return new CardResult(Combination.StraightFlush, isFlush.HighestCards);
-            }
+            var flush = IsFlush(cards);
 
-            return null;
+            if (flush is null)
+                return null;
+
+            var straightInTheFlush = IsStraight(flush.HighestCards);
+
+            if(straightInTheFlush is null)
+                return null;
+
+            if (straightInTheFlush.HighestCards.First() > flush.HighestCards.First())
+                return new CardResult(Combination.StraightFlush, straightInTheFlush.HighestCards);
+                
+            return new CardResult(Combination.StraightFlush, flush.HighestCards);
         }
 
-        private static CardResult? IsStraight(List<Card> cards)
+        private static CardResult? IsStraight(List<ECardValue> cardsValues)
         {
-            var orderedByValue = cards.OrderByDescending(x => x.Value).ToList();
+            var orderedByValue = cardsValues.OrderByDescending(c => c).ToList();
             int cardsInOrder = 1;
             var highestCard = ECardValue.Two;
 
             for(int i = 0; i < orderedByValue.Count -1 && cardsInOrder < 5; i++)
             { 
-                var currentCard = orderedByValue[i];
-                var nextCard = orderedByValue[i + 1];
+                var currentValue = orderedByValue[i];
+                var nextValue = orderedByValue[i + 1];
 
                 //next card has to be Two because its ordered by value
-                if(currentCard.Value == ECardValue.Three && cards.Any(c => c.Value == ECardValue.Ace))
+                if(currentValue == ECardValue.Three && cardsValues.Any(c => c == ECardValue.Ace))
                 {
                     cardsInOrder+=2;
                     highestCard = ECardValue.Five;
                 }
-                else if ((currentCard.Value - nextCard.Value) == 1)
+                else if ((currentValue - nextValue) == 1)
                 {
                     cardsInOrder++;
-                    highestCard = nextCard.Value;
+                    highestCard = nextValue;
                 }
                 else
                 {
@@ -138,7 +151,7 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
 
 
-            return new CardResult(Combination.Flush, new List<ECardValue> { GetHighestValue(flushCards) });
+            return new CardResult(Combination.Flush, flushCards.OrderByDescending(c => c.Value).Select(c => c.Value).ToList());
         }
 
         private static ECardValue GetHighestValue(List<Card> cards)
