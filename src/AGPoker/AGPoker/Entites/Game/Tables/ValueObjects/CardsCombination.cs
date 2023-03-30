@@ -24,6 +24,10 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
             if(flush is not null)
                 return flush;
 
+            var straight = IsStraight(cards);
+            if (straight is not null)
+                return straight;
+
 
             return null;
         }
@@ -107,9 +111,12 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
             return new CardResult(Combination.StraightFlush, flush.HighestCards);
         }
 
+        private static CardResult? IsStraight(List<Card> cards)
+            => IsStraight(cards.Select(c => c.Value).ToList());
+
         private static CardResult? IsStraight(List<ECardValue> cardsValues)
         {
-            var orderedByValue = cardsValues.OrderByDescending(c => c).ToList();
+            var orderedByValue = cardsValues.OrderBy(c => c).ToList();
             int cardsInOrder = 1;
             var highestCard = ECardValue.Two;
 
@@ -118,13 +125,11 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                 var currentValue = orderedByValue[i];
                 var nextValue = orderedByValue[i + 1];
 
-                //next card has to be Two because its ordered by value
-                if(currentValue == ECardValue.Three && cardsValues.Any(c => c == ECardValue.Ace))
+                if(currentValue == ECardValue.Two && cardsValues.Any(c => c == ECardValue.Ace))
                 {
                     cardsInOrder+=2;
-                    highestCard = ECardValue.Five;
                 }
-                else if ((currentValue - nextValue) == 1)
+                else if ((nextValue - currentValue) == 1)
                 {
                     cardsInOrder++;
                     highestCard = nextValue;

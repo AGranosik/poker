@@ -342,5 +342,68 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             nextCard = result.HighestCards.ElementAt(4);
             nextCard.Should().Be(ECardValue.Four);
         }
+
+        [Test]
+        public void CardsCombination_SimpleStraight_Success()
+        {
+            var cards = new List<Card>
+            {
+                new Card('C', ECardValue.Ten),
+                new Card('H', ECardValue.Nine),
+                new Card('C', ECardValue.Jack),
+                new Card('H', ECardValue.Quenn),
+                new Card('C', ECardValue.Four),
+                new Card('C', ECardValue.Five),
+                new Card('D', ECardValue.Eight),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.Straight);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Quenn);
+        }
+
+        [Test]
+        public void CardsCombination_StraightAceAtTheEnd_Success()
+        {
+            var cards = new List<Card>
+            {
+                new Card('C', ECardValue.Ten),
+                new Card('H', ECardValue.King),
+                new Card('C', ECardValue.Jack),
+                new Card('H', ECardValue.Quenn),
+                new Card('C', ECardValue.Four),
+                new Card('C', ECardValue.Ace),
+                new Card('D', ECardValue.Eight),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.Straight);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Ace);
+        }
+
+        [Test]
+        public void CardsCombination_StraightAceAtTheBeginning_Success()
+        {
+            var cards = new List<Card>
+            {
+                new Card('C', ECardValue.Five),
+                new Card('H', ECardValue.King),
+                new Card('C', ECardValue.Two),
+                new Card('H', ECardValue.Quenn),
+                new Card('C', ECardValue.Four),
+                new Card('C', ECardValue.Ace),
+                new Card('D', ECardValue.Three),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.Straight);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Five);
+        }
     }
 }
