@@ -432,5 +432,60 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             nextCard = result.HighestCards.ElementAt(2);
             nextCard.Should().Be(ECardValue.Quenn);
         }
+
+        [Test]
+        public void CardsCombination_SimpleTwoPair_Success()
+        {
+            var cards = new List<Card>
+            {
+                new Card('C', ECardValue.Five),
+                new Card('H', ECardValue.King),
+                new Card('C', ECardValue.Quenn),
+                new Card('H', ECardValue.Quenn),
+                new Card('C', ECardValue.Three),
+                new Card('C', ECardValue.Four),
+                new Card('D', ECardValue.Four),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.TwoPair);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Quenn);
+
+            var nextCard = result.HighestCards.ElementAt(1);
+            nextCard.Should().Be(ECardValue.Four);
+
+            nextCard = result.HighestCards.ElementAt(2);
+            nextCard.Should().Be(ECardValue.King);
+        }
+
+        [Test]
+        public void CardsCombination_SimpleTwoPair_Success2()
+        {
+            var cards = new List<Card>
+            {
+                new Card('C', ECardValue.Five),
+                new Card('H', ECardValue.King),
+                new Card('C', ECardValue.Quenn),
+                new Card('H', ECardValue.Quenn),
+                new Card('C', ECardValue.Three),
+                new Card('C', ECardValue.Ace),
+                new Card('D', ECardValue.Ace),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.TwoPair);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Ace);
+
+            var nextCard = result.HighestCards.ElementAt(1);
+            nextCard.Should().Be(ECardValue.Quenn);
+
+            nextCard = result.HighestCards.ElementAt(2);
+            nextCard.Should().Be(ECardValue.King);
+        }
+
     }
 }

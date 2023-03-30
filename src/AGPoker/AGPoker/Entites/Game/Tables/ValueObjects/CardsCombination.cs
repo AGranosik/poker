@@ -43,7 +43,7 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
             if (threeOfKind is not null)
             {
-                var twoOfKindExceptThreeCardsAlreadyCHecked = IsTwoOfKind(groupped.Where(g => g.Key != threeOfKind.HighestCards.First()));
+                var twoOfKindExceptThreeCardsAlreadyCHecked = IsPair(groupped.Where(g => g.Key != threeOfKind.HighestCards.First()));
                 if(twoOfKindExceptThreeCardsAlreadyCHecked is not null)
                 {
                     return new CardResult(Combination.FullHouse, threeOfKind.HighestCards);
@@ -52,10 +52,31 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                 return threeOfKind;
             }
 
+            var pair = IsPair(groupped);
+            if (pair is not null)
+            {
+                var secondPair = IsPair(groupped.Where(g => g.Key != pair.HighestCards.First()));
+                if(secondPair is not null)
+                {
+                    var fithHighestCard = cards
+                        .Where(c => c.Value != pair.HighestCards.First() && secondPair.HighestCards.First() != c.Value)
+                        .OrderByDescending(c => c.Value)
+                        .First();
+                    return new CardResult(Combination.TwoPair, new List<ECardValue>
+                    {
+                        pair.HighestCards.First(),
+                        secondPair.HighestCards.First(),
+                        fithHighestCard.Value
+                    });
+                }
+
+                return pair;
+            }
+
             return null;
         }
 
-        private static CardResult? IsTwoOfKind(IEnumerable<IGrouping<ECardValue, Card>> groupped)
+        private static CardResult? IsPair(IEnumerable<IGrouping<ECardValue, Card>> groupped)
             => IsExactNumberOfCards(groupped, 2, Combination.TwoPair);
 
         private static CardResult? IsThreeOfKind(IEnumerable<IGrouping<ECardValue, Card>> groupped)
