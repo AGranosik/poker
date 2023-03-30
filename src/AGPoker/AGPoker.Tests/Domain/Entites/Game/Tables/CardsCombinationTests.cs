@@ -405,5 +405,32 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             var highestCard = result.HighestCards.First();
             highestCard.Should().Be(ECardValue.Five);
         }
+
+        [Test]
+        public void CardsCombination_SimpleThreeOfKind_Success()
+        {
+            var cards = new List<Card>
+            {
+                new Card('C', ECardValue.Five),
+                new Card('H', ECardValue.King),
+                new Card('C', ECardValue.Two),
+                new Card('H', ECardValue.Quenn),
+                new Card('C', ECardValue.Four),
+                new Card('C', ECardValue.Four),
+                new Card('D', ECardValue.Four),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.ThreeOfKind);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Four);
+
+            var nextCard = result.HighestCards.ElementAt(1);
+            nextCard.Should().Be(ECardValue.King);
+
+            nextCard = result.HighestCards.ElementAt(2);
+            nextCard.Should().Be(ECardValue.Quenn);
+        }
     }
 }

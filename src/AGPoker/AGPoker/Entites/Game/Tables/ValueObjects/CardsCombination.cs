@@ -28,8 +28,7 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
             if (straight is not null)
                 return straight;
 
-
-            return null;
+            return valueCombination;
         }
 
         private static CardResult? GetCardValueCombination(List<Card> cards)
@@ -49,6 +48,8 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                 {
                     return new CardResult(Combination.FullHouse, threeOfKind.HighestCards);
                 }
+
+                return threeOfKind;
             }
 
             return null;
