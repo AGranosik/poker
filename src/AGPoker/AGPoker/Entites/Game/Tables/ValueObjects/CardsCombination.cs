@@ -59,7 +59,8 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                 if(secondPair is not null)
                 {
                     var fithHighestCard = cards
-                        .Where(c => c.Value != pair.HighestCards.First() && secondPair.HighestCards.First() != c.Value)
+                        .Where(c => c.Value != pair.HighestCards.First()
+                             && secondPair.HighestCards.First() != c.Value)
                         .OrderByDescending(c => c.Value)
                         .First();
                     return new CardResult(Combination.TwoPair, new List<ECardValue>
@@ -73,11 +74,11 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                 return pair;
             }
 
-            return null;
+            return new CardResult(Combination.HighCard, cards.OrderByDescending(c => c.Value).Select(c => c.Value).ToList());
         }
 
         private static CardResult? IsPair(IEnumerable<IGrouping<ECardValue, Card>> groupped)
-            => IsExactNumberOfCards(groupped, 2, Combination.TwoPair);
+            => IsExactNumberOfCards(groupped, 2, Combination.OnePair);
 
         private static CardResult? IsThreeOfKind(IEnumerable<IGrouping<ECardValue, Card>> groupped)
             => IsExactNumberOfCards(groupped, 3, Combination.ThreeOfKind);
@@ -138,7 +139,10 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
         private static CardResult? IsStraight(List<ECardValue> cardsValues)
         {
-            var orderedByValue = cardsValues.OrderBy(c => c).ToList();
+            var orderedByValue = cardsValues.OrderBy(c => c).Distinct().ToList();
+            if (orderedByValue.Count < 5)
+                return null;
+
             int cardsInOrder = 1;
             var highestCard = ECardValue.Two;
 

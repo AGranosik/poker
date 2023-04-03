@@ -156,7 +156,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             };
 
             var result = CardsCombination.GetCombination(cards);
-            result.Should().BeNull();
+            result.Should().NotBe(Combination.StraightFlush);
         }
 
         [Test]
@@ -485,6 +485,99 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
 
             nextCard = result.HighestCards.ElementAt(2);
             nextCard.Should().Be(ECardValue.King);
+        }
+
+        [Test]
+        public void CardsCombination_SimplePair_Success()
+        {
+            var cards = new List<Card>
+            {
+                new Card('C', ECardValue.Five),
+                new Card('H', ECardValue.King),
+                new Card('C', ECardValue.Quenn),
+                new Card('H', ECardValue.Quenn),
+                new Card('C', ECardValue.Three),
+                new Card('C', ECardValue.Four),
+                new Card('D', ECardValue.Ace),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.OnePair);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Quenn);
+
+            var nextCard = result.HighestCards.ElementAt(1);
+            nextCard.Should().Be(ECardValue.Ace);
+
+            nextCard = result.HighestCards.ElementAt(2);
+            nextCard.Should().Be(ECardValue.King);
+
+            nextCard = result.HighestCards.ElementAt(3);
+            nextCard.Should().Be(ECardValue.Five);
+        }
+
+        [Test]
+        public void CardsCombination_SimplePairSameColor_Success()
+        {
+            var cards = new List<Card>
+            {
+                new Card('C', ECardValue.Six),
+                new Card('H', ECardValue.King),
+                new Card('H', ECardValue.Two),
+                new Card('H', ECardValue.Two),
+                new Card('C', ECardValue.Three),
+                new Card('C', ECardValue.Four),
+                new Card('D', ECardValue.Ace),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.OnePair);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Two);
+
+            var nextCard = result.HighestCards.ElementAt(1);
+            nextCard.Should().Be(ECardValue.Ace);
+
+            nextCard = result.HighestCards.ElementAt(2);
+            nextCard.Should().Be(ECardValue.King);
+
+            nextCard = result.HighestCards.ElementAt(3);
+            nextCard.Should().Be(ECardValue.Six);
+        }
+
+        [Test]
+        public void CardsCombination_HighestCard_Success()
+        {
+            var cards = new List<Card>
+            {
+                new Card('C', ECardValue.Six),
+                new Card('H', ECardValue.King),
+                new Card('H', ECardValue.Two),
+                new Card('H', ECardValue.Seven),
+                new Card('C', ECardValue.Three),
+                new Card('C', ECardValue.Four),
+                new Card('D', ECardValue.Ace),
+            };
+
+            var result = CardsCombination.GetCombination(cards);
+            result.Should().NotBeNull();
+            result.Combination.Should().Be(Combination.HighCard);
+            var highestCard = result.HighestCards.First();
+            highestCard.Should().Be(ECardValue.Ace);
+
+            var nextCard = result.HighestCards.ElementAt(1);
+            nextCard.Should().Be(ECardValue.King);
+
+            nextCard = result.HighestCards.ElementAt(2);
+            nextCard.Should().Be(ECardValue.Seven);
+
+            nextCard = result.HighestCards.ElementAt(3);
+            nextCard.Should().Be(ECardValue.Six);
+
+            nextCard = result.HighestCards.ElementAt(4);
+            nextCard.Should().Be(ECardValue.Four);
         }
 
     }
