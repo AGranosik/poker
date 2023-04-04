@@ -1,5 +1,5 @@
-﻿using AGPoker.Entites.Game.Decks.ValueObjects;
-using AGPoker.Entites.Game.Decks;
+﻿using AGPoker.Entites.Game.Decks;
+using AGPoker.Entites.Game.Decks.ValueObjects;
 using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Tables.ValueObjects;
 
@@ -21,12 +21,45 @@ namespace AGPoker.Entites.Game.Tables
             GiveHandToThePlayers();
         }
 
-        public IReadOnlyCollection<Player> GetWinners()
+        public IReadOnlyCollection<Player> GetWinners(List<Player> playersToDecide)
         {
             if (!AreAllPlayersHaveCards())
                 throw new InvalidOperationException();
 
-            return _players.AsReadOnly();
+            if (!IsLastStage())
+                throw new InvalidOperationException();
+
+            PotencialPlayersWinnerValidation(playersToDecide);
+            var playersCombination = playersToDecide.Select(p => 
+            {
+                var allCards = new List<Card>();
+                allCards.AddRange(p.Cards);
+                allCards.AddRange(Flop.Cards);
+                allCards.AddRange(Turn.Cards);
+                allCards.AddRange(River.Cards); //gett all cards method
+                return new
+                {
+                    Player = p,
+                    Combination = CardsCombination.GetCombination(allCards)
+                };
+            })
+            .GroupBy(pc => pc.Combination)
+            .OrderBy(pc => pc)
+            .First();
+
+            return playersCombination.Select(pc => pc.Player).ToList().AsReadOnly();
+        }
+
+        private bool IsLastStage()
+            => River is not null || Flop is not null || Turn is not null;
+
+        private void PotencialPlayersWinnerValidation(List<Player> playersToDecide)
+        {
+            if(playersToDecide is null || playersToDecide.Count == 0)
+                throw new InvalidOperationException();
+
+            if(!playersToDecide.All(p => _players.Contains(p)))
+                throw new ArgumentException();
         }
 
         private bool AreAllPlayersHaveCards()
