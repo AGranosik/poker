@@ -23,31 +23,11 @@ namespace AGPoker.Entites.Game.Tables
 
         public IReadOnlyCollection<Player> GetWinners(List<Player> playersToDecide)
         {
-            if (!AreAllPlayersHaveCards())
-                throw new InvalidOperationException();
-
-            if (!IsLastStage())
-                throw new InvalidOperationException();
-
-            PotencialPlayersWinnerValidation(playersToDecide);
-            var playersCombination = playersToDecide.Select(p => 
-            {
-                var allCards = new List<Card>();
-                allCards.AddRange(p.Cards);
-                allCards.AddRange(Flop.Cards);
-                allCards.AddRange(Turn.Cards);
-                allCards.AddRange(River.Cards); //gett all cards method
-                return new
-                {
-                    Player = p,
-                    Combination = CardsCombination.GetCombination(allCards)
-                };
-            })
-            .GroupBy(pc => pc.Combination)
-            .OrderBy(pc => pc)
-            .First();
-
-            return playersCombination.Select(pc => pc.Player).ToList().AsReadOnly();
+            var tableCards = new List<Card>(5);
+            tableCards.AddRange(Flop.Cards);
+            tableCards.AddRange(Turn.Cards);
+            tableCards.AddRange(River.Cards);
+            return CardsCombination.GetWinners(playersToDecide, tableCards);
         }
 
         private bool IsLastStage()
@@ -62,8 +42,7 @@ namespace AGPoker.Entites.Game.Tables
                 throw new ArgumentException();
         }
 
-        private bool AreAllPlayersHaveCards()
-            => _players.All(p => p.Cards.Count == 2);
+
 
         public void Fold(Player player)
             => _players.Remove(player);

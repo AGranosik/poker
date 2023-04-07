@@ -1,9 +1,31 @@
 ﻿using AGPoker.Entites.Game.Decks.ValueObjects;
+using AGPoker.Entites.Game.Game.Players;
 
 namespace AGPoker.Entites.Game.Tables.ValueObjects
 {
     public static class CardsCombination
     {
+        public static IReadOnlyCollection<Player> GetWinners(List<Player> players, List<Card> cardsFromTable)
+        {
+            GetWinnersValidation(players, cardsFromTable);
+            var playersWithGreatestCombination = players.Select(p =>
+            {
+                var allCards = new List<Card>();
+                allCards.AddRange(p.Cards);
+                allCards.AddRange(cardsFromTable);
+                return new
+                {
+                    Player = p,
+                    Combination = GetCombination(allCards)
+                };
+            })
+            .GroupBy(pc => pc.Combination)
+            .OrderBy(pc => pc)
+            .First();
+
+            return playersWithGreatestCombination.Select(p => p.Player).ToList();
+        }
+
         public static CardResult GetCombination(List<Card> cards)
         {
             CardsValidation(cards);
@@ -30,6 +52,24 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
             return valueCombination;
         }
+
+        private static void GetWinnersValidation(List<Player> players, List<Card> cardsFromTable)
+        {
+            if(!AreAllPlayersHaveCards(players) && ArePlayersEmpty(players))
+                throw new ArgumentException(nameof(players));
+
+            if(!AreENoughCardsInTable(cardsFromTable))
+                throw new ArgumentException(nameof(cardsFromTable));
+        }
+
+        private static bool AreENoughCardsInTable(List<Card> cardsFromTable)
+            => cardsFromTable is not null && cardsFromTable.Count == 5;
+
+        private static bool AreAllPlayersHaveCards(List<Player> players)
+            => players.All(p => p.Cards.Count == 2);
+
+        private static bool ArePlayersEmpty(List<Player> players)
+            => players is null || players.Count == 0;
 
         private static CardResult? GetCardValueCombination(List<Card> cards)
         {
