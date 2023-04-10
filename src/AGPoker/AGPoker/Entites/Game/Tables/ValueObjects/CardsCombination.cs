@@ -20,7 +20,7 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                 };
             })
             .GroupBy(pc => pc.Combination)
-            .OrderBy(pc => pc)
+            .OrderBy(pc => pc.Key)
             .First();
 
             return playersWithGreatestCombination.Select(p => p.Player).ToList();
@@ -224,12 +224,9 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
             return new CardResult(Combination.Flush, flushCards.OrderByDescending(c => c.Value).Select(c => c.Value).ToList());
         }
-
-        private static ECardValue GetHighestValue(List<Card> cards)
-            => cards.Max(c => c.Value);
     }
 
-    public class CardResult
+    public class CardResult : IComparable<CardResult>
     {
         public CardResult(Combination combination, List<ECardValue> cardsOrder)
         {
@@ -239,6 +236,16 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
         public Combination Combination { get; init; }
         public List<ECardValue> HighestCards { get; init; }
+
+        public int CompareTo(CardResult? other)
+        {
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            if(Combination < other.Combination) return 1;
+            if(Combination > other.Combination) return -1;
+            throw new NotImplementedException();
+        }
     }
 
     public enum Combination

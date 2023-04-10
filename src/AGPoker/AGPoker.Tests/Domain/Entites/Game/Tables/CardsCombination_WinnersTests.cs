@@ -109,7 +109,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
         }
 
         [Test]
-        public void Winners_DifferentCombinations_success()
+        public void Winners_DifferentCombinations_Success()
         {
             var player = Player.Create("hehe", "hehe");
             player.TakeCards(new List<Card>
@@ -132,7 +132,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
                 new Card('C', ECardValue.Three)
             });
 
-            var result = CardsCombination.GetWinners(new List<Player>() { player }, new List<Card>()
+            var result = CardsCombination.GetWinners(new List<Player>() { player, player2, player3 }, new List<Card>()
             {
                 new Card('C', ECardValue.Ace),
                 new Card('C', ECardValue.Quenn),
@@ -143,6 +143,81 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
 
             result.Should().NotBeNullOrEmpty();
             result.First().Should().Be(player);
+        }
+
+        [Test]
+        public void Winners_DifferentCombinations_Success2()
+        {
+            var player = Player.Create("hehe", "hehe");
+            player.TakeCards(new List<Card>
+            {
+                new Card('C', ECardValue.King),
+                new Card('C', ECardValue.Nine)
+            });
+
+            var player2 = Player.Create("hehe2", "hehe");
+            player2.TakeCards(new List<Card>
+            {
+                new Card('H', ECardValue.King),
+                new Card('H', ECardValue.Nine)
+            });
+
+            var player3 = Player.Create("hehe3", "hehe");
+            player3.TakeCards(new List<Card>
+            {
+                new Card('H', ECardValue.Three),
+                new Card('C', ECardValue.Three)
+            });
+
+            var result = CardsCombination.GetWinners(new List<Player>() { player, player2, player3 }, new List<Card>()
+            {
+                new Card('C', ECardValue.Six),
+                new Card('C', ECardValue.Quenn),
+                new Card('C', ECardValue.Ten),
+                new Card('D', ECardValue.Three),
+                new Card('D', ECardValue.Four),
+            });
+
+            result.Should().NotBeNullOrEmpty();
+            result.First().Should().Be(player);
+        }
+
+        [Test]
+        public void Winners_StraightFlushHigherCardDecide_Success()
+        {
+            var player = Player.Create("hehe", "hehe");
+            player.TakeCards(new List<Card>
+            {
+                new Card('H', ECardValue.Six),
+                new Card('C', ECardValue.Two)
+            });
+
+            var player2 = Player.Create("hehe2", "hehe");
+            player2.TakeCards(new List<Card>
+            {
+                new Card('H', ECardValue.King),
+                new Card('H', ECardValue.Nine)
+            });
+
+            var player3 = Player.Create("hehe3", "hehe");
+            player3.TakeCards(new List<Card>
+            {
+                new Card('C', ECardValue.King),
+                new Card('C', ECardValue.Nine)
+
+            });
+
+            var result = CardsCombination.GetWinners(new List<Player>() { player, player2, player3 }, new List<Card>()
+            {
+                new Card('C', ECardValue.Ace),
+                new Card('C', ECardValue.Quenn),
+                new Card('C', ECardValue.Five),
+                new Card('C', ECardValue.Three),
+                new Card('C', ECardValue.Four),
+            });
+
+            result.Should().NotBeNullOrEmpty();
+            result.First().Should().Be(player3);
         }
     }
 }

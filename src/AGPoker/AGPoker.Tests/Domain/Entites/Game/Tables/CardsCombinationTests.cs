@@ -156,7 +156,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             };
 
             var result = CardsCombination.GetCombination(cards);
-            result.Should().NotBe(Combination.StraightFlush);
+            result.Combination.Should().NotBe(Combination.StraightFlush);
         }
 
         [Test]
