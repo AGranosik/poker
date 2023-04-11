@@ -230,12 +230,13 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
     {
         public CardResult(Combination combination, List<ECardValue> cardsOrder)
         {
+            CreationValidation(cardsOrder);
+            AssignNeccessaryCardsForCombination(combination, cardsOrder);
             Combination = combination;
-            HighestCards = cardsOrder;
         }
 
         public Combination Combination { get; init; }
-        public List<ECardValue> HighestCards { get; init; }
+        public List<ECardValue> HighestCards { get; private set; }
 
         public int CompareTo(CardResult? other)
         {
@@ -245,6 +246,29 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
             if(Combination < other.Combination) return 1;
             if(Combination > other.Combination) return -1;
             throw new NotImplementedException();
+        }
+
+        private void CreationValidation(List<ECardValue> cardsOrder)
+        {
+            if(cardsOrder is null || cardsOrder.Count == 0)
+                throw new ArgumentException(nameof(cardsOrder));
+        }
+
+        private void AssignNeccessaryCardsForCombination(Combination combination, List<ECardValue> cardsOrder)
+        {
+            switch (combination)
+            {
+                case Combination.StraightFlush:
+                    HighestCards = cardsOrder.Take(1).ToList();
+                    break;
+                case Combination.FourOfKind:
+                case Combination.FullHouse:
+                    HighestCards = cardsOrder.Take(2).ToList();
+                    break;
+                case Combination.Flush:
+                    HighestCards = cardsOrder.Take(5).ToList();
+                    break;
+            }
         }
     }
 
