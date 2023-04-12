@@ -77,5 +77,71 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             highestCards.ElementAt(3).Should().Be(ECardValue.Nine);
             highestCards.ElementAt(4).Should().Be(ECardValue.Eight);
         }
+
+        [Test]
+        public void Creation_Straight_OneCardCount_Success()
+        {
+            var result = new CardResult(Combination.Straight, new List<ECardValue>() { ECardValue.Quenn, ECardValue.Jack, ECardValue.Ten, ECardValue.Nine, ECardValue.Eight });
+            result.Should().NotBeNull();
+            var highestCards = result.HighestCards;
+            highestCards.Should().NotBeNull();
+            highestCards.Should().HaveCount(1);
+            highestCards.ElementAt(0).Should().Be(ECardValue.Quenn);
+        }
+
+        [Test]
+        public void Creation_ThreeOfKind_3CardsCount_Success()
+        {
+            var result = new CardResult(Combination.ThreeOfKind, new List<ECardValue>() { ECardValue.Eight, ECardValue.Jack, ECardValue.Ten });
+            result.Should().NotBeNull();
+            var highestCards = result.HighestCards;
+            highestCards.Should().NotBeNull();
+            highestCards.Should().HaveCount(3);
+            highestCards.ElementAt(0).Should().Be(ECardValue.Eight);
+            highestCards.ElementAt(1).Should().Be(ECardValue.Jack);
+            highestCards.ElementAt(2).Should().Be(ECardValue.Ten);
+        }
+
+        [Test]
+        public void Creation_TwoPair_3CardsCount_Success()
+        {
+            var result = new CardResult(Combination.TwoPair, new List<ECardValue>() { ECardValue.Eight, ECardValue.Two, ECardValue.Ten });
+            result.Should().NotBeNull();
+            var highestCards = result.HighestCards;
+            highestCards.Should().NotBeNull();
+            highestCards.Should().HaveCount(3);
+            highestCards.ElementAt(0).Should().Be(ECardValue.Eight);
+            highestCards.ElementAt(1).Should().Be(ECardValue.Two);
+            highestCards.ElementAt(2).Should().Be(ECardValue.Ten);
+        }
+
+        [Test]
+        public void Creation_OnePair_4CardsCount_Success()
+        {
+            var result = new CardResult(Combination.OnePair, new List<ECardValue>() { ECardValue.Eight, ECardValue.Ace, ECardValue.Ten, ECardValue.Three });
+            result.Should().NotBeNull();
+            var highestCards = result.HighestCards;
+            highestCards.Should().NotBeNull();
+            highestCards.Should().HaveCount(4);
+            highestCards.ElementAt(0).Should().Be(ECardValue.Eight);
+            highestCards.ElementAt(1).Should().Be(ECardValue.Ace);
+            highestCards.ElementAt(2).Should().Be(ECardValue.Ten);
+            highestCards.ElementAt(3).Should().Be(ECardValue.Three);
+        }
+
+        [Test]
+        public void Creation_HighCard_5CardsCount_Success()
+        {
+            var result = new CardResult(Combination.HighCard, new List<ECardValue>() { ECardValue.Ace, ECardValue.Ten, ECardValue.Four, ECardValue.Three, ECardValue.Two });
+            result.Should().NotBeNull();
+            var highestCards = result.HighestCards;
+            highestCards.Should().NotBeNull();
+            highestCards.Should().HaveCount(5);
+            highestCards.ElementAt(0).Should().Be(ECardValue.Ace);
+            highestCards.ElementAt(1).Should().Be(ECardValue.Ten);
+            highestCards.ElementAt(2).Should().Be(ECardValue.Four);
+            highestCards.ElementAt(3).Should().Be(ECardValue.Three);
+            highestCards.ElementAt(4).Should().Be(ECardValue.Two);
+        }
     }
 }

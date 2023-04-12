@@ -259,6 +259,7 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
             switch (combination)
             {
                 case Combination.StraightFlush:
+                case Combination.Straight:
                     HighestCards = cardsOrder.Take(1).ToList();
                     break;
                 case Combination.FourOfKind:
@@ -266,7 +267,15 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                     HighestCards = cardsOrder.Take(2).ToList();
                     break;
                 case Combination.Flush:
+                case Combination.HighCard:
                     HighestCards = cardsOrder.Take(5).ToList();
+                    break;
+                case Combination.ThreeOfKind:
+                case Combination.TwoPair:
+                    HighestCards = cardsOrder.Take(3).ToList();
+                    break;
+                case Combination.OnePair:
+                    HighestCards = cardsOrder.Take(4).ToList();
                     break;
             }
         }
