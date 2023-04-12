@@ -20,10 +20,17 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                 };
             })
             .GroupBy(pc => pc.Combination)
-            .OrderBy(pc => pc.Key)
-            .First();
+            .OrderByDescending(pc => pc.Key);
 
-            return playersWithGreatestCombination.Select(p => p.Player).ToList();
+            var greatestCombination = playersWithGreatestCombination.First();
+            if(greatestCombination.Count() > 1)
+            {
+                return null;
+            }
+            else
+            {
+                return greatestCombination.Select(g => g.Player).ToList();
+            }
         }
 
         public static CardResult GetCombination(List<Card> cards)
@@ -158,20 +165,25 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
         private static CardResult? IsStraightFlush(List<Card> cards)
         {
-            var flush = IsFlush(cards);
+            var flushCards = cards.GroupBy(c => c.Symbol)
+                .Where(s => s.Count() >= 5)
+                .SelectMany(s => s)
+                .ToList();
 
-            if (flush is null)
+            if (flushCards.Count == 0)
                 return null;
 
-            var straightInTheFlush = IsStraight(flush.HighestCards);
+            var straightInTheFlush = IsStraight(flushCards);
 
             if(straightInTheFlush is null)
                 return null;
 
-            if (straightInTheFlush.HighestCards.First() > flush.HighestCards.First())
+            var flushCardsOrdered = flushCards.OrderByDescending(c => c.Value).Select(c => c.Value).ToList();
+
+            if (straightInTheFlush.HighestCards.First() > flushCardsOrdered.First())
                 return new CardResult(Combination.StraightFlush, straightInTheFlush.HighestCards);
                 
-            return new CardResult(Combination.StraightFlush, flush.HighestCards);
+            return new CardResult(Combination.StraightFlush, flushCardsOrdered);
         }
 
         private static CardResult? IsStraight(List<Card> cards)
@@ -219,8 +231,6 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
             if (!flushCards.Any())
                 return null;
-
-
 
             return new CardResult(Combination.Flush, flushCards.OrderByDescending(c => c.Value).Select(c => c.Value).ToList());
         }
