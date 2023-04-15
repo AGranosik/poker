@@ -63,34 +63,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
         [Test]
         public void GetWinners_NotLastStage_ThrowsException()
         {
-            var players = new List<Player>()
-            {
-                Player.Create("hehe", "hehe"),
-                Player.Create("hehe7", "hehe"),
-                Player.Create("hehe3", "hehe"),
-                Player.Create("hehe4", "hehe"),
-            };
-            var func = () => _table.GetWinners(players);
+            var func = () => _table.GetWinners(_players);
             func.Should().Throw<InvalidOperationException>();
-        }
-
-        [Test]
-        public void GetWinners_SinglePlayer_Success()
-        {
-            var players = new List<Player>()
-            {
-                Player.Create("hehe", "hehe"),
-                Player.Create("hehe7", "hehe"),
-                Player.Create("hehe3", "hehe"),
-                Player.Create("hehe4", "hehe"),
-            };
-        }
-
-        private void TableIntoLastStage()
-        {
-            _table.NextStage();
-            _table.NextStage();
-            _table.NextStage();
         }
     }
 }

@@ -189,7 +189,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             player.TakeCards(new List<Card>
             {
                 new Card('H', ECardValue.Six),
-                new Card('C', ECardValue.Two)
+                new Card('C', ECardValue.King)
             });
 
             var player2 = Player.Create("hehe2", "hehe");

@@ -22,15 +22,9 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
             .GroupBy(pc => pc.Combination)
             .OrderByDescending(pc => pc.Key);
 
-            var greatestCombination = playersWithGreatestCombination.First();
-            if(greatestCombination.Count() > 1)
-            {
-                return null;
-            }
-            else
-            {
-                return greatestCombination.Select(g => g.Player).ToList();
-            }
+            return playersWithGreatestCombination.First()
+                .Select(p => p.Player)
+                .ToList();
         }
 
         public static CardResult GetCombination(List<Card> cards)
@@ -180,10 +174,7 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
             var flushCardsOrdered = flushCards.OrderByDescending(c => c.Value).Select(c => c.Value).ToList();
 
-            if (straightInTheFlush.HighestCards.First() > flushCardsOrdered.First())
-                return new CardResult(Combination.StraightFlush, straightInTheFlush.HighestCards);
-                
-            return new CardResult(Combination.StraightFlush, flushCardsOrdered);
+            return new CardResult(Combination.StraightFlush, straightInTheFlush.HighestCards);
         }
 
         private static CardResult? IsStraight(List<Card> cards)
@@ -191,7 +182,7 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
         private static CardResult? IsStraight(List<ECardValue> cardsValues)
         {
-            var orderedByValue = cardsValues.OrderBy(c => c).Distinct().ToList();
+            var orderedByValue = cardsValues.OrderByDescending(c => c).Distinct().ToList();
             if (orderedByValue.Count < 5)
                 return null;
 
@@ -203,14 +194,14 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                 var currentValue = orderedByValue[i];
                 var nextValue = orderedByValue[i + 1];
 
-                if(currentValue == ECardValue.Two && cardsValues.Any(c => c == ECardValue.Ace))
+                if(currentValue == ECardValue.Three && nextValue == ECardValue.Two && cardsValues.Any(c => c == ECardValue.Ace))
                 {
                     cardsInOrder+=2;
                 }
-                else if ((nextValue - currentValue) == 1)
+                else if ((currentValue - nextValue) == 1)
                 {
                     cardsInOrder++;
-                    highestCard = nextValue;
+                    highestCard = currentValue > highestCard ? currentValue : highestCard;
                 }
                 else
                 {

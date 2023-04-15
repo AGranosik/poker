@@ -138,7 +138,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             result.Should().NotBeNull();
             result.Combination.Should().Be(Combination.StraightFlush);
             var highestCard = result.HighestCards.First();
-            highestCard.Should().Be(ECardValue.Ace);
+            highestCard.Should().Be(ECardValue.Five);
         }
 
         [Test]

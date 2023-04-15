@@ -23,6 +23,10 @@ namespace AGPoker.Entites.Game.Tables
 
         public IReadOnlyCollection<Player> GetWinners(List<Player> playersToDecide)
         {
+            PotencialPlayersWinnerValidation(playersToDecide);
+            if (!IsLastStage())
+                throw new InvalidOperationException();
+
             var tableCards = new List<Card>(5);
             tableCards.AddRange(Flop.Cards);
             tableCards.AddRange(Turn.Cards);
