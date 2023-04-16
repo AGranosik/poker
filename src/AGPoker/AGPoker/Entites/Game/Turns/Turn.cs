@@ -22,6 +22,7 @@ namespace AGPoker.Entites.Game.Turns
         private List<Player> _players = new();
         private List<int> _playersInGame = new();
         private List<int> _playersToRemove = new();
+        private List<int> _allInPlayers = new();
         private int _currentPlayerIndex = 0;
         private int _dealerIndex = 0;
         private int _movesInTurn = 1;
@@ -37,8 +38,8 @@ namespace AGPoker.Entites.Game.Turns
                 throw new CannotBetException("Next move cannot be performed.");
 
             SetTurnBet(bidType);
-            SetNextPlayerIndex();
-            RemovePlayerFromTurnIfNeccessary(player, bidType);
+            SetNextPlayer(); //pass currentIndex before increment
+            TakePlayerBetIntoAccountForFutureMoves(player, bidType);
         }
 
         private bool IsThisPlayerTurn(Player player)
@@ -104,7 +105,7 @@ namespace AGPoker.Entites.Game.Turns
 
         private void SetTurnBet(BetType bidType)
         {
-            if (bidType == BetType.Raise)
+            if (bidType == BetType.Raise || bidType == BetType.AllIn)
                 _movesInTurn = 1;
             else if (bidType == BetType.Fold)
                 return;
@@ -112,12 +113,16 @@ namespace AGPoker.Entites.Game.Turns
                 _movesInTurn++;
         }
 
-        private void RemovePlayerFromTurnIfNeccessary(Player player,BetType bidType)
+        private void TakePlayerBetIntoAccountForFutureMoves(Player player,BetType bidType)
         {
             if (bidType == BetType.Fold)
             {
                 _playersInGame.Remove(_players.IndexOf(player));
                 _maximumMovesInRound = _playersInGame.Count;
+            }
+            else if (bidType == BetType.AllIn)
+            {
+                _allInPlayers.Add(_currentPlayerIndex);
             }
         }
 
@@ -160,9 +165,14 @@ namespace AGPoker.Entites.Game.Turns
             BigBlindPlayer = _players[Circle.GetNextInCircle(_players.IndexOf(SmallBlindPlayer), _playersInGame)];
         }
 
-        private void SetNextPlayerIndex()
+        private void SetNextPlayer()
         {
             _currentPlayerIndex = Circle.GetNextInCircle(_currentPlayerIndex, _playersInGame);
+            if (_allInPlayers.Contains(_currentPlayerIndex))
+            {
+                _movesInTurn++;
+                SetNextPlayer();
+            }
         }
 
     }

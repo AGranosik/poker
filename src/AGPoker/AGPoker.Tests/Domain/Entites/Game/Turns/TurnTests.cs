@@ -182,22 +182,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         }
 
         [Test]
-        public void Next_AllInDoesntChangeCircleFlow_Success()
-        {
-            var checkedBid = BetType.Call;
-            var allIn = BetType.AllIn;
-
-            for (int i = 0; i < 3; i++)
-                _turn.Bet(_players[i], checkedBid);
-
-            _turn.Bet(_players[3], allIn);
-            _turn.Bet(_players[4], checkedBid);
-
-            var func = () => _turn.Bet(_players[0], checkedBid); // to make sure circle is closed
-            func.Should().Throw<CannotBetException>();
-        }
-
-        [Test]
         public void NextRound_CannotStartWhenEarlierNotFinished_ThrwosException()
         {
             var func = () => _turn.NextRound();
