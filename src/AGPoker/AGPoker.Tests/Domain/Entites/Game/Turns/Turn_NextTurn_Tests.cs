@@ -1,4 +1,5 @@
-﻿using AGPoker.Entites.Game.Game.Players;
+﻿using AGPoker.Core;
+using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Entites.Game.Turns;
 using AGPoker.Exceptions;
@@ -34,10 +35,10 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
 
         private void GetIntoNextTurn(Turn turn)
         {
-            EveryPlayerCall(turn);
-            EveryPlayerCall(turn);
-            EveryPlayerCall(turn);
-            EveryPlayerCall(turn, false);
+            EveryPlayerCall(turn, 1);
+            EveryPlayerCall(turn, 1);
+            EveryPlayerCall(turn, 1);
+            EveryPlayerCall(turn, 1, false);
 
             turn.NextTurn();
         }
@@ -52,9 +53,9 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void NextTurn_CannotStartWithoutFourRounds_ThrowsException2()
         {
-            EveryPlayerCall(_turn);
-            EveryPlayerCall(_turn);
-            EveryPlayerCall(_turn);
+            EveryPlayerCall(_turn, 1);
+            EveryPlayerCall(_turn, 1);
+            EveryPlayerCall(_turn, 1);
 
             var func = () => _turn.NextTurn();
             func.Should().Throw<CannotStartNextTurn>();
@@ -63,11 +64,11 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void NextTurn_CannotStartBefore4thRoundIsInGame_Sucess()
         {
-            EveryPlayerCall(_turn);
-            EveryPlayerCall(_turn);
-            EveryPlayerCall(_turn);
+            EveryPlayerCall(_turn, 1);
+            EveryPlayerCall(_turn, 1);
+            EveryPlayerCall(_turn, 1);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 1; i < 5; i++)
                 _turn.Bet(_players[i], BetType.Call);
 
             var func = () => _turn.NextTurn();
@@ -80,10 +81,10 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             var oldDealer = _turn.Dealer;
             var oldSmallBLind = _turn.SmallBlindPlayer;
             var oldBigBlind = _turn.BigBlindPlayer;
-            EveryPlayerCall(_turn);
-            EveryPlayerCall(_turn);
-            EveryPlayerCall(_turn);
-            EveryPlayerCall(_turn, false);
+            EveryPlayerCall(_turn, 1);
+            EveryPlayerCall(_turn, 1);
+            EveryPlayerCall(_turn, 1);
+            EveryPlayerCall(_turn, 1, false);
 
             var func = () => _turn.NextTurn();
             func.Should().NotThrow();
@@ -104,10 +105,10 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             (secondTurnDealer == _players.ElementAt(_players.Count - 2)).Should().BeTrue();
 
             // player order not changed
-            EveryPlayerCall(_secondTurn);
-            EveryPlayerCall(_secondTurn);
-            EveryPlayerCall(_secondTurn);
-            EveryPlayerCall(_secondTurn, false);
+            EveryPlayerCall(_secondTurn, 2);
+            EveryPlayerCall(_secondTurn, 2);
+            EveryPlayerCall(_secondTurn, 2);
+            EveryPlayerCall(_secondTurn, 2, false);
 
             var func = () => _secondTurn.NextTurn();
             func.Should().NotThrow();
@@ -123,9 +124,9 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             var secondTurnDealer = _secondTurn.Dealer;
             (secondTurnDealer == _players[_players.Count - 2]).Should().BeTrue();
 
-            EveryPlayerCall(_secondTurn);
-            EveryPlayerCall(_secondTurn);
-            EveryPlayerCall(_secondTurn);
+            EveryPlayerCall(_secondTurn, 2);
+            EveryPlayerCall(_secondTurn, 2);
+            EveryPlayerCall(_secondTurn, 2);
             ThreePlayersLastAfterBetting(_secondTurn);
 
             var func = () => _secondTurn.NextTurn();
@@ -164,8 +165,63 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
 
         }
 
-        //check if next turn player after big blind
+        [Test]
+        public void NextTurn_DifferentFirstPlayer_Success()
+        {
+            var firstPlayer = _players[1];
+            var secondPlayer = _players[2];
 
+            EveryPlayerCall(_turn, 1, true);
+            EveryPlayerCall(_turn, 1, true);
+            EveryPlayerCall(_turn, 1, true);
+            EveryPlayerCall(_turn, 1, false);
+            _turn.NextTurn();
+            var func = () => _turn.Bet(firstPlayer, BetType.Call);
+            func.Should().Throw<CannotBetException>();
+        }
+
+        [Test]
+        public void NextTurn_DifferentFirstPlayer_Success2()
+        {
+            var firstPlayer = _players[1];
+            var secondPlayer = _players[2];
+
+            EveryPlayerCall(_turn, 1, true);
+            EveryPlayerCall(_turn, 1, true);
+            EveryPlayerCall(_turn, 1, true);
+            EveryPlayerCall(_turn, 1, false);
+            _turn.NextTurn();
+
+            var func = () => _turn.Bet(secondPlayer, BetType.Call);
+            func.Should().NotThrow();
+        }
+
+        [Test]
+        public void NextTurn_3rdRound_Success2()
+        {
+            var firstPlayer = _players[1];
+            var secondPlayer = _players[2];
+            var thirdPlayer = _players[3];
+
+            EveryPlayerCall(_turn, 1, true);
+            EveryPlayerCall(_turn, 1, true);
+            EveryPlayerCall(_turn, 1, true);
+            EveryPlayerCall(_turn, 1, false);
+            _turn.NextTurn();
+
+
+            EveryPlayerCall(_turn, 2, true);
+            EveryPlayerCall(_turn, 2, true);
+            EveryPlayerCall(_turn, 2, true);
+            EveryPlayerCall(_turn, 2, false);
+            _turn.NextTurn();
+
+            var exceptionFunc = () => _turn.Bet(secondPlayer, BetType.Call);
+            exceptionFunc.Should().Throw<CannotBetException>();
+
+            var func = () => _turn.Bet(thirdPlayer, BetType.Call);
+            func.Should().NotThrow();
+        }
         private void ThreePlayersLastAfterBetting(Turn turn)
         {
             turn.Bet(_players[0], BetType.Call);
@@ -181,10 +237,17 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             turn.Bet(_players[2], BetType.Fold);
         }
 
-        private void EveryPlayerCall(Turn turn, bool startNextRound = true)
+        private void EveryPlayerCall(Turn turn, int turnNumber, bool startNextRound = true)
         {
+            var playerIndexes = Enumerable.Range(0, _players.Count).ToList();
+
+            int previousPlayerIndex = turnNumber - 1;
             for (int i = 0; i < _players.Count; i++)
-                turn.Bet(_players[i], BetType.Call);
+            {
+                var player = _players[Circle.GetNextInCircle(previousPlayerIndex, playerIndexes)];
+                turn.Bet(player, BetType.Call);
+                previousPlayerIndex = _players.IndexOf(player);
+            }
 
             if(startNextRound)
                 turn.NextRound();

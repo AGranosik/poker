@@ -148,6 +148,12 @@ namespace AGPoker.Entites.Game.Turns
             SetDealer();
             SetSmallBlind();
             SetBigBlind();
+            SetFirstPlayer();
+        }
+
+        private void SetFirstPlayer()
+        {
+            _currentPlayerIndex = _players.IndexOf(Circle.GetPrevious(BigBlindPlayer, _players, 3));
         }
 
         private void SetDealer()
