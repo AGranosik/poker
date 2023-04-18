@@ -107,6 +107,17 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         }
 
         [Test]
+        public void Start_PlayerAfterBigBlindStarts_success()
+        {
+            var nextPlayer = _players[0];
+            var expectionFunc = () => _turn.Bet(_players[1], BetType.Call);
+            expectionFunc.Should().Throw<CannotBetException>();
+
+            var rightBEt = () => _turn.Bet(nextPlayer, BetType.Call);
+            rightBEt.Should().NotThrow();
+        }
+
+        [Test]
         public void Next_EveryoneCalled_Success()
         {
             var bidTypeChecked = BetType.Call;
@@ -115,7 +126,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         }
 
         [Test]
-        public void Next_EveryoneCalledExtraTurn_ThrowsException()
+        public void Next_EveryoneCalledExtraBet_ThrowsException()
         {
             var bidTypeChecked = BetType.Call;
             for (int i = 0; i < _players.Count; i++)

@@ -137,7 +137,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         }
 
         [Test]
-        public void NextTurn_DealersChosenCorrectrly_Success()
+        public void NextTurn_DealersChosenCorrectly_Success()
         {
             var firstDealer = _players[2];
             var secondDealer = _players[3];
@@ -164,6 +164,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
 
         }
 
+        //check if next turn player after big blind
+
         private void ThreePlayersLastAfterBetting(Turn turn)
         {
             turn.Bet(_players[0], BetType.Call);
@@ -177,15 +179,6 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             turn.Bet(_players[4], BetType.Call);
             turn.Bet(_players[0], BetType.Call);
             turn.Bet(_players[2], BetType.Fold);
-        }
-
-        private void AllToTheNextOneWithoutOne(Turn turn)
-        {
-            for (int i = 0; i < _players.Count - 1; i++)
-                turn.Bet(_players[i], BetType.Call);
-
-            turn.Bet(_players[4], BetType.Fold);
-            turn.NextRound();
         }
 
         private void EveryPlayerCall(Turn turn, bool startNextRound = true)
