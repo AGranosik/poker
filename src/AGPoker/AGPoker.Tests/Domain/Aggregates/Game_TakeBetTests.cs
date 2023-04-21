@@ -50,7 +50,7 @@ namespace AGPoker.Tests.Domain.Aggregates
         [Test]
         public void TakeBid_NotPlayerTurn_ThrowsException()
         {
-            var notPlayerTurn = _players[1];
+            var notPlayerTurn = _players[0];
             var money = Money.Create(30);
             var bid = notPlayerTurn.Raise(money);
             var func = () => _game.Raise(bid);
@@ -69,7 +69,7 @@ namespace AGPoker.Tests.Domain.Aggregates
         [Test]
         public void TakeBid_SimpleBid_Success()
         {
-            var playerTurn = _players[0];
+            var playerTurn = _players[1];
             var money = Money.Create(30);
             var bid = playerTurn.Raise(money);
             _game.Raise(bid);
@@ -79,14 +79,14 @@ namespace AGPoker.Tests.Domain.Aggregates
         [Test]
         public void TakeBid_EasiestFlow_Success()
         {
-            var firstPlayer = _players[0];
-            var secondPlayer = _players[1];
+            var firstPlayer = _players[1];
+            var lastPlayer = _players[0];
 
             _game.Call(firstPlayer);
-            _game.Call(secondPlayer);
             _game.Call(_dealer); 
             _game.Call(_smallBlind);
             _game.Call(_bigBlind);
+            _game.Call(lastPlayer);
 
             _game.Stack.Worth.Value.Should().Be(100);
         }
@@ -94,15 +94,15 @@ namespace AGPoker.Tests.Domain.Aggregates
         [Test]
         public void TakeBid_BidingShouldBeClosed_ThrowsException()
         {
-            var firstPlayer = _players[0];
-            var secondPlayer = _players[1];
+            var firstPlayer = _players[1];
+            var lastPlayer = _players[0];
             var money = Money.Create(20);
 
-            _game.Call(firstPlayer); // 20 - 0 - 10 -20
-            _game.Call(secondPlayer); // 20 - 0 - 10 -20
-            _game.Call(_dealer); // 20 - 20 - 10 - 20
+            _game.Call(firstPlayer);
+            _game.Call(_dealer);
             _game.Call(_smallBlind);
             _game.Call(_bigBlind);
+            _game.Call(lastPlayer); 
 
             var func = () => _game.Raise(firstPlayer.Raise(money));
             func.Should().Throw<CannotBetException>();
@@ -118,11 +118,11 @@ namespace AGPoker.Tests.Domain.Aggregates
 
         private void AllPlayersCalled()
         {
-            _game.Call(_players[0]);
             _game.Call(_players[1]);
             _game.Call(_players[2]);
             _game.Call(_players[3]);
             _game.Call(_players[4]);
+            _game.Call(_players[0]);
         }
     }
 }
