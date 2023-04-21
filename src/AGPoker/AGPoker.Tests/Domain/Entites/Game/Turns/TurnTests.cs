@@ -109,49 +109,46 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void Start_PlayerAfterBigBlindStarts_success()
         {
-            var nextPlayer = _players[0];
-            var expectionFunc = () => _turn.Bet(_players[1], BetType.Call);
+            var nextPlayer = _players[1];
+            var expectionFunc = () => _turn.Bet(_players[0], BetType.Call);
             expectionFunc.Should().Throw<CannotBetException>();
 
-            var rightBEt = () => _turn.Bet(nextPlayer, BetType.Call);
-            rightBEt.Should().NotThrow();
+            var rightBet = () => _turn.Bet(nextPlayer, BetType.Call);
+            rightBet.Should().NotThrow();
         }
 
         [Test]
         public void Next_EveryoneCalled_Success()
         {
-            var bidTypeChecked = BetType.Call;
-            for(int i =0; i < _players.Count; i++)
-                _turn.Bet(_players[i], bidTypeChecked);
+            var func = () => TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
+            func.Should().NotThrow();
         }
 
         [Test]
         public void Next_EveryoneCalledExtraBet_ThrowsException()
         {
-            var bidTypeChecked = BetType.Call;
-            for (int i = 0; i < _players.Count; i++)
-                _turn.Bet(_players[i], bidTypeChecked);
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, false);
 
-            var func = () => _turn.Bet(_players[0], bidTypeChecked);
+            var func = () => _turn.Bet(_players[1], BetType.Call);
             func.Should().Throw<CannotBetException>();
         }
 
         [Test]
         public void Next_EveryoneFoldedExceptLastPlayer_Success()
         {
-            var bidTypeFolded = BetType.Fold;
-            for (int i = 0; i < _players.Count - 1; i++)
-                _turn.Bet(_players[i], bidTypeFolded);
+            var betTypeFolded = BetType.Fold;
+            for (int i = 1; i < _players.Count - 1; i++)
+                _turn.Bet(_players[i], betTypeFolded);
         }
 
         [Test]
         public void Next_LastPlayerCannotPass_ThrowsException()
         {
-            var bidTypePassed = BetType.Fold;
-            for (int i = 0; i < _players.Count - 1; i++)
-                _turn.Bet(_players[i], bidTypePassed);
+            var betTypePassed = BetType.Fold;
+            for (int i = 1; i < _players.Count; i++)
+                _turn.Bet(_players[i], betTypePassed);
 
-            var func = () => _turn.Bet(_players[4], bidTypePassed);
+            var func = () => _turn.Bet(_players[0], betTypePassed);
             func.Should().Throw<CannotBetException>();
         }
 
@@ -159,17 +156,17 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         public void Next_OneOfThemMakeBiggerBedCircleNotClosedRestCalledUntilThen_Success()
         {
             var foldedBet = BetType.Call;
-            for (int i = 0; i < 2; i++)
+            for (int i = 1; i < 3; i++)
                 _turn.Bet(_players[i], foldedBet);
 
-            _turn.Bet(_players[2], BetType.Raise);
+            _turn.Bet(_players[3], BetType.Raise);
 
-            _turn.Bet(_players[3], foldedBet);
             _turn.Bet(_players[4], foldedBet);
             _turn.Bet(_players[0], foldedBet);
             _turn.Bet(_players[1], foldedBet);
+            _turn.Bet(_players[2], foldedBet);
 
-            var func = () => _turn.Bet(_players[2], foldedBet);
+            var func = () => _turn.Bet(_players[3], foldedBet);
             func.Should().Throw<CannotBetException>();
         }
 
@@ -178,17 +175,17 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         {
             var checkedBid = BetType.Call;
             var higherBid = BetType.Raise;
-            for (int i = 0; i < 2; i++)
+            for (int i = 1; i < 3; i++)
                 _turn.Bet(_players[i], checkedBid);
 
-            _turn.Bet(_players[2], higherBid);
-            _turn.Bet(_players[3], checkedBid);
-            _turn.Bet(_players[4], higherBid);
+            _turn.Bet(_players[3], higherBid);
+            _turn.Bet(_players[4], checkedBid);
+            _turn.Bet(_players[0], higherBid);
 
-            for (int i = 0; i < _players.Count-1; i++)
+            for (int i = 1; i < _players.Count; i++)
                 _turn.Bet(_players[i], checkedBid);
 
-            var func = () => _turn.Bet(_players[4], checkedBid);
+            var func = () => _turn.Bet(_players[0], checkedBid);
             func.Should().Throw<CannotBetException>();
         }
 
@@ -202,10 +199,10 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void NextRound_CannotStartIfThereIsNotMoreThan1PlayerLeft_ThrowsException()
         {
-            for (int i = 0; i < _players.Count-2; i++)
+            for (int i = 1; i < _players.Count-1; i++)
                 _turn.Bet(_players[i], BetType.Fold);
 
-            _turn.Bet(_players[3], BetType.Call);
+            _turn.Bet(_players[4], BetType.Call);
 
             var func = () => _turn.NextRound();
             func.Should().Throw<CannotStartNextRound>();
@@ -214,23 +211,26 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void NextRound_EveryOneGetIntoNextRoundAndCanCall_ThrowsException()
         {
-            EveryPlayerCall();
-
-            EveryPlayerCall();
-
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
+            var func = () => TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
+            func.Should().NotThrow();
         }
 
         [Test]
         public void NextRound_OnlyPlayersInGameStayAtNextRound_Success()
         {
-            _turn.Bet(_players[0], BetType.Fold);
-            for (int i = 1; i < _players.Count; i++)
+            _turn.Bet(_players[1], BetType.Fold);
+            for (int i = 2; i < _players.Count; i++)
                 _turn.Bet(_players[i], BetType.Call);
+
+            _turn.Bet(_players[0], BetType.Call);
 
             _turn.NextRound();
 
-            for (int i = 1; i < _players.Count; i++)
+            for (int i = 2; i < _players.Count; i++)
                 _turn.Bet(_players[i], BetType.Call);
+
+            _turn.Bet(_players[0], BetType.Call);
 
             var func = () => _turn.Bet(_players[1], BetType.Call);
             func.Should().Throw<CannotBetException>();
@@ -242,34 +242,34 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         {
             AllToTheNextOneWithoutOne();
 
+            _turn.Bet(_players[2], BetType.Raise);
+            _turn.Bet(_players[3], BetType.Call);
+            _turn.Bet(_players[4], BetType.Fold);
             _turn.Bet(_players[0], BetType.Raise);
-            _turn.Bet(_players[1], BetType.Call);
-            _turn.Bet(_players[2], BetType.Fold);
-            _turn.Bet(_players[3], BetType.Raise);
-            _turn.Bet(_players[0], BetType.Call); 
-            _turn.Bet(_players[1], BetType.Call);
+            _turn.Bet(_players[2], BetType.Call); 
+            _turn.Bet(_players[3], BetType.Call);
 
-            var func = () => _turn.Bet(_players[3], BetType.Call); // circle should be closed
+            var func = () => _turn.Bet(_players[4], BetType.Call); // circle should be closed
             func.Should().Throw<CannotBetException>();
         }
 
         [Test]
         public void Next_OnePlayerFoldedAfterSomeRaisingBets_Success()
         {
-            EveryPlayerCall();
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
 
-            _turn.Bet(_players[0], BetType.Call);
-            _turn.Bet(_players[1], BetType.Raise);
-            _turn.Bet(_players[2], BetType.Call);
+            _turn.Bet(_players[1], BetType.Call);
+            _turn.Bet(_players[2], BetType.Raise);
             _turn.Bet(_players[3], BetType.Call);
             _turn.Bet(_players[4], BetType.Call);
-            _turn.Bet(_players[0], BetType.Raise);
+            _turn.Bet(_players[0], BetType.Call);
             _turn.Bet(_players[1], BetType.Raise);
-            _turn.Bet(_players[2], BetType.Fold);
-            _turn.Bet(_players[3], BetType.Raise);
-            _turn.Bet(_players[4], BetType.Call);
+            _turn.Bet(_players[2], BetType.Raise);
+            _turn.Bet(_players[3], BetType.Fold);
+            _turn.Bet(_players[4], BetType.Raise);
             _turn.Bet(_players[0], BetType.Call);
             _turn.Bet(_players[1], BetType.Call);
+            _turn.Bet(_players[2], BetType.Call);
 
 
             var func = () => _turn.Bet(_players[3], BetType.Call); // circle should be closed
@@ -279,20 +279,20 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void Next_FirstPlayerFoldThenSomeRaises_Success()
         {
-            EveryPlayerCall();
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
 
-            _turn.Bet(_players[0], BetType.Fold);
-            _turn.Bet(_players[1], BetType.Call);
-            _turn.Bet(_players[2], BetType.Call);
-            _turn.Bet(_players[3], BetType.Raise);
-            _turn.Bet(_players[4], BetType.Raise);
-            _turn.Bet(_players[1], BetType.Raise);
+            _turn.Bet(_players[1], BetType.Fold);
             _turn.Bet(_players[2], BetType.Call);
             _turn.Bet(_players[3], BetType.Call);
+            _turn.Bet(_players[4], BetType.Raise);
+            _turn.Bet(_players[0], BetType.Raise);
+            _turn.Bet(_players[2], BetType.Raise);
+            _turn.Bet(_players[3], BetType.Call);
             _turn.Bet(_players[4], BetType.Call);
+            _turn.Bet(_players[0], BetType.Call);
 
 
-            var func = () => _turn.Bet(_players[1], BetType.Call); // circle should be closed
+            var func = () => _turn.Bet(_players[2], BetType.Call); // circle should be closed
             func.Should().Throw<CannotBetException>();
         }
 
@@ -300,39 +300,40 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void Next_TwoPlayersFoldDuringSomeRaisesFlow_Success()
         {
-            EveryPlayerCall();
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
 
-            _turn.Bet(_players[0], BetType.Call);
             _turn.Bet(_players[1], BetType.Call);
             _turn.Bet(_players[2], BetType.Call);
-            _turn.Bet(_players[3], BetType.Raise);
-            _turn.Bet(_players[4], BetType.Call);
-            _turn.Bet(_players[0], BetType.Raise);
-            _turn.Bet(_players[1], BetType.Fold);
-            _turn.Bet(_players[2], BetType.Raise);
-            _turn.Bet(_players[3], BetType.Fold);
-            _turn.Bet(_players[4], BetType.Call);
+            _turn.Bet(_players[3], BetType.Call);
+            _turn.Bet(_players[4], BetType.Raise);
             _turn.Bet(_players[0], BetType.Call);
+            _turn.Bet(_players[1], BetType.Raise);
+            _turn.Bet(_players[2], BetType.Fold);
+            _turn.Bet(_players[3], BetType.Raise);
+            _turn.Bet(_players[4], BetType.Fold);
+            _turn.Bet(_players[0], BetType.Call);
+            _turn.Bet(_players[1], BetType.Call);
 
 
-            var func = () => _turn.Bet(_players[1], BetType.Call); // circle should be closed
+            var func = () => _turn.Bet(_players[2], BetType.Call); // circle should be closed
             func.Should().Throw<CannotBetException>();
         }
 
         [Test]
         public void Next_LastPlayerFold_Success()
         {
-            EveryPlayerCall();
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
 
             TwoPlayersLastAfterBetting();
-            var func = () => _turn.Bet(_players[0], BetType.Call); // circle should be closed
+            var func = () => _turn.Bet(_players[1], BetType.Call); // circle should be closed
             func.Should().Throw<CannotBetException>();
         }
 
         [Test]
         public void NextRound_2ndRound_Sucess()
         {
-            EveryPlayerCall();
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
+
             TwoPlayersLastAfterBetting();
             var func = () => _turn.NextRound();
             func.Should().NotThrow();
@@ -341,7 +342,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void NextRound_CannotStart3rdRoundWithoutFullCircle_Sucess()
         {
-            EveryPlayerCall();
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
 
             TwoPlayersLastAfterBetting();
             _turn.NextRound();
@@ -353,8 +354,9 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void NextRound_CanStart3rdRoundAfterFullCircle_Success()
         {
-            EveryPlayerCall();
-            EveryPlayerCall();
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
+
             TwoPlayersLastAfterBetting();
 
             var func = () => _turn.NextRound();
@@ -364,8 +366,8 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void NextRound_CanStartFinalRound_Success()
         {
-            EveryPlayerCall();
-            EveryPlayerCall();
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
             TwoPlayersLastAfterBetting();
 
             var func = () => _turn.NextRound();
@@ -375,9 +377,9 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void NextRound_CannotStart5thRound_Success()
         {
-            EveryPlayerCall();
-            EveryPlayerCall();
-            EveryPlayerCall();
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
+            TurnHelper.EveryPlayerCall(_turn, 0, _players, true);
 
             TwoPlayersLastAfterBetting();
 
@@ -387,33 +389,26 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
 
         private void TwoPlayersLastAfterBetting()
         {
-            _turn.Bet(_players[0], BetType.Call);
-            _turn.Bet(_players[1], BetType.Fold);
-            _turn.Bet(_players[2], BetType.Call);
-            _turn.Bet(_players[3], BetType.Raise);
-            _turn.Bet(_players[4], BetType.Call);
-            _turn.Bet(_players[0], BetType.Raise);
-            _turn.Bet(_players[2], BetType.Call);
-            _turn.Bet(_players[3], BetType.Raise);
-            _turn.Bet(_players[4], BetType.Call);
-            _turn.Bet(_players[0], BetType.Call);
+            _turn.Bet(_players[1], BetType.Call);
             _turn.Bet(_players[2], BetType.Fold);
-        }
-
-        private void EveryPlayerCall()
-        {
-            for (int i = 0; i < _players.Count; i++)
-                _turn.Bet(_players[i], BetType.Call);
-
-            _turn.NextRound();
+            _turn.Bet(_players[3], BetType.Call);
+            _turn.Bet(_players[4], BetType.Raise);
+            _turn.Bet(_players[0], BetType.Call);
+            _turn.Bet(_players[1], BetType.Raise);
+            _turn.Bet(_players[3], BetType.Call);
+            _turn.Bet(_players[4], BetType.Raise);
+            _turn.Bet(_players[0], BetType.Call);
+            _turn.Bet(_players[1], BetType.Call);
+            _turn.Bet(_players[3], BetType.Fold);
         }
 
         private void AllToTheNextOneWithoutOne()
         {
-            for (int i = 0; i < _players.Count-1; i++)
+            _turn.Bet(_players[1], BetType.Fold);
+            for (int i = 2; i < _players.Count; i++)
                 _turn.Bet(_players[i], BetType.Call);
 
-            _turn.Bet(_players[4], BetType.Fold);
+            _turn.Bet(_players[0], BetType.Call);
             _turn.NextRound();
         }
     }
