@@ -37,9 +37,9 @@ namespace AGPoker.Entites.Game.Turns
             if (!CanBetBeMade() || !IsThisPlayerTurn(player))
                 throw new CannotBetException("Next move cannot be performed.");
 
+            TakePlayerBetIntoAccountForFutureMoves(player, bidType);
             SetTurnBet(bidType);
             SetNextPlayer(); //pass currentIndex before increment
-            TakePlayerBetIntoAccountForFutureMoves(player, bidType);
         }
 
         private bool IsThisPlayerTurn(Player player)
@@ -78,7 +78,6 @@ namespace AGPoker.Entites.Game.Turns
         {
             _roundNumber = 1;
             SetPlayersInGame();
-            ResetTurnCounters();
             SetTrio();
             SetDealerIndex();
         }
@@ -105,10 +104,12 @@ namespace AGPoker.Entites.Game.Turns
 
         private void SetTurnBet(BetType bidType)
         {
-            if (bidType == BetType.Raise || bidType == BetType.AllIn)
+            if (bidType == BetType.Raise)
                 _movesInTurn = 1;
             else if (bidType == BetType.Fold)
                 return;
+            else if (bidType == BetType.AllIn)
+                _movesInTurn = 0;
             else
                 _movesInTurn++;
         }
@@ -118,12 +119,13 @@ namespace AGPoker.Entites.Game.Turns
             if (bidType == BetType.Fold)
             {
                 _playersInGame.Remove(_players.IndexOf(player));
-                _maximumMovesInRound = _playersInGame.Count;
             }
             else if (bidType == BetType.AllIn)
             {
                 _allInPlayers.Add(_currentPlayerIndex);
             }
+
+            _maximumMovesInRound = _playersInGame.Count - _allInPlayers.Count;
         }
 
         private bool CanBetBeMade()
@@ -135,12 +137,14 @@ namespace AGPoker.Entites.Game.Turns
         private void SetPlayersInGame()
         {
             _playersInGame = Enumerable.Range(0, _players.Count).ToList();
+            _maximumMovesInRound = _playersInGame.Count - _allInPlayers.Count;
         }
 
         private void ResetTurnCounters()
         {
             _maximumMovesInRound = _playersInGame.Count;
             _movesInTurn = 0;
+            SetFirstPlayer();
         }
 
         private void SetTrio()
@@ -176,7 +180,6 @@ namespace AGPoker.Entites.Game.Turns
             _currentPlayerIndex = Circle.GetNextInCircle(_currentPlayerIndex, _playersInGame);
             if (_allInPlayers.Contains(_currentPlayerIndex))
             {
-                _movesInTurn++;
                 SetNextPlayer();
             }
         }
