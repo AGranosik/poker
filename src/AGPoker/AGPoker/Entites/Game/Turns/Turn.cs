@@ -115,15 +115,15 @@ namespace AGPoker.Entites.Game.Turns
                 _movesInTurn++;
         }
 
-        private void TakePlayerBetIntoAccountForFutureMoves(Player player,BetType bidType)
+        private void TakePlayerBetIntoAccountForFutureMoves(Player player,BetType betType)
         {
-            if (bidType == BetType.Fold)
+            if (betType == BetType.Fold)
             {
                 _playersInGame.Remove(_players.IndexOf(player));
             }
-            else if (bidType == BetType.AllIn)
+            else if (betType == BetType.AllIn)
             {
-                _allInPlayers.Add(_currentPlayerIndex);
+                _allInPlayers.Add(_players.IndexOf(player));
             }
 
             _maximumMovesInRound = _playersInGame.Count - _allInPlayers.Count;
