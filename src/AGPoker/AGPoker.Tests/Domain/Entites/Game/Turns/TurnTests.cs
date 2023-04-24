@@ -137,7 +137,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         public void Next_EveryoneFoldedExceptLastPlayer_Success()
         {
             var betTypeFolded = BetType.Fold;
-            for (int i = 1; i < _players.Count - 1; i++)
+            for (int i = 1; i < _players.Count; i++)
                 _turn.Bet(_players[i], betTypeFolded);
         }
 
@@ -199,7 +199,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
         [Test]
         public void NextRound_CannotStartIfThereIsNotMoreThan1PlayerLeft_ThrowsException()
         {
-            for (int i = 1; i < _players.Count-1; i++)
+            for (int i = 1; i < _players.Count - 1; i++)
                 _turn.Bet(_players[i], BetType.Fold);
 
             _turn.Bet(_players[4], BetType.Call);

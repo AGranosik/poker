@@ -25,21 +25,21 @@ namespace AGPoker.Entites.Game.Turns
         private List<int> _allInPlayers = new();
         private int _currentPlayerIndex = 0;
         private int _dealerIndex = 0;
-        private int _movesInTurn = 1;
+        private int _movesInTurn = 0;
         private int _maximumMovesInRound = 0;
         private int _roundNumber = 1;
 
         public static Turn Start(List<Player> players)
             => new(players);
 
-        public void Bet(Player player, BetType bidType)
+        public void Bet(Player player, BetType betType)
         {
             if (!CanBetBeMade() || !IsThisPlayerTurn(player))
                 throw new CannotBetException("Next move cannot be performed.");
 
-            TakePlayerBetIntoAccountForFutureMoves(player, bidType);
-            SetTurnBet(bidType);
             SetNextPlayer(); //pass currentIndex before increment
+            TakePlayerBetIntoAccountForFutureMoves(player, betType);
+            SetTurnBet(betType);
         }
 
         private bool IsThisPlayerTurn(Player player)
@@ -80,6 +80,7 @@ namespace AGPoker.Entites.Game.Turns
             SetPlayersInGame();
             SetTrio();
             SetDealerIndex();
+            ResetTurnCounters();
         }
 
         private void SetDealerIndex()
@@ -158,6 +159,11 @@ namespace AGPoker.Entites.Game.Turns
         private void SetFirstPlayer()
         {
             _currentPlayerIndex = _players.IndexOf(Circle.GetPrevious(BigBlindPlayer, _players, 3));
+            while (!_playersInGame.Contains(_currentPlayerIndex))
+            {
+                var player = _players[_currentPlayerIndex];
+                _currentPlayerIndex = _players.IndexOf(Circle.GetNextInCircle(player, _players));
+            }
         }
 
         private void SetDealer()

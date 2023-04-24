@@ -1,5 +1,4 @@
-﻿using AGPoker.Core;
-using AGPoker.Entites.Game.Game.Players;
+﻿using AGPoker.Entites.Game.Game.Players;
 using AGPoker.Entites.Game.Stacks.ValueObjects;
 using AGPoker.Entites.Game.Turns;
 using AGPoker.Exceptions;
