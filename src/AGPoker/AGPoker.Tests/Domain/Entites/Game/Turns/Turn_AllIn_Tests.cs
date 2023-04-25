@@ -107,13 +107,12 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             GetIntoNextRoundWithAllIn();
             _turn.Bet(_players[1], BetType.Call);
             _turn.Bet(_players[2], BetType.Call);
-            _turn.Bet(_players[0], BetType.AllIn);
-            _turn.Bet(_players[1], BetType.Call);
-            _turn.Bet(_players[2], BetType.Call);
+            _turn.Bet(_players[0], BetType.Call);
 
             _turn.NextRound();
             _turn.Bet(_players[1], BetType.Call);
             _turn.Bet(_players[2], BetType.AllIn);
+            _turn.Bet(_players[0], BetType.Call);
             _turn.Bet(_players[1], BetType.Call);
 
             var func = () => _turn.NextRound();

@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace AGPoker.Tests.Domain.Entites.Game.Turns
 {
     [TestFixture]
-    internal class TurnResultTests
+    internal class TurnResult_CreationTests
     {
         [Test]
         public void Creation_InProgress_Success()

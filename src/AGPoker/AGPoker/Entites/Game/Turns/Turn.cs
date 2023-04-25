@@ -32,7 +32,7 @@ namespace AGPoker.Entites.Game.Turns
         public static Turn Start(List<Player> players)
             => new(players);
 
-        public void Bet(Player player, BetType betType)
+        public TurnResult Bet(Player player, BetType betType)
         {
             if (!CanBetBeMade() || !IsThisPlayerTurn(player))
                 throw new CannotBetException("Next move cannot be performed.");
@@ -40,6 +40,8 @@ namespace AGPoker.Entites.Game.Turns
             SetNextPlayer(); //pass currentIndex before increment
             TakePlayerBetIntoAccountForFutureMoves(player, betType);
             SetTurnBet(betType);
+
+            return GetTurnStatus();
         }
 
         private bool IsThisPlayerTurn(Player player)
@@ -97,6 +99,17 @@ namespace AGPoker.Entites.Game.Turns
         public bool CanStartNextTurn()
             => IsTheLastRound() && EarlierRoundFinished();
 
+        public TurnResult GetTurnStatus()
+        {
+            if(IsTheLastRound() || IsTheLastOnePlayer())
+            {
+                var winenrs = _players.Where(p => _playersInGame.Contains(_players.IndexOf(p))).ToList();
+                return TurnResult.Winners(winenrs);
+            }
+
+            return TurnResult.InProgress();
+        }
+
         private bool IsTheLastRound()
             => _roundNumber == 4;
 
@@ -133,7 +146,7 @@ namespace AGPoker.Entites.Game.Turns
             => _movesInTurn < _maximumMovesInRound && !IsTheLastOnePlayer();
 
         private bool IsTheLastOnePlayer()
-            => _playersInGame.Count == _playersToRemove.Count+1;
+            => _playersInGame.Count == _playersToRemove.Count + 1 || _playersInGame.Count == _allInPlayers.Count + 1;
 
         private void SetPlayersInGame()
         {
