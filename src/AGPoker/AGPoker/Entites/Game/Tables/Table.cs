@@ -34,6 +34,18 @@ namespace AGPoker.Entites.Game.Tables
             return CardsCombination.GetWinners(playersToDecide, tableCards);
         }
 
+        public IReadOnlyCollection<Player> GiveAwayAllneccessaryCards(List<Player> playersToDecide)
+        {
+            if (WasPreFlop())
+                StartFlop();
+            if (WasFlop())
+                StartTurn();
+            if (WasTurn())
+                StartRiver();
+
+            return GetWinners(playersToDecide);
+        }
+
         private bool IsLastStage()
             => River is not null || Flop is not null || Turn is not null;
 
@@ -45,8 +57,6 @@ namespace AGPoker.Entites.Game.Tables
             if(!playersToDecide.All(p => _players.Contains(p)))
                 throw new ArgumentException();
         }
-
-
 
         public void Fold(Player player)
             => _players.Remove(player);
