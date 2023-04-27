@@ -97,7 +97,7 @@ namespace AGPoker.Entites.Game.Turns
         }
 
         public bool CanStartNextTurn()
-            => IsTheLastRound() && EarlierRoundFinished();
+            => (IsTheLastRound() && EarlierRoundFinished()) || IsTheLastOnePlayer();
 
         public TurnResult GetTurnStatus()
         {
@@ -114,7 +114,7 @@ namespace AGPoker.Entites.Game.Turns
             => _roundNumber == 4;
 
         private bool EarlierRoundFinished()
-            => _movesInTurn == _maximumMovesInRound || IsTheLastOnePlayer();
+            => _movesInTurn == _maximumMovesInRound;
 
         private void SetTurnBet(BetType bidType)
         {

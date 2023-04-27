@@ -119,6 +119,17 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             func.Should().NotThrow();
         }
 
+        [Test]
+        public void NextTurn_CanStartNExtTunrWhenNoNeedTobetInThisTurn_Success()
+        {
+            GetIntoNextRoundWithAllIn();
+            _turn.Bet(_players[1], BetType.AllIn);
+            _turn.Bet(_players[2], BetType.AllIn);
+
+            var func = () => _turn.NextTurn();
+            func.Should().NotThrow();
+        }
+
         private void GetIntoNextRoundWithAllIn()
         {
             _turn.Bet(_players[1], BetType.Call);
