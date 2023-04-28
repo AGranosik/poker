@@ -49,8 +49,8 @@ namespace AGPoker.Aggregates
 
         public void Call(Player player)
         {
-            Stack.Call(player);
             Turn.Bet(player, BetType.Call);
+            Stack.Call(player);
             StartNewTurnOrRoundIfNeccessary();
         }
 
@@ -59,6 +59,22 @@ namespace AGPoker.Aggregates
             Stack.Raise(bet);
             Turn.Bet(bet.Player, bet.BetType);
             StartNewTurnOrRoundIfNeccessary();
+        }
+
+        // not this way...
+        // method with turn result which gonnacheck and perform actions 
+        private void PlayerMove(Bet bet)
+        {
+            var turnResult = Turn.Bet(bet.Player, bet.BetType);
+            if (turnResult.Status == TurnStatus.Winners)
+            {
+                _table.GiveAwayAllneccessaryCards(turnResult.WinnerPlayers);
+                var tableWinners = _table.GetWinners(turnResult.WinnerPlayers);
+                Stack.GetWinners();
+            }
+            else
+                StartNewTurnOrRoundIfNeccessary();
+
         }
 
         private void StartNewTurnOrRoundIfNeccessary()
