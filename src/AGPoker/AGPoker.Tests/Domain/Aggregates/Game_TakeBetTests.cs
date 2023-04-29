@@ -105,8 +105,11 @@ namespace AGPoker.Tests.Domain.Aggregates
             _game.Call(lastPlayer); 
 
             var func = () => _game.Raise(firstPlayer.Raise(money));
-            func.Should().Throw<CannotBetException>();
+            func.Should().NotThrow();
         }
+
+        //[Test]
+
 
         private void AddPlayersToGame()
         {

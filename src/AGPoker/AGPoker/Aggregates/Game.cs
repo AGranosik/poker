@@ -42,39 +42,34 @@ namespace AGPoker.Aggregates
         // leave game but its optional
         public void Fold(Player player)
         {
-            Turn.Bet(player, BetType.Fold);
+            var turnStatus = Turn.Bet(player, BetType.Fold);
             _table.Fold(player);
-            StartNewTurnOrRoundIfNeccessary();
+            Stack.Fold(Bet.Fold(player));
+            MovePerformed(turnStatus);
         }
 
         public void Call(Player player)
         {
-            Turn.Bet(player, BetType.Call);
+            var turnStatus = Turn.Bet(player, BetType.Call);
             Stack.Call(player);
-            StartNewTurnOrRoundIfNeccessary();
+            MovePerformed(turnStatus);
         }
 
         public void Raise(Bet bet)
         {
+            var turnStatus = Turn.Bet(bet.Player, bet.BetType);
             Stack.Raise(bet);
-            Turn.Bet(bet.Player, bet.BetType);
-            StartNewTurnOrRoundIfNeccessary();
+            MovePerformed(turnStatus);
         }
 
-        // not this way...
-        // method with turn result which gonnacheck and perform actions 
-        private void PlayerMove(Bet bet)
+        
+        private void MovePerformed(TurnResult turnResult)
         {
-            var turnResult = Turn.Bet(bet.Player, bet.BetType);
-            if (turnResult.Status == TurnStatus.Winners)
+            if(turnResult.Status == TurnStatus.Winners)
             {
-                _table.GiveAwayAllneccessaryCards(turnResult.WinnerPlayers);
-                var tableWinners = _table.GetWinners(turnResult.WinnerPlayers);
-                Stack.GetWinners();
-            }
-            else
-                StartNewTurnOrRoundIfNeccessary();
 
+            }
+            StartNewTurnOrRoundIfNeccessary();
         }
 
         private void StartNewTurnOrRoundIfNeccessary()
@@ -83,6 +78,11 @@ namespace AGPoker.Aggregates
             {
                 Turn.NextRound();
                 _table.NextStage();
+            }
+            else if (Turn.CanStartNextRound())
+            {
+                Turn.NextRound();
+                // next round for table
             }
         }
 
