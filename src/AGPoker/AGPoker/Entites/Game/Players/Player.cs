@@ -49,6 +49,7 @@ namespace AGPoker.Entites.Game.Game.Players
         public void TakeCards(List<Card> cards)
         {
             CheckIfCardsNotNullOrEmpty(cards);
+            _cards.Clear();
             _cards.AddRange(cards);
         }
 

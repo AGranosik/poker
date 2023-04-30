@@ -22,7 +22,7 @@ namespace AGPoker.Aggregates
             => new(owner, limit);
 
         private List<Player> _players = new();
-        private Table _table;
+        public Table Table { get; private set; }
         public Player Owner { get; init; }
         public GameLimit Limit { get; init; }
         public Stack Stack { get; init; }
@@ -37,13 +37,14 @@ namespace AGPoker.Aggregates
             CanBegin();
             StartTurn();
             TakeBetFromBlinds();
-            _table = Table.PreFlop(_players);
+            Table = Table.PreFlop(_players);
         }
         // leave game but its optional
+        // next round 
         public void Fold(Player player)
         {
             var turnStatus = Turn.Bet(player, BetType.Fold);
-            _table.Fold(player);
+            Table.Fold(player);
             Stack.Fold(Bet.Fold(player));
             MovePerformed(turnStatus);
         }
@@ -76,13 +77,13 @@ namespace AGPoker.Aggregates
         {
             if (Turn.CanStartNextTurn())
             {
-                Turn.NextRound();
-                _table.NextStage();
+                Turn.NextTurn();
+                Table.NextTurn(_players.Where(p => p.Money.Any).ToList());
             }
             else if (Turn.CanStartNextRound())
             {
                 Turn.NextRound();
-                // next round for table
+                Table.NextStage();
             }
         }
 

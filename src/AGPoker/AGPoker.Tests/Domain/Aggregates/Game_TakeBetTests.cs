@@ -107,10 +107,6 @@ namespace AGPoker.Tests.Domain.Aggregates
             var func = () => _game.Raise(firstPlayer.Raise(money));
             func.Should().NotThrow();
         }
-
-        //[Test]
-
-
         private void AddPlayersToGame()
         {
             foreach(var player in _players)
