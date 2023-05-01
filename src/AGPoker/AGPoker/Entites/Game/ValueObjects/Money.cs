@@ -16,6 +16,10 @@ namespace AGPoker.Entites.Game.ValueObjects
         public static Money Create(int value)
             => new(value);
 
+        public void Add(Money money)
+        {
+            Value = money.Value + Value;
+        }
         public void Split(Money amount)
         {
             if (amount == this)

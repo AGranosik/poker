@@ -73,13 +73,10 @@ namespace AGPoker.Aggregates
 
                 foreach(var potWinner in stackWinners)
                 {
-                    var potPrize = potWinner.WinningPrize;
                     var combinationWinners = Table.GetWinners(potWinner.Winners.ToList());
-
+                    var winningPrize = potWinner.WinningPrize.Value * potWinner.Winners.Count; // should return overall prize
+                    potWinner.Winners.ToList().ForEach(p => p.GetPrize(Money.Create(winningPrize)));
                 }
-                // maybe some status?
-                // how to check who shoul win without logic in tests?
-                // or just call get winner fro mtable to verify that winner get money??
             }
             StartNewTurnOrRoundIfNeccessary();
         }

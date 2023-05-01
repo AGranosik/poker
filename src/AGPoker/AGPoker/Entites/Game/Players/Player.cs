@@ -23,6 +23,9 @@ namespace AGPoker.Entites.Game.Game.Players
 
         private List<Card> _cards = new();
 
+        public void GetPrize(Money money) // test it
+            => Money.Add(money);
+
         public bool AnyMoneyLeft()
             => Money.Any;
         public Bet AllIn()

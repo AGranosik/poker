@@ -45,7 +45,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
                 .ToList();
 
             var winners = groppedBets.Where(b => b.SumOfBets == _highestBet).ToList();
-            var winPrize = PrizePerWinner(winners.Count);
+            var winPrize = PrizePerWinner(winners.Count); //cant be per winner
 
             return PotWinner.Create(winners.Select(w => w.Player).ToList(), winPrize);
         }

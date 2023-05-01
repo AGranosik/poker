@@ -59,7 +59,7 @@ namespace AGPoker.Entites.Game.Tables
         }
 
         public void Fold(Player player)
-            => _players.Remove(player);
+            => _players = _players.Where(p => p != player).ToList();
 
         public void NextTurn(List<Player> players) //test it
         {
