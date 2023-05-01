@@ -41,15 +41,31 @@ namespace AGPoker.Tests.Domain.Aggregates
             AllPlayersCalled();
             AllPlayersCalled();
             AllPlayersCalled();
-            AllPlayersCalled();
+            _game.Call(_players[1]);
+            _game.Call(_players[2]);
+            _game.Call(_players[3]);
+            _game.Call(_players[4]);
+
+            var tableWinners = _game.Table.GetWinners(_players);
+            _game.Call(_players[0]);
 
             var currentDealer = _game.Turn.Dealer;
             currentDealer.Should().Be(_smallBlind);
 
             var table = _game.Table;
             table.Flop.Should().Be(null);
+            table.Turn.Should().Be(null);
+            table.River.Should().Be(null);
+
+            CheckWinners(tableWinners, Money.Create(100), Money.Create(500));
         }
 
+        private void CheckWinners(IReadOnlyCollection<Player> tableWinners, Money winningPrize, Money startingMoney)
+        {
+            var winningPrizePerWinner = Money.Create(winningPrize.Value / tableWinners.Count);
+            tableWinners.All(t => t.Money - startingMoney == winningPrize)
+                .Should().BeTrue();
+        }
         private void AddPlayersToGame()
         {
             foreach (var player in _players)

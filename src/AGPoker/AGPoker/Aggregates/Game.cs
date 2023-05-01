@@ -68,7 +68,18 @@ namespace AGPoker.Aggregates
         {
             if(turnResult.Status == TurnStatus.Winners)
             {
+                var turnWinners = turnResult.WinnerPlayers;
+                var stackWinners = Stack.GetWinners();
 
+                foreach(var potWinner in stackWinners)
+                {
+                    var potPrize = potWinner.WinningPrize;
+                    var combinationWinners = Table.GetWinners(potWinner.Winners.ToList());
+
+                }
+                // maybe some status?
+                // how to check who shoul win without logic in tests?
+                // or just call get winner fro mtable to verify that winner get money??
             }
             StartNewTurnOrRoundIfNeccessary();
         }

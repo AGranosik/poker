@@ -50,7 +50,7 @@ namespace AGPoker.Entites.Game.Turns
             return playerIndex >= 0 && _playersInGame.Contains(playerIndex) && _currentPlayerIndex == playerIndex;
         }
 
-        public void NextRound()
+        public void NextRound ()
         {
             if (!CanStartNextRound())
                 throw new CannotStartNextRound();
@@ -68,7 +68,7 @@ namespace AGPoker.Entites.Game.Turns
         }
 
         public bool CanStartNextRound()
-            => !IsTheLastRound() && EarlierRoundFinished() && !IsTheLastOnePlayer();
+            => !IsTheLastRound() && EveryoneMadeMove() && !IsLastPlayerWithoutAutoBets();
 
         private void PlayersValidation(List<Player> players)
         {
@@ -97,11 +97,11 @@ namespace AGPoker.Entites.Game.Turns
         }
 
         public bool CanStartNextTurn()
-            => (IsTheLastRound() && EarlierRoundFinished()) || IsTheLastOnePlayer();
+            => (IsTheLastRound() && EveryoneMadeMove()) || IsLastPlayerWithoutAutoBets();
 
         public TurnResult GetTurnStatus()
         {
-            if(IsTheLastRound() || IsTheLastOnePlayer())
+            if(IsLastPlayerWithoutAutoBets() || (EveryoneMadeMove() && IsTheLastRound()))
             {
                 var winenrs = _players.Where(p => _playersInGame.Contains(_players.IndexOf(p))).ToList();
                 return TurnResult.Winners(winenrs);
@@ -113,7 +113,7 @@ namespace AGPoker.Entites.Game.Turns
         private bool IsTheLastRound()
             => _roundNumber == 4;
 
-        private bool EarlierRoundFinished()
+        private bool EveryoneMadeMove()
             => _movesInTurn == _maximumMovesInRound;
 
         private void SetTurnBet(BetType bidType)
@@ -143,9 +143,9 @@ namespace AGPoker.Entites.Game.Turns
         }
 
         private bool CanBetBeMade()
-            => _movesInTurn < _maximumMovesInRound && !IsTheLastOnePlayer();
+            => _movesInTurn < _maximumMovesInRound && !IsLastPlayerWithoutAutoBets();
 
-        private bool IsTheLastOnePlayer()
+        private bool IsLastPlayerWithoutAutoBets()
             => _playersInGame.Count == _playersToRemove.Count + 1 || _playersInGame.Count == _allInPlayers.Count + 1;
 
         private void SetPlayersInGame()
