@@ -25,7 +25,7 @@ namespace AGPoker.Aggregates
         public Table Table { get; private set; }
         public Player Owner { get; init; }
         public GameLimit Limit { get; init; }
-        public Stack Stack { get; init; }
+        public Stack Stack { get; private set; }
         public IReadOnlyCollection<Player> Players
             => _players.AsReadOnly();
 
@@ -75,7 +75,7 @@ namespace AGPoker.Aggregates
                 {
                     var combinationWinners = Table.GetWinners(potWinner.Winners.ToList());
                     var winningPrize = potWinner.WinningPrize.Value * potWinner.Winners.Count; // should return overall prize
-                    potWinner.Winners.ToList().ForEach(p => p.GetPrize(Money.Create(winningPrize)));
+                    combinationWinners.ToList().ForEach(p => p.GetPrize(Money.Create(winningPrize)));
                 }
             }
             StartNewTurnOrRoundIfNeccessary();
@@ -87,6 +87,7 @@ namespace AGPoker.Aggregates
             {
                 Turn.NextTurn();
                 Table.NextTurn(_players.Where(p => p.Money.Any).ToList());
+                Stack = Stack.Create();
             }
             else if (Turn.CanStartNextRound())
             {

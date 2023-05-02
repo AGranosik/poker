@@ -67,14 +67,19 @@ namespace AGPoker.Tests.Domain.Aggregates
             AllPlayersCalled();
             AllPlayersCalled();
             _game.Call(_players[1]);
-            _game.Raise(Bet.Raise(Money.Create(40), _players[2]));
+            _game.Raise(_players[2].Raise(Money.Create(40)));
             _game.Call(_players[3]);
             _game.Fold(_players[4]);
 
             _game.Call(_players[0]);
-            var tableWinners = _game.Table.GetWinners(_players.Where(p => p != _players[4]).ToList());
             _game.Call(_players[1]);
 
+            _game.Call(_players[1]);
+            _game.Call(_players[2]);
+            _game.Call(_players[3]);
+
+            var tableWinners = _game.Table.GetWinners(_players.Where(p => p != _players[4]).ToList());
+            _game.Call(_players[0]);
             var currentDealer = _game.Turn.Dealer;
             currentDealer.Should().Be(_smallBlind);
 
@@ -83,10 +88,37 @@ namespace AGPoker.Tests.Domain.Aggregates
             table.Turn.Should().Be(null);
             table.River.Should().Be(null);
 
-            CheckWinners(tableWinners, Money.Create(100), Money.Create(480));
+            CheckWinners(tableWinners, Money.Create(260), Money.Create(440));
         }
 
-        private void CheckWinners(IReadOnlyCollection<Player> tableWinners, Money potPrize, Money moneyAfetrBets)
+        [Test]
+        public void RoundFIsnihed_AllInPot_Sccess()
+        {
+            AllPlayersCalled();
+            AllPlayersCalled();
+            AllPlayersCalled();
+            _game.Call(_players[1]);
+            _game.Call(_players[2]);
+            _game.Call(_players[3]);
+            _game.Raise(_players[4].Raise(Money.Create(180)));
+            _game.Call(_players[0]);
+            _game.Raise(_players[1].Raise(Money.Create(200)));
+            _game.Call(_players[2]);
+            _game.Call(_players[3]);
+
+            _game.Stack.Pots.Should().HaveCount(2);
+            _game.Call(_players[0]);
+            var currentDealer = _game.Turn.Dealer;
+            currentDealer.Should().Be(_smallBlind);
+
+            var table = _game.Table;
+            table.Flop.Should().Be(null);
+            table.Turn.Should().Be(null);
+            table.River.Should().Be(null);
+            _game.Stack.Pots.Should().HaveCount(1);
+        }
+
+        private static void CheckWinners(IReadOnlyCollection<Player> tableWinners, Money potPrize, Money moneyAfetrBets)
         {
             var winningPrizePerWinner = Money.Create(potPrize.Value / tableWinners.Count);
             tableWinners.All(t => t.Money - moneyAfetrBets == potPrize)
