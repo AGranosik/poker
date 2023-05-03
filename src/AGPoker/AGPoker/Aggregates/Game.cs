@@ -73,7 +73,7 @@ namespace AGPoker.Aggregates
                 foreach(var potWinner in stackWinners)
                 {
                     var combinationWinners = Table.GetWinners(potWinner.Winners.ToList());
-                    var winningPrize = potWinner.WinningPrize.Value / combinationWinners.Count; // should return overall prize
+                    var winningPrize = potWinner.WinningPrize.Value / combinationWinners.Count;
                     combinationWinners.ToList().ForEach(p => p.GetPrize(Money.Create(winningPrize)));
                 }
             }

@@ -98,6 +98,45 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
             func.Should().Throw<InvalidOperationException>();
         }
 
+        [Test]
+        public void NextTurn_PlayersCannotBeNull_ThrowsException()
+        {
+            var table = Table.PreFlop(_players);
+            var exceptionFunc = () => table.NextTurn(null);
+            exceptionFunc.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void NextTurn_PlayersCannotBeEmpty_ThrowsException()
+        {
+            var table = Table.PreFlop(_players);
+            var exceptionFunc = () => table.NextTurn(new List<Player>());
+            exceptionFunc.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
+        public void NextTurn_Success()
+        {
+            var newPlayers = new List<Player>()
+            {
+                Player.Create("asdasd", "asddfdfg"),
+                Player.Create("asdasd", "asddfdfg2"),
+            };
+            var table = Table.PreFlop(_players);
+            table.NextStage();
+            table.NextStage();
+            table.NextStage();
+
+            table.NextTurn(newPlayers);
+
+            newPlayers.All(p => p.Cards.Count == 2)
+                .Should().BeTrue();
+
+            table.Flop.Should().BeNull();
+            table.Turn.Should().BeNull();
+            table.River.Should().BeNull();
+        }
+
         private void AllPlayersHasUniqueNumberOfCards(int n)
         {
             _players.All(p => p.Cards.Count == n && p.Cards.Distinct().Count() == p.Cards.Count)

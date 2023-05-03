@@ -23,7 +23,7 @@ namespace AGPoker.Entites.Game.Game.Players
 
         private List<Card> _cards = new();
 
-        public void GetPrize(Money money) // test it
+        public void GetPrize(Money money)
             => Money.Add(money);
 
         public bool AnyMoneyLeft()

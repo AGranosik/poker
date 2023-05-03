@@ -15,11 +15,7 @@ namespace AGPoker.Entites.Game.Tables
         public TableTurn Turn { get; private set; }
         public River River { get; private set; }
         public Table(List<Player> players)
-        {
-            _deck = Deck.Create();
-            _players = players;
-            GiveHandToThePlayers();
-        }
+            => NewTurn(players);
 
         public IReadOnlyCollection<Player> GetWinners(List<Player> playersToDecide)
         {
@@ -49,6 +45,19 @@ namespace AGPoker.Entites.Game.Tables
         private bool IsNotLastStage()
             => River is not null || Flop is not null || Turn is not null;
 
+        private void NewTurn(List<Player> players)
+        {
+            if (players is null || players.Count == 0)
+                throw new ArgumentException();
+
+            _deck = Deck.Create();
+            _players = players;
+            GiveHandToThePlayers();
+            Flop = null;
+            Turn = null;
+            River = null;
+        }
+
         private void PotencialPlayersWinnerValidation(List<Player> playersToDecide)
         {
             if(playersToDecide is null || playersToDecide.Count == 0)
@@ -61,15 +70,8 @@ namespace AGPoker.Entites.Game.Tables
         public void Fold(Player player)
             => _players = _players.Where(p => p != player).ToList();
 
-        public void NextTurn(List<Player> players) //test it
-        {
-            _deck = Deck.Create();
-            _players = players;
-            GiveHandToThePlayers();
-            Flop = null;// move it different method
-            Turn = null;
-            River = null;
-        }
+        public void NextTurn(List<Player> players)
+            => NewTurn(players);
 
         public void NextStage()
         {

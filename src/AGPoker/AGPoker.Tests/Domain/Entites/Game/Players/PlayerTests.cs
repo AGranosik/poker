@@ -128,5 +128,17 @@ namespace AGPoker.Tests.Domain.Entites.Game.Players
             (player.Money == Money.None).Should().BeTrue();
             bet.BetType.Should().Be(BetType.AllIn);
         }
+
+        [Test]
+        public void GetPrize_Success()
+        {
+            var startMoney = 40;
+            var player = Player.Create("hehe", "sadad", startMoney);
+            var moneyToAdd = Money.Create(30);
+
+            var func = () => player.GetPrize(moneyToAdd);
+            func.Should().NotThrow();
+            player.Money.Value.Should().Be(startMoney + moneyToAdd.Value);
+        }
     }
 }

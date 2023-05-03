@@ -4,7 +4,7 @@ using AGPoker.Entites.Game.ValueObjects;
 
 namespace AGPoker.Entites.Game.Stacks.ValueObjects
 {
-    public class PotWinner: ValueObject //pot winner with list and prize
+    public class PotWinner: ValueObject
     {
         private PotWinner(List<Player> players, Money winningPrize)
         {
