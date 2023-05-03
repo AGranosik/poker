@@ -25,7 +25,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             _stack = Stack.Create();
         }
 
-        [Test] //stack -> get winners??
+        [Test]
         public void MultiplePots_RaiseForMultiplePots_Success()
         {
             _stack.Raise(_player.Raise(Money.Create(20)));
@@ -45,7 +45,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             var firstPotWinner = firstPotWinners.Winners.First();
             firstPotWinner.Should().Be(_player2);
 
-            var secondPotWinners = winners.FirstOrDefault(w => w.WinningPrize == Money.Create(125));
+            var secondPotWinners = winners.FirstOrDefault(w => w.WinningPrize == Money.Create(250));
             secondPotWinners.Should().NotBeNull();
             secondPotWinners.Winners.Count.Should().Be(2);
             secondPotWinners.Winners.All(w => w == _player || w == _player2).Should().BeTrue();
@@ -66,7 +66,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             var winners = _stack.GetWinners();
             winners.Should().NotBeNullOrEmpty();
 
-            var firstPotWinners = winners.FirstOrDefault(w => w.WinningPrize == Money.Create(100));
+            var firstPotWinners = winners.FirstOrDefault(w => w.WinningPrize == Money.Create(300));
             firstPotWinners.Should().NotBeNull();
             firstPotWinners.Winners.Distinct().Count().Should().Be(3);
 
@@ -109,14 +109,14 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             var winners = _stack.GetWinners();
             winners.Should().NotBeNullOrEmpty();
 
-            var firstPotWinners = winners.FirstOrDefault(w => w.WinningPrize == Money.Create(100));
+            var firstPotWinners = winners.FirstOrDefault(w => w.WinningPrize == Money.Create(300));
             firstPotWinners.Should().NotBeNull();
             firstPotWinners.Winners.Distinct().Count().Should().Be(3);
 
-            var secondPotWinners = winners.LastOrDefault(w => w.WinningPrize == Money.Create(100));
+            var secondPotWinners = winners.LastOrDefault(w => w.WinningPrize == Money.Create(200));
             secondPotWinners.Should().NotBeNull();
             secondPotWinners.Winners.Distinct().Count().Should().Be(2);
-            secondPotWinners.WinningPrize.Value.Should().Be(100);
+            secondPotWinners.WinningPrize.Value.Should().Be(200);
         }
     }
 }

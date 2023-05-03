@@ -64,7 +64,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             var oldPotWinners = oldPot.GetWinners();
             oldPotWinners.Should().NotBeNull();
             oldPotWinners.Winners.Count.Should().Be(2);
-            oldPotWinners.WinningPrize.Value.Should().Be(200);
+            oldPotWinners.WinningPrize.Value.Should().Be(400);
 
             var newPot = _stack.Pots.First(p => p.HighestBet.Value == 50);
             newPot.Should().NotBeNull();
@@ -90,13 +90,13 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             firstPot.Should().NotBeNull();
             var firstPotWinners = firstPot.GetWinners();
             firstPotWinners.Winners.Count.Should().Be(3);
-            firstPotWinners.WinningPrize.Value.Should().Be(90);
+            firstPotWinners.WinningPrize.Value.Should().Be(270);
 
             var secondPot = _stack.Pots.First(p => p.HighestBet.Value == 110);
             secondPot.Should().NotBeNull();
             var secondPotWinners = secondPot.GetWinners();
             secondPotWinners.Winners.Count.Should().Be(2);
-            secondPotWinners.WinningPrize.Value.Should().Be(110);
+            secondPotWinners.WinningPrize.Value.Should().Be(220);
 
             var thirdPot = _stack.Pots.First(p => p.HighestBet.Value == 50);
             thirdPot.Should().NotBeNull();
@@ -121,13 +121,13 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             firstPot.Should().NotBeNull();
             var firstPotWinners = firstPot.GetWinners();
             firstPotWinners.Winners.Count.Should().Be(3);
-            firstPotWinners.WinningPrize.Value.Should().Be(100);
+            firstPotWinners.WinningPrize.Value.Should().Be(300);
 
             var secondPot = _stack.Pots.Last(p => p.HighestBet.Value == 100);
             secondPot.Should().NotBeNull();
             var secondPotWinners = secondPot.GetWinners();
             secondPotWinners.Winners.Count.Should().Be(2);
-            secondPotWinners.WinningPrize.Value.Should().Be(100);
+            secondPotWinners.WinningPrize.Value.Should().Be(200);
 
             var thirdPot = _stack.Pots.Last(p => p.HighestBet.Value == 50);
             thirdPot.Should().NotBeNull();
@@ -153,13 +153,13 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             firstPot.Should().NotBeNull();
             var firstPotWinners = firstPot.GetWinners();
             firstPotWinners.Winners.Count.Should().Be(4);
-            firstPotWinners.WinningPrize.Value.Should().Be(90);
+            firstPotWinners.WinningPrize.Value.Should().Be(360);
 
             var secondPot = _stack.Pots.Last(p => p.HighestBet.Value == 100);
             secondPot.Should().NotBeNull();
             var secondPotWinners = secondPot.GetWinners();
             secondPotWinners.Winners.Count.Should().Be(2);
-            secondPotWinners.WinningPrize.Value.Should().Be(100);
+            secondPotWinners.WinningPrize.Value.Should().Be(200);
 
             var thirdPot = _stack.Pots.Last(p => p.HighestBet.Value == 50);
             thirdPot.Should().NotBeNull();
@@ -185,13 +185,13 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             firstPot.Should().NotBeNull();
             var firstPotWinners = firstPot.GetWinners();
             firstPotWinners.Winners.Count.Should().Be(4);
-            firstPotWinners.WinningPrize.Value.Should().Be(90);
+            firstPotWinners.WinningPrize.Value.Should().Be(360);
 
             var secondPot = _stack.Pots.Last(p => p.HighestBet.Value == 100);
             secondPot.Should().NotBeNull();
             var secondPotWinners = secondPot.GetWinners();
             secondPotWinners.Winners.Count.Should().Be(2);
-            secondPotWinners.WinningPrize.Value.Should().Be(100);
+            secondPotWinners.WinningPrize.Value.Should().Be(200);
 
             var thirdPot = _stack.Pots.Last(p => p.HighestBet.Value == 50);
             thirdPot.Should().NotBeNull();
@@ -217,7 +217,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             firstPot.Should().NotBeNull();
             var firstPotWinners = firstPot.GetWinners();
             firstPotWinners.Winners.Count.Should().Be(4);
-            firstPotWinners.WinningPrize.Value.Should().Be(90);
+            firstPotWinners.WinningPrize.Value.Should().Be(360);
 
             var secondPot = _stack.Pots.LastOrDefault(p => p.HighestBet.Value == 90);
             secondPot.Should().NotBeNull();
@@ -229,13 +229,13 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             fourthPot.Should().NotBeNull();
             var fourthPottWinners = fourthPot.GetWinners();
             fourthPottWinners.Winners.Count.Should().Be(2);
-            fourthPottWinners.WinningPrize.Value.Should().Be(110);
+            fourthPottWinners.WinningPrize.Value.Should().Be(220);
 
             var thirdPot = _stack.Pots.LastOrDefault(p => p.HighestBet.Value == 10);
             thirdPot.Should().NotBeNull();
             var thirdPotWinners = thirdPot.GetWinners();
             thirdPotWinners.Winners.Count.Should().Be(2);
-            thirdPotWinners.WinningPrize.Value.Should().Be(10);
+            thirdPotWinners.WinningPrize.Value.Should().Be(20);
         }
 
         [Test]
@@ -255,13 +255,13 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             firstPot.Should().NotBeNull();
             var firstPotWinners = firstPot.GetWinners();
             firstPotWinners.Winners.Count.Should().Be(4);
-            firstPotWinners.WinningPrize.Value.Should().Be(90);
+            firstPotWinners.WinningPrize.Value.Should().Be(360);
 
             var secondPot = _stack.Pots.FirstOrDefault(p => p.HighestBet.Value == 100);
             secondPot.Should().NotBeNull();
             var secondPotWinners = secondPot.GetWinners();
             secondPotWinners.Winners.Count.Should().Be(2);
-            secondPotWinners.WinningPrize.Value.Should().Be(100);
+            secondPotWinners.WinningPrize.Value.Should().Be(200);
 
             var fourthPot = _stack.Pots.LastOrDefault(p => p.HighestBet.Value == 100);
             fourthPot.Should().NotBeNull();
@@ -273,7 +273,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             thirdPot.Should().NotBeNull();
             var thirdPotWinners = thirdPot.GetWinners();
             thirdPotWinners.Winners.Count.Should().Be(3);
-            thirdPotWinners.WinningPrize.Value.Should().Be(10);
+            thirdPotWinners.WinningPrize.Value.Should().Be(30);
         }
     }
 }

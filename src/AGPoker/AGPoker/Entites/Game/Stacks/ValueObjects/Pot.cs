@@ -44,10 +44,8 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
                 })
                 .ToList();
 
-            var winners = groppedBets.Where(b => b.SumOfBets == _highestBet).ToList();
-            var winPrize = PrizePerWinner(winners.Count); //cant be per winner
-
-            return PotWinner.Create(winners.Select(w => w.Player).ToList(), winPrize);
+            var winners = groppedBets.Where(b => b.SumOfBets == _highestBet).Select(b => b.Player).ToList();
+            return PotWinner.Create(winners, WholePrize());
         }
 
         public void Fold(Bet bet)
@@ -197,14 +195,10 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
                 throw new ArgumentException();
         }
 
-        private Money PrizePerWinner(int numberOfWinners)
+        private Money WholePrize()
         {
-            if (numberOfWinners == 0)
-                return Money.None;
-
             var moneyInPot = _bets.Sum(b => b.Money.Value);
-
-            return Money.Create(moneyInPot / numberOfWinners);
+            return Money.Create(moneyInPot);
         }
 
 

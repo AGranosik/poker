@@ -39,8 +39,7 @@ namespace AGPoker.Aggregates
             TakeBetFromBlinds();
             Table = Table.PreFlop(_players);
         }
-        // leave game but its optional
-        // next round 
+
         public void Fold(Player player)
         {
             var turnStatus = Turn.Bet(player, BetType.Fold);
@@ -74,7 +73,7 @@ namespace AGPoker.Aggregates
                 foreach(var potWinner in stackWinners)
                 {
                     var combinationWinners = Table.GetWinners(potWinner.Winners.ToList());
-                    var winningPrize = potWinner.WinningPrize.Value * potWinner.Winners.Count; // should return overall prize
+                    var winningPrize = potWinner.WinningPrize.Value / combinationWinners.Count; // should return overall prize
                     combinationWinners.ToList().ForEach(p => p.GetPrize(Money.Create(winningPrize)));
                 }
             }

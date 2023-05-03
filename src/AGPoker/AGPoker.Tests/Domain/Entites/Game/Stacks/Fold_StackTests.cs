@@ -81,7 +81,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Stacks
             var winners = _stack.GetWinners();
             winners.Should().NotBeNullOrEmpty();
 
-            var firstPotWinners = winners.First(w => w.WinningPrize.Value == 150);
+            var firstPotWinners = winners.First(w => w.WinningPrize.Value == 300);
             firstPotWinners.Winners.Count.Should().Be(2);
 
             var secondPotWinners = winners.First(w => w.WinningPrize.Value == 60);
