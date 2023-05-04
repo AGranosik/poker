@@ -129,11 +129,10 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
 
         private static CardResult? IsExactNumberOfCards(IEnumerable<IGrouping<ECardValue, Card>> grouppedCards, int numberOfSameCards, Combination resultCombination)
         {
-            //better name
-            var sortedFromHighestToLowest = grouppedCards.OrderByDescending(gp => gp.Count())
+            var cardsOccurences = grouppedCards.OrderByDescending(gp => gp.Count())
                 .ThenByDescending(gp => gp.Key);
 
-            var sameCards = sortedFromHighestToLowest.FirstOrDefault(gp => gp.Count() >= numberOfSameCards);
+            var sameCards = cardsOccurences.FirstOrDefault(gp => gp.Count() >= numberOfSameCards);
 
             if(sameCards is not null)
             {
@@ -141,7 +140,7 @@ namespace AGPoker.Entites.Game.Tables.ValueObjects
                 {
                     sameCards.Key
                 };
-                highestFromLowest.AddRange(sortedFromHighestToLowest.Where(s => s.Key != sameCards.Key).Select(s => s.Key).ToList());
+                highestFromLowest.AddRange(cardsOccurences.Where(s => s.Key != sameCards.Key).Select(s => s.Key).ToList());
                 return new CardResult(resultCombination, highestFromLowest);
             }
 

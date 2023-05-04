@@ -143,7 +143,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Tables
                 .Should().BeTrue();
         }
 
-        private void AllCardsAreUnique(List<Card> cards)
+        private static void AllCardsAreUnique(List<Card> cards)
         {
             cards.Count().Should().Be(cards.Distinct().Count());
         }

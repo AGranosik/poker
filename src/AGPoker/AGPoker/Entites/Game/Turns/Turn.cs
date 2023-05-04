@@ -7,6 +7,7 @@ namespace AGPoker.Entites.Game.Turns
 {
     public class Turn
     {
+        //turn -> 4 rounds
         private Turn(List<Player> players)
         {
             PlayersValidation(players);
@@ -32,14 +33,15 @@ namespace AGPoker.Entites.Game.Turns
         public static Turn Start(List<Player> players)
             => new(players);
 
+        //refactor this
         public TurnResult Bet(Player player, BetType betType)
         {
             if (!CanBetBeMade() || !IsThisPlayerTurn(player))
                 throw new CannotBetException("Next move cannot be performed.");
 
-            SetNextPlayer(); //pass currentIndex before increment
+            SetNextPlayerInRound();
             TakePlayerBetIntoAccountForFutureMoves(player, betType);
-            SetTurnBet(betType);
+            SetRoundBet(betType);
 
             return GetTurnStatus();
         }
@@ -50,7 +52,7 @@ namespace AGPoker.Entites.Game.Turns
             return playerIndex >= 0 && _playersInGame.Contains(playerIndex) && _currentPlayerIndex == playerIndex;
         }
 
-        public void NextRound ()
+        public void NextRound()
         {
             if (!CanStartNextRound())
                 throw new CannotStartNextRound();
@@ -70,7 +72,7 @@ namespace AGPoker.Entites.Game.Turns
         public bool CanStartNextRound()
             => !IsTheLastRound() && EveryoneMadeMove() && !IsLastPlayerWithoutAutoBets();
 
-        private void PlayersValidation(List<Player> players)
+        private static void PlayersValidation(List<Player> players)
         {
             if (players is null || players.Count < 3)
                 throw new ArgumentException(nameof(players));
@@ -79,15 +81,9 @@ namespace AGPoker.Entites.Game.Turns
         private void StartTurn()
         {
             _roundNumber = 1;
-            SetPlayersInGame();
-            SetTrio();
-            SetDealerIndex();
+            SetPlayersInTurnGame();
+            SetTurnPlayers();
             ResetTurnCounters();
-        }
-
-        private void SetDealerIndex()
-        {
-            _dealerIndex = Circle.GetNextInCircle(_dealerIndex, _playersInGame);
         }
 
         private void SetDealerIndexAtStart()
@@ -116,7 +112,7 @@ namespace AGPoker.Entites.Game.Turns
         private bool EveryoneMadeMove()
             => _movesInTurn == _maximumMovesInRound;
 
-        private void SetTurnBet(BetType bidType)
+        private void SetRoundBet(BetType bidType)
         {
             if (bidType == BetType.Raise)
                 _movesInTurn = 1;
@@ -148,7 +144,7 @@ namespace AGPoker.Entites.Game.Turns
         private bool IsLastPlayerWithoutAutoBets()
             => _playersInGame.Count == _playersToRemove.Count + 1 || _playersInGame.Count == _allInPlayers.Count + 1;
 
-        private void SetPlayersInGame()
+        private void SetPlayersInTurnGame()
         {
             _playersInGame = Enumerable.Range(0, _players.Count).ToList();
             _maximumMovesInRound = _playersInGame.Count - _allInPlayers.Count;
@@ -161,7 +157,7 @@ namespace AGPoker.Entites.Game.Turns
             SetFirstPlayer();
         }
 
-        private void SetTrio()
+        private void SetTurnPlayers()
         {
             SetDealer();
             SetSmallBlind();
@@ -181,7 +177,9 @@ namespace AGPoker.Entites.Game.Turns
 
         private void SetDealer()
         {
-            Dealer = _players[Circle.GetNextInCircle(_dealerIndex, _playersInGame)];
+            var nextDealerIndex = Circle.GetNextInCircle(_dealerIndex, _playersInGame);
+            Dealer = _players[nextDealerIndex];
+            _dealerIndex = nextDealerIndex;
         }
 
         private void SetSmallBlind()
@@ -194,12 +192,12 @@ namespace AGPoker.Entites.Game.Turns
             BigBlindPlayer = _players[Circle.GetNextInCircle(_players.IndexOf(SmallBlindPlayer), _playersInGame)];
         }
 
-        private void SetNextPlayer()
+        private void SetNextPlayerInRound()
         {
             _currentPlayerIndex = Circle.GetNextInCircle(_currentPlayerIndex, _playersInGame);
             if (_allInPlayers.Contains(_currentPlayerIndex))
             {
-                SetNextPlayer();
+                SetNextPlayerInRound();
             }
         }
 
