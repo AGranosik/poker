@@ -23,7 +23,7 @@
 
         public static bool operator !=(Card card1, Card card2)
             => !(card1 == card2);
-        private void Validation(char symbol, ECardValue value)
+        private static void Validation(char symbol, ECardValue value)
         {
             if (!_symbols.Contains(symbol))
                 throw new ArgumentException(nameof(symbol));

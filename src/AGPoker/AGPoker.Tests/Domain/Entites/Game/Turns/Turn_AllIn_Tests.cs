@@ -126,7 +126,7 @@ namespace AGPoker.Tests.Domain.Entites.Game.Turns
             _turn.Bet(_players[1], BetType.AllIn);
             _turn.Bet(_players[2], BetType.AllIn);
 
-            var func = () => _turn.NextTurn();
+            var func = () => _turn.NextTurn(_players);
             func.Should().NotThrow();
         }
 

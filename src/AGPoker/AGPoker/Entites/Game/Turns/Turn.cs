@@ -11,9 +11,8 @@ namespace AGPoker.Entites.Game.Turns
         private Turn(List<Player> players)
         {
             PlayersValidation(players);
-            _players = players;
-            SetDealerIndexAtStart();
-            StartTurn();
+            DealerIndexInit(players);
+            StartTurn(players);
         }
 
         public Player Dealer { get; private set; }
@@ -33,7 +32,7 @@ namespace AGPoker.Entites.Game.Turns
         public static Turn Start(List<Player> players)
             => new(players);
 
-        //refactor this
+
         public TurnResult Bet(Player player, BetType betType)
         {
             if (!CanBetBeMade() || !IsThisPlayerTurn(player))
@@ -61,12 +60,12 @@ namespace AGPoker.Entites.Game.Turns
             _roundNumber++;
         }
 
-        public void NextTurn()
+        public void NextTurn(List<Player> players)
         {
             if (!CanStartNextTurn())
                 throw new CannotStartNextTurn("Cannot start next turn.");
 
-            StartTurn();
+            StartTurn(players);
         }
 
         public bool CanStartNextRound()
@@ -78,18 +77,19 @@ namespace AGPoker.Entites.Game.Turns
                 throw new ArgumentException(nameof(players));
         }
 
-        private void StartTurn()
+        private void StartTurn(List<Player> players)
         {
+            _players = players;
             _roundNumber = 1;
             SetPlayersInTurnGame();
             SetTurnPlayers();
             ResetTurnCounters();
         }
 
-        private void SetDealerIndexAtStart()
+        private void DealerIndexInit(List<Player> players)
         {
-            var dealer = Circle.GetPrevious(_players.Last(), _players, 3);
-            _dealerIndex = _players.IndexOf(dealer);
+            var dealer = Circle.GetPrevious(players.Last(), players, 3);
+            _dealerIndex = players.IndexOf(dealer);
         }
 
         public bool CanStartNextTurn()
@@ -141,6 +141,8 @@ namespace AGPoker.Entites.Game.Turns
         private bool CanBetBeMade()
             => _movesInTurn < _maximumMovesInRound && !IsLastPlayerWithoutAutoBets();
 
+        // case when player doesn't have to decide because is the last one who has money in game
+        // it means turn finished and cards combination should decide
         private bool IsLastPlayerWithoutAutoBets()
             => _playersInGame.Count == _playersToRemove.Count + 1 || _playersInGame.Count == _allInPlayers.Count + 1;
 

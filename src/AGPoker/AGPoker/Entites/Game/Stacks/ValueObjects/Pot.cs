@@ -35,8 +35,6 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
 
         public PotWinner GetWinners()
         {
-            // pass players as argument??
-            // pot shouldnt hold part of turn resposibilties??
             var groppedBets = _bets.GroupBy(b => b.Player)
                 .Where(gp => !gp.Any(b => b.IsFolded()))
                 .Select(gp => new

@@ -61,7 +61,6 @@ namespace AGPoker.Aggregates
             Stack.Raise(bet);
             MovePerformed(turnStatus);
         }
-
         
         private void MovePerformed(TurnResult turnResult)
         {
@@ -84,8 +83,9 @@ namespace AGPoker.Aggregates
         {
             if (Turn.CanStartNextTurn())
             {
-                Turn.NextTurn();
-                Table.NextTurn(_players.Where(p => p.Money.Any).ToList());
+                var playersWithMoney = _players.Where(p => p.Money.Any).ToList();
+                Turn.NextTurn(playersWithMoney);
+                Table.NextTurn(playersWithMoney);
                 Stack = Stack.Create();
             }
             else if (Turn.CanStartNextRound())
@@ -112,7 +112,7 @@ namespace AGPoker.Aggregates
             return true;
         }
 
-        private void CreateValidation(Player owner, GameLimit limit)
+        private static void CreateValidation(Player owner, GameLimit limit)
         {
             if (owner is null)
                 throw new ArgumentNullException(nameof(owner));

@@ -30,16 +30,18 @@ namespace AGPoker.Entites.Game.Game.Players
             => Money.Any;
         public Bet AllIn()
             => Bet.AllIn(this, Money.TakeAll());
+
         public Bet Call(Money amount = null)
         {
             if(amount is not null)
                 Money.Split(amount);
+
             return Bet.Call(this, amount ?? Money.None);
         }
 
         public Bet Raise(Money amount)
         {
-            if (LastChipsGonnaBeTaken(amount))
+            if (IsLastChipsGonnaBeTaken(amount))
                 return AllIn();
 
             Money.Split(amount);
@@ -56,7 +58,7 @@ namespace AGPoker.Entites.Game.Game.Players
             _cards.AddRange(cards);
         }
 
-        public bool LastChipsGonnaBeTaken(Money amount)
+        public bool IsLastChipsGonnaBeTaken(Money amount)
             => Money == amount;
 
         private static void CheckIfCardsNotNullOrEmpty(List<Card> cards)

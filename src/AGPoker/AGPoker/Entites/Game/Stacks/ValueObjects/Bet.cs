@@ -18,10 +18,8 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
         public Bet SplitedFrom { get; init; }
 
         public Money Money { get; init; }
-        public Player Player { get; set; }
+        public Player Player { get; private set; }
         public BetType BetType { get; init; }
-
-
 
         public bool IsFolded()
             => BetType.Fold == BetType;
@@ -49,8 +47,6 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             var result = new Bet(moneyToTakeOut, Player, BetType, this);
             return result;
         }
-
-
 
         private static void CreationValidation(Money money, Player player)
         {

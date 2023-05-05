@@ -21,7 +21,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             => _winners.AsReadOnly();
         public Money WinningPrize { get; init; }
 
-        private void CreationValidation(List<Player> players, Money winningPrize)
+        private static void CreationValidation(List<Player> players, Money winningPrize)
         {
             if(players is null)
                 throw new ArgumentNullException(nameof(players));
