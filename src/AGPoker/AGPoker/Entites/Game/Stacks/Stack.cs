@@ -37,7 +37,6 @@ namespace AGPoker.Entites.Game.Stacks
             for(int i =0; i < pots.Count && bet.Money.Any; i++)
             {
                 lastPot = pots[i];
-                var isAllInPot = lastPot.IsAllIn();
                 if (lastPot.CanTakeBetPart(bet))
                 {
                     lastPot.TakePartOfAllInBet(bet);
@@ -77,7 +76,7 @@ namespace AGPoker.Entites.Game.Stacks
                     else
                     {
                         lastPot.Raise(bet);
-                        bet = Bet.Fold(bet.Player);
+                        return;
                     }
                 }
                 if (bet.Money.Any)

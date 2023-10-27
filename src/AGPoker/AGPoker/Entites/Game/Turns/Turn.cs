@@ -18,6 +18,7 @@ namespace AGPoker.Entites.Game.Turns
         public Player Dealer { get; private set; }
         public Player SmallBlindPlayer { get; private set; }
         public Player BigBlindPlayer { get; private set; }
+        private int MaximumMovesInRound => _playersInGame.Count - _allInPlayers.Count;
 
         private List<Player> _players = new();
         private List<int> _playersInGame = new();
@@ -26,7 +27,6 @@ namespace AGPoker.Entites.Game.Turns
         private int _currentPlayerIndex = 0;
         private int _dealerIndex = 0;
         private int _movesInTurn = 0;
-        private int _maximumMovesInRound = 0;
         private int _roundNumber = 1;
 
         public static Turn Start(List<Player> players)
@@ -110,7 +110,7 @@ namespace AGPoker.Entites.Game.Turns
             => _roundNumber == 4;
 
         private bool EveryoneMadeMove()
-            => _movesInTurn == _maximumMovesInRound;
+            => _movesInTurn == MaximumMovesInRound;
 
         private void SetRoundBet(BetType bidType)
         {
@@ -134,12 +134,10 @@ namespace AGPoker.Entites.Game.Turns
             {
                 _allInPlayers.Add(_players.IndexOf(player));
             }
-
-            _maximumMovesInRound = _playersInGame.Count - _allInPlayers.Count;
         }
 
         private bool CanBetBeMade()
-            => _movesInTurn < _maximumMovesInRound && !IsLastPlayerWithoutAutoBets();
+            => _movesInTurn < MaximumMovesInRound && !IsLastPlayerWithoutAutoBets();
 
         // case when player doesn't have to decide because is the last one who has money in game
         // it means turn finished and cards combination should decide
@@ -149,12 +147,10 @@ namespace AGPoker.Entites.Game.Turns
         private void SetPlayersInTurnGame()
         {
             _playersInGame = Enumerable.Range(0, _players.Count).ToList();
-            _maximumMovesInRound = _playersInGame.Count - _allInPlayers.Count;
         }
 
         private void ResetTurnCounters()
         {
-            _maximumMovesInRound = _playersInGame.Count;
             _movesInTurn = 0;
             SetFirstPlayer();
         }

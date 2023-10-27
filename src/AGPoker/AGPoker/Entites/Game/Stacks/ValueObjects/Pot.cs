@@ -85,7 +85,7 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             _bets.Add(bet);
         }
 
-        public List<Bet> AllIn(Bet bet)// add tests where there are bets to split
+        public List<Bet> AllIn(Bet bet)
         {
             if (!bet.IsAllIn())
                 throw new ArgumentException();
@@ -229,8 +229,8 @@ namespace AGPoker.Entites.Game.Stacks.ValueObjects
             return bets;
         }
 
-        private bool IsFoldBet(Bet bet)
-            => bet.BetType == BetType.Fold && bet.Money == Money.None;
+        private static bool IsFoldBet(Bet bet)
+            => bet.BetType == BetType.Fold;
 
         private bool IsPlayerFoldedBefore(Player player)
             => _bets.Any(b => BetType.Fold == b.BetType && b.Player == player);
