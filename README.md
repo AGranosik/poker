@@ -5,4 +5,4 @@ Te point was to code game rules using DDD approach and make sure it works proper
 
 ---
 Solution contains only pure domain code. **It's not possible to launch in any way.**
-It is not stored or save in any way. It's pure Domain code wihtou any User Interface.
+Data is not stored or saved in any way. It's pure Domain code wihtout any User Interface.
